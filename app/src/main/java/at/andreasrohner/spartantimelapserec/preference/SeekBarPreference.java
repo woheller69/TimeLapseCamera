@@ -29,7 +29,6 @@ import at.andreasrohner.spartantimelapserec.R;
 
 public class SeekBarPreference extends DialogPreference implements
 		SeekBar.OnSeekBarChangeListener {
-	private static final String NAMESPACE = "http://schemas.android.com/apk/res/android";
 	private static final int DEFAULT_VALUE = 0;
 
 	private TextView mValueDisp;
@@ -44,16 +43,19 @@ public class SeekBarPreference extends DialogPreference implements
 
 		super(context, attrs);
 
-		int resId = attrs.getAttributeResourceValue(null, "suffix", 0);
+		TypedArray a = context.obtainStyledAttributes(attrs,
+				R.styleable.TimeLapse);
+
+		int resId = a.getResourceId(R.styleable.TimeLapse_suffix,0);
 		if (resId == 0)
-			mSuffix = attrs.getAttributeValue(null, "suffix");
+			mSuffix = a.getString(R.styleable.TimeLapse_suffix);
 		else
 			mSuffix = context.getString(resId);
 
-		mMaxValue = attrs.getAttributeIntValue(NAMESPACE, "max", 100);
-		mMinValue = attrs.getAttributeIntValue(null, "min", 0);
-		mLog = attrs.getAttributeFloatValue(null, "log", 0);
-		mStickyValue = attrs.getAttributeIntValue(null, "stickyValue", 0);
+		mMaxValue = a.getInteger(R.styleable.TimeLapse_max,  100);
+		mMinValue = a.getInteger(R.styleable.TimeLapse_min,  0);
+		mLog = a.getFloat(R.styleable.TimeLapse_log,  0);
+		mStickyValue = a.getInteger(R.styleable.TimeLapse_stickyValue,  0);
 
 		setDialogLayoutResource(R.layout.dialog_seekbar_preference);
 	}

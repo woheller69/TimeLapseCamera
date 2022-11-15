@@ -20,6 +20,7 @@ package at.andreasrohner.spartantimelapserec.preference;
 
 import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.preference.ListPreference;
 import android.util.AttributeSet;
 import android.widget.ListAdapter;
@@ -31,7 +32,9 @@ public class IconListPreference extends ListPreference {
 	public IconListPreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
 
-		int resId = attrs.getAttributeResourceValue(null, "entryImages", 0);
+		TypedArray a = context.obtainStyledAttributes(attrs,
+				R.styleable.TimeLapse);
+		int resId = a.getResourceId(R.styleable.TimeLapse_entryImages,0);
 		mImagePaths = context.getResources().getStringArray(resId);
 	}
 

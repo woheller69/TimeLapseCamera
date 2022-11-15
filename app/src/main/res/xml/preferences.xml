@@ -1,4 +1,5 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
@@ -24,7 +25,7 @@
             android:title="@string/pref_project_path" />
 
         <at.andreasrohner.spartantimelapserec.preference.IconListPreference
-            entryImages="@array/pref_notification_icon_icons"
+            app:entryImages="@array/pref_notification_icon_icons"
             android:defaultValue="ic_launcher"
             android:entries="@array/pref_notification_icon_entries"
             android:entryValues="@array/pref_notification_icon_values"
@@ -48,17 +49,18 @@
             android:title="@string/pref_frame_rate" />
 
         <at.andreasrohner.spartantimelapserec.preference.SeekBarPreference
-            log="1.2"
-            stickyValue="250"
-            suffix="ms"
+            app:log="1.2"
+            app:stickyValue="250"
+            app:suffix="ms"
             android:defaultValue="1000"
             android:dialogMessage="@string/pref_capture_rate_summ"
             android:key="pref_capture_rate"
-            android:max="600000"
+            app:max="600000"
             android:title="@string/pref_capture_rate" />
         <at.andreasrohner.spartantimelapserec.preference.SeekBarPreference
-            min="1"
-            suffix="%"
+            app:min="1"
+            app:max="100"
+            app:suffix="%"
             android:defaultValue="90"
             android:dialogMessage="@string/pref_jpeg_quality_summ"
             android:key="pref_jpeg_quality"
@@ -72,21 +74,21 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_schedule_settings_category" >
         <at.andreasrohner.spartantimelapserec.preference.SeekBarPreference
-            log="1.2"
-            stickyValue="250"
-            suffix="ms"
+            app:log="1.2"
+            app:stickyValue="250"
+            app:suffix="ms"
             android:defaultValue="1000"
             android:dialogMessage="@string/pref_initial_delay_summ"
             android:key="pref_initial_delay"
-            android:max="300000"
+            app:max="300000"
             android:title="@string/pref_initial_delay" />
         <at.andreasrohner.spartantimelapserec.preference.SeekBarPreference
-            log="1.2"
-            stickyValue="60"
-            suffix="min"
+            app:log="1.2"
+            app:stickyValue="60"
+            app:suffix="min"
             android:defaultValue="2880"
             android:key="pref_stop_recording_after"
-            android:max="2880"
+            app:max="28800"
             android:title="@string/pref_stop_recording_after" />
 
         <at.andreasrohner.spartantimelapserec.preference.DateTimePreference
