@@ -1,0 +1,58 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="at.andreasrohner.spartantimelapserec"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="at.andreasrohner.spartantimelapserec.MainActivity"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="stateUnchanged" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="at.andreasrohner.spartantimelapserec.PreviewActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name="at.andreasrohner.spartantimelapserec.SettingsActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
+
+        <service
+            android:name="at.andreasrohner.spartantimelapserec.BackgroundService"
+            android:enabled="true"
+            android:exported="false" >
+        </service>
+
+        <receiver android:name="at.andreasrohner.spartantimelapserec.DeviceStatusReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_BATTERY_LOW" />
+                <action android:name="android.intent.action.ACTION_DEVICE_STORAGE_LOW" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="at.andreasrohner.spartantimelapserec.ScheduleReceiver" />
+        <receiver android:name="at.andreasrohner.spartantimelapserec.PowerSavingReceiver" />
+    </application>
+
+</manifest>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="dialog_seekbar_message_size">14sp</dimen>
+    <dimen name="dialog_seekbar_value_size">20sp</dimen>
+
+</resources>

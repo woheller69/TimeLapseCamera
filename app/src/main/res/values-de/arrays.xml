@@ -1,0 +1,18 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <string-array name="pref_rec_mode_entries">
+        <item>Normales Video (MP4)</item>
+        <item>Zeitraffer Video (MP4)</item>
+        <item>Zeitraffer Bilder (JPG)</item>
+    </string-array>
+    <string-array name="pref_notification_icon_entries">
+        <item>Anwendungs Icon</item>
+        <item>Leeres Icon</item>
+        <item>Einstellungs Icon</item>
+        <item>Email Icon</item>
+        <item>Ereignis Icon</item>
+        <item>Video Icon</item>
+        <item>Foto Icon</item>
+    </string-array>
+
+</resources>

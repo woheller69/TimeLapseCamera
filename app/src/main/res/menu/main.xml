@@ -1,0 +1,27 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="at.andreasrohner.spartantimelapserec.MainActivity" >
+
+    <item
+        android:id="@+id/action_start"
+        android:onClick="actionStart"
+        android:title="@string/action_start"/>
+    <item
+        android:id="@+id/action_stop"
+        android:onClick="actionStop"
+        android:title="@string/action_stop"/>
+    <item
+        android:id="@+id/action_gallery"
+        android:onClick="actionGallery"
+        android:title="@string/action_gallery"/>
+    <item
+        android:id="@+id/action_preview"
+        android:onClick="actionPreview"
+        android:title="@string/action_preview"/>
+    <item
+        android:id="@+id/action_unmute_all_streams"
+        android:onClick="actionUnmuteAllStreams"
+        android:title="@string/action_unmute_all_streams"/>
+
+</menu>
