@@ -244,6 +244,11 @@ public abstract class Recorder {
 
 		mCamera.setParameters(params);
 	}
+	protected void setExposureCompensation() {
+		Camera.Parameters params = mCamera.getParameters();
+		params.setExposureCompensation(mSettings.getExposureCompensation());
+		mCamera.setParameters(params);
+	}
 
 	@SuppressLint("NewApi")
 	protected void muteShutter() {

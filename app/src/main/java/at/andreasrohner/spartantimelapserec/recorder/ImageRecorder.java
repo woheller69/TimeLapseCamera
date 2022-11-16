@@ -122,6 +122,7 @@ public class ImageRecorder extends Recorder implements Runnable,
 				prepareRecord();
 
 			setCameraOrientation(mSettings.getCameraId());
+			setExposureCompensation();
 
 			mCamera.startPreview();
 

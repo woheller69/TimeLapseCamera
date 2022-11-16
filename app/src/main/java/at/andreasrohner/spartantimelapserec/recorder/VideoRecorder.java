@@ -119,7 +119,7 @@ public class VideoRecorder extends Recorder implements OnInfoListener,
 				params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
 			}
 		}
-
+		params.setExposureCompensation(mSettings.getExposureCompensation());
 		mCamera.setParameters(params);
 	}
 

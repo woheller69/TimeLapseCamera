@@ -47,6 +47,7 @@ public class RecSettings {
 	private boolean schedRecEnabled;
 	private int stopRecAfter;
 	private int notificationIcon;
+	private int exposureCompensation;
 
 	public static int getInteger(SharedPreferences prefs, String key, int def) {
 		try {
@@ -160,6 +161,7 @@ public class RecSettings {
 		initDelay = prefs.getInt("pref_initial_delay", 1000);
 		jpegQuality = prefs.getInt("pref_jpeg_quality", 90);
 		stopRecAfter = prefs.getInt("pref_stop_recording_after", 48 * 60);
+		exposureCompensation = prefs.getInt("pref_exposurecomp",0);
 		// negative value disables the limit
 		if (stopRecAfter >= 47 * 60)
 			stopRecAfter = -1;
@@ -337,6 +339,8 @@ public class RecSettings {
 	public int getStopRecAfter() {
 		return stopRecAfter;
 	}
+
+	public int getExposureCompensation() { return exposureCompensation; }
 
 	public void setStopRecAfter(int stopRecAfter) {
 		this.stopRecAfter = stopRecAfter;

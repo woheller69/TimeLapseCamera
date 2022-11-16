@@ -54,5 +54,6 @@
     <string name="time_format_mins">min</string>
     <string name="time_format_hour">std</string>
     <string name="time_format_hours">std</string>
+    <string name="pref_exposure_compensation">Belichtungskorrektur</string>
 
 </resources>

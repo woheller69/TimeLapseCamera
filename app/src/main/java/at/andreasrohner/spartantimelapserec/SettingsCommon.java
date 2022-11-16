@@ -33,7 +33,6 @@ import android.os.Looper;
 import android.preference.ListPreference;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.data.RecMode;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 import at.andreasrohner.spartantimelapserec.preference.DateTimePreference;
@@ -53,6 +52,7 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 	private SeekBarPreference prefJpegQuality;
 	private DateTimePreference prefScheduleRec;
 	private SeekBarPreference prefStopRecAfter;
+	private SeekBarPreference prefExposureComp;
 
 	private int calcGcd(int a, int b) {
 		if (b == 0)
@@ -314,9 +314,10 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 			if (entry != null) {
 				prefCamera.setSummary(entry);
 			}
-
 			setFrameRates(prefs);
 			setFrameSizes(prefs);
+			setExposureCompRange(prefs);
+			prefs.edit().putInt("pref_exposurecomp",0).apply();
 		} else if (key.equals("pref_rec_mode")) {
 			setRecMode(prefs);
 			setFrameSizes(prefs);
@@ -362,7 +363,8 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 		prefInitialDelay = (SeekBarPreference) screen.findPreference("pref_initial_delay");
 		prefScheduleRec = (DateTimePreference) screen.findPreference("pref_schedule_recording");
 		prefStopRecAfter = (SeekBarPreference) screen.findPreference("pref_stop_recording_after");
-
+		prefExposureComp = (SeekBarPreference) screen.findPreference("pref_exposurecomp");
+		setExposureCompRange(prefs);
 		setCameras(prefs);
 		setRecMode(prefs);
 		// Opening the camera object to
@@ -391,6 +393,12 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 			prefStopRecAfter.setSummary(onFormatOutputValue(value, "min"));
 
 		updatePrefStatus(prefs);
+	}
+
+	private void setExposureCompRange(SharedPreferences prefs) {
+		int camId = RecSettings.getInteger(prefs, "pref_camera", 0);
+		prefExposureComp.setMinValue(cameraSettings.getMinExposureCompensation(camId));
+		prefExposureComp.setMaxValue(cameraSettings.getMaxExposureCompensation(camId));
 	}
 
 	public void onResume(PreferenceScreen screen) {

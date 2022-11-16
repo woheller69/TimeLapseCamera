@@ -149,6 +149,7 @@ public class PreviewActivity extends Activity implements ErrorCallback,
 
 			setFocusMode(params, suppModes);
 		}
+		params.setExposureCompensation(mSettings.getExposureCompensation());
 
 		mCamera.setParameters(params);
 

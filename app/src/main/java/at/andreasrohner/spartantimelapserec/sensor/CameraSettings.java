@@ -346,4 +346,15 @@ public class CameraSettings {
 
 		return sizesList;
 	}
+
+	public int getMinExposureCompensation(int camId){
+		Camera.Parameters params = getCameraParameters(camId);
+		return params.getMinExposureCompensation();
+	}
+
+	public int getMaxExposureCompensation(int camId){
+		Camera.Parameters params = getCameraParameters(camId);
+		return params.getMaxExposureCompensation();
+	}
+
 }
