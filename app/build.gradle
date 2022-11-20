@@ -7,8 +7,8 @@ android {
 
     defaultConfig {
         applicationId "at.andreasrohner.spartantimelapserec"
-        minSdk 19
-        targetSdk 19
+        minSdk 23
+        targetSdk 26
         versionCode 1
         versionName "1.0"
 

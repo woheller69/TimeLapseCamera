@@ -38,6 +38,6 @@ public class DeviceStatusReceiver extends BroadcastReceiver {
 		 */
 		if ((stopOnLowBattery && intent.getAction().equals(Intent.ACTION_BATTERY_LOW))
 				|| (stopOnLowStorage && intent.getAction().equals(Intent.ACTION_DEVICE_STORAGE_LOW)))
-			context.stopService(new Intent(context, BackgroundService.class));
+			context.stopService(new Intent(context, ForegroundService.class));
 	}
 }

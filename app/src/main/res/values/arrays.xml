@@ -10,32 +10,5 @@
         <item>VIDEO_TIME_LAPSE</item>
         <item>IMAGE_TIME_LAPSE</item>
     </string-array>
-    <string-array name="pref_notification_icon_entries">
-        <item>Application Icon</item>
-        <item>Blank Icon</item>
-        <item>Settings Icon</item>
-        <item>Email Icon</item>
-        <item>Event Icon</item>
-        <item>Video Icon</item>
-        <item>Picture Icon</item>
-    </string-array>
-    <string-array name="pref_notification_icon_values">
-        <item>ic_launcher</item>
-        <item>ic_action_blank</item>
-        <item>ic_action_settings</item>
-        <item>ic_action_email</item>
-        <item>ic_action_event</item>
-        <item>ic_action_video</item>
-        <item>ic_action_picture</item>
-    </string-array>
-    <string-array name="pref_notification_icon_icons">
-        <item>@drawable/ic_launcher</item>
-        <item>@drawable/ic_action_blank</item>
-        <item>@drawable/ic_action_settings</item>
-        <item>@drawable/ic_action_email</item>
-        <item>@drawable/ic_action_event</item>
-        <item>@drawable/ic_action_video</item>
-        <item>@drawable/ic_action_picture</item>
-    </string-array>
 
 </resources>

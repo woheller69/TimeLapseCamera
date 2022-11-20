@@ -26,8 +26,7 @@ public class ScheduleReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Intent serviceIntent = new Intent(context, BackgroundService.class);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		Intent serviceIntent = new Intent(context, ForegroundService.class);
 		context.startService(serviceIntent);
 	}
 }

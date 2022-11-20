@@ -18,8 +18,10 @@
 
 package at.andreasrohner.spartantimelapserec.sensor;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Handler;
 
 public class MuteShutter {
@@ -29,36 +31,38 @@ public class MuteShutter {
 			AudioManager.STREAM_MUSIC, AudioManager.STREAM_NOTIFICATION,
 			AudioManager.STREAM_SYSTEM };
 	private int[] streamVolumes = new int[streams.length];
-	private AudioManager manager;
+	private AudioManager audioManager;
+	private NotificationManager notificationManager;
 	private final Handler handler = new Handler();
 	private volatile boolean muted;
 
 	public MuteShutter(Context context) {
-		this.manager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+		this.audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+		this.notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		muted = false;
 	}
 
 	private void storeSoundSettings() {
-		mode = manager.getMode();
-		ringerMode = manager.getRingerMode();
+		mode = audioManager.getMode();
+		ringerMode = audioManager.getRingerMode();
 
 		for (int i = 0; i < streams.length; ++i)
-			streamVolumes[i] = manager.getStreamVolume(streams[i]);
+			streamVolumes[i] = audioManager.getStreamVolume(streams[i]);
 	}
 
 	private void recoverSoundSettings() {
-		manager.setMode(mode);
-		manager.setRingerMode(ringerMode);
+		audioManager.setMode(mode);
+		audioManager.setRingerMode(ringerMode);
 
 		for (int i = 0; i < streams.length; ++i)
-			manager.setStreamVolume(streams[i], streamVolumes[i],
+			audioManager.setStreamVolume(streams[i], streamVolumes[i],
 					AudioManager.FLAG_ALLOW_RINGER_MODES);
 	}
 
 	public void maxAllStreams() {
 		for (int stream : streams) {
-			manager.setStreamMute(stream, false);
-			manager.setStreamVolume(stream, manager.getStreamMaxVolume(stream),
+			audioManager.setStreamMute(stream, false);
+			audioManager.setStreamVolume(stream, audioManager.getStreamMaxVolume(stream),
 					AudioManager.FLAG_ALLOW_RINGER_MODES);
 		}
 	}
@@ -92,12 +96,17 @@ public class MuteShutter {
 		storeSoundSettings();
 
 		for (int stream : streams) {
-			manager.setStreamVolume(stream, 0,
+			audioManager.setStreamVolume(stream, 0,
 					AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
-			manager.setStreamMute(stream, true);
+			audioManager.setStreamMute(stream, true);
 		}
 
-		manager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+			if (notificationManager.isNotificationPolicyAccessGranted()) audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+		} else {
+			audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+		}
+
 		muted = true;
 
 		restartHandler();

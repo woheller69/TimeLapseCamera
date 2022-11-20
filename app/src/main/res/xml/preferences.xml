@@ -19,14 +19,6 @@
             android:summary="@string/pref_project_title_summ"
             android:title="@string/pref_project_title" />
 
-        <at.andreasrohner.spartantimelapserec.preference.IconListPreference
-            app:entryImages="@array/pref_notification_icon_icons"
-            android:defaultValue="ic_launcher"
-            android:entries="@array/pref_notification_icon_entries"
-            android:entryValues="@array/pref_notification_icon_values"
-            android:key="pref_notification_icon"
-            android:summary="@string/pref_notification_icon_summ"
-            android:title="@string/pref_notification_icon" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_camera_settings_category" >
         <ListPreference
@@ -68,7 +60,7 @@
             android:title="@string/pref_jpeg_quality" />
 
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="pref_mute_shutter"
             android:summary="@string/pref_mute_shutter_summ"
             android:title="@string/pref_mute_shutter" />

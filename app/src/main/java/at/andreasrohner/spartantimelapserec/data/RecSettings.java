@@ -48,7 +48,6 @@ public class RecSettings {
 	private long schedRecTime;
 	private boolean schedRecEnabled;
 	private int stopRecAfter;
-	private int notificationIcon;
 	private int exposureCompensation;
 
 	public static int getInteger(SharedPreferences prefs, String key, int def) {
@@ -196,11 +195,6 @@ public class RecSettings {
 			schedRecEnabled = false;
 		}
 
-		String name = prefs.getString("pref_notification_icon", "ic_launcher");
-		notificationIcon = context.getResources().getIdentifier(name,
-				"drawable", context.getPackageName());
-		if (notificationIcon == 0)
-			notificationIcon = R.drawable.ic_launcher;
 	}
 
 	public boolean shouldUsePowerSaveMode() {
@@ -347,11 +341,4 @@ public class RecSettings {
 		this.stopRecAfter = stopRecAfter;
 	}
 
-	public int getNotificationIcon() {
-		return notificationIcon;
-	}
-
-	public void setNotificationIcon(int notificationIcon) {
-		this.notificationIcon = notificationIcon;
-	}
 }

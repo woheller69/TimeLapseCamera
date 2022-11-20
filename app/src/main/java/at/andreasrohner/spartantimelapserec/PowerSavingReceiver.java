@@ -26,7 +26,7 @@ public class PowerSavingReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Intent serviceIntent = new Intent(context, BackgroundService.class);
+		Intent serviceIntent = new Intent(context, ForegroundService.class);
 		serviceIntent.putExtra("powerSavingCallback", true);
 		context.startService(serviceIntent);
 	}

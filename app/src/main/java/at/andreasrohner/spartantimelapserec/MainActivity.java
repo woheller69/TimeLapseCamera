@@ -26,58 +26,50 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
 
-public class MainActivity extends Activity {
-
-	private void setButtonToStop(Button button) {
-		button.setText(R.string.button_stop);
-		button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_stop, 0, 0, 0);
-		findViewById(R.id.button_preview).setEnabled(false);
-	}
-
-	private void setButtonToStart(Button button) {
-		button.setText(R.string.button_start);
-		button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_video, 0, 0, 0);
-		findViewById(R.id.button_preview).setEnabled(true);
-	}
+public class MainActivity extends Activity  {
 
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)!= PackageManager.PERMISSION_GRANTED){
-			ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.RECORD_AUDIO},123);
-		}
-		if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED){
-			ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.CAMERA},124);
-		}
-		if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
-			ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},125);
-		}
-
 		Context context = getApplicationContext();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		SettingsCommon.setDefaultValues(context, prefs);
 
-		// Display the fragment as the main content.
-		getFragmentManager().beginTransaction()
-				.replace(android.R.id.content, new SettingsFragment())
-				.commit();
+
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+			// Display the fragment as the main content.
+			getFragmentManager().beginTransaction()
+					.replace(android.R.id.content, new SettingsFragment())
+					.commit();
+		} else 	Toast.makeText(this, "Missing permission", Toast.LENGTH_SHORT).show();
+
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)){
+			ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.CAMERA},123);
+		}
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)!= PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)){
+			ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.RECORD_AUDIO},124);
+		}
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+			ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},125);
+		}
 	}
 
 	@SuppressLint("NewApi")
@@ -87,12 +79,8 @@ public class MainActivity extends Activity {
 			Toast.makeText(this, "Already running", Toast.LENGTH_SHORT).show();
 		} else startForegroundService(intent);
 
-		Intent intent2 = new Intent(MainActivity.this, BackgroundService.class);
-		intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		startService(intent2);
-
 		invalidateOptionsMenu();
-		//finish();
+
 	}
 
 	@SuppressLint("NewApi")
@@ -101,7 +89,6 @@ public class MainActivity extends Activity {
 		intent.setAction(ForegroundService.ACTION_STOP_SERVICE);
 		startService(intent);
 
-		stopService(new Intent(MainActivity.this, BackgroundService.class));
 		invalidateOptionsMenu();
 	}
 
@@ -120,62 +107,16 @@ public class MainActivity extends Activity {
 		startActivity(intent);
 	}
 
-	public void buttonGallery(View view) {
-		actionGallery(null);
-	}
-
-	public void buttonPreview(View view) {
-		actionPreview(null);
-	}
-
 	public void actionUnmuteAllStreams(MenuItem item) {
 		MuteShutter mute = new MuteShutter(this);
 		mute.maxAllStreams();
 	}
 
-	public void buttonStart(View view) {
-		if (((Button) view).getText().equals(getString(R.string.button_stop))) {
-			stopService(new Intent(MainActivity.this, BackgroundService.class));
-			setButtonToStart((Button) view);
-		} else {
-			Context context = getApplicationContext();
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-			// check if settings were shown at least once
-			if (prefs.getBoolean("pref_settings_shown", false) == false) {
-				prefs.edit().putBoolean("pref_settings_shown", true).commit();
-				Intent intent = new Intent(this, SettingsActivity.class);
-				startActivity(intent);
-			} else {
-				setButtonToStop((Button) view);
-				Intent intent = new Intent(this, BackgroundService.class);
-				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				startService(intent);
-				finish();
-			}
-		}
-	}
-
-	public void buttonUnmuteAllStreams(View view) {
-		actionUnmuteAllStreams(null);
-	}
-
-	public void buttonSettings(View view) {
-		Intent intent = new Intent(this, SettingsActivity.class);
-		startActivity(intent);
-	}
-
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		menu.findItem(R.id.action_start).setEnabled(
-				!BackgroundService.isCreated());
-		menu.findItem(R.id.action_preview).setEnabled(
-				!BackgroundService.isCreated());
-		return true;
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+
 }
