@@ -25,6 +25,7 @@ import java.util.Set;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
@@ -40,9 +41,9 @@ public class VideoRecorder extends Recorder implements OnInfoListener,
 	protected MediaRecorder mMediaRecorder;
 	protected int mRate;
 
-	public VideoRecorder(RecSettings settings, SurfaceHolder surfaceHolder,
+	public VideoRecorder(RecSettings settings,
 			Context context, Handler handler) {
-		super(settings, surfaceHolder, context, handler);
+		super(settings, context, handler);
 	}
 
 	protected int getFrameRate() {
@@ -135,7 +136,9 @@ public class VideoRecorder extends Recorder implements OnInfoListener,
 
 		mRate = getFrameRate();
 
-		mCamera.setPreviewDisplay(mSurfaceHolder);
+		SurfaceTexture surfaceTexture = new SurfaceTexture(10);
+		mCamera.setPreviewTexture(surfaceTexture);
+		//mCamera.setPreviewDisplay(mSurfaceHolder);
 
 		muteShutter();
 

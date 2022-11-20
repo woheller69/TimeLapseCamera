@@ -414,12 +414,6 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 	static public void setDefaultValues(Context context, SharedPreferences prefs) {
 		PreferenceManager.setDefaultValues(context, R.xml.preferences, false);
 
-		if (prefs.getString("pref_project_path", "").equals("")) {
-			prefs.edit().putString("pref_project_path",
-				Environment.getExternalStorageDirectory().getPath()
-				+ "/SpartanVidRec").commit();
-		}
-
 		// disable VIDEO_TIME_LAPSE if it is not supported
 		if (prefs.getString("pref_rec_mode", "").equals("VIDEO_TIME_LAPSE")
 				&& Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {

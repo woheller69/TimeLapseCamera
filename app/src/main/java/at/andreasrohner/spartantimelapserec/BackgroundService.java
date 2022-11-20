@@ -165,7 +165,7 @@ public class BackgroundService extends Service implements
 		Context context = getApplicationContext();
 		Handler handler = new Handler(handlerThread.getLooper(), this);
 
-		recorder = Recorder.getInstance(settings, surfaceHolder, context,
+		recorder = Recorder.getInstance(settings, context,
 				handler, wakeLock);
 
 		handler.post(new Runnable() {

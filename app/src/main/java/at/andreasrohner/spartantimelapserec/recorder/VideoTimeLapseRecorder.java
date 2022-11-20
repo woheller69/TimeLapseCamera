@@ -35,8 +35,8 @@ import at.andreasrohner.spartantimelapserec.data.RecSettings;
 public class VideoTimeLapseRecorder extends VideoRecorder {
 
 	public VideoTimeLapseRecorder(RecSettings settings,
-			SurfaceHolder surfaceHolder, Context context, Handler handler) {
-		super(settings, surfaceHolder, context, handler);
+			Context context, Handler handler) {
+		super(settings,  context, handler);
 	}
 
 	protected void doRecord() throws IllegalStateException, IOException {

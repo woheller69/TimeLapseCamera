@@ -34,9 +34,9 @@ public class PowerSavingImageRecorder extends ImageRecorder {
 	private AlarmManager mAlarmMgr;
 
 	public PowerSavingImageRecorder(RecSettings settings,
-			SurfaceHolder surfaceHolder, Context context, Handler handler,
+			 Context context, Handler handler,
 			WakeLock wakeLock) {
-		super(settings, surfaceHolder, context, handler);
+		super(settings, context, handler);
 
 		this.mWakeLock = wakeLock;
 

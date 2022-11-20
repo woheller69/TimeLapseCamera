@@ -23,8 +23,6 @@
     <string name="pref_rec_mode">Aufnahmemodus</string>
     <string name="pref_project_title">Projekttitel</string>
     <string name="pref_project_title_summ">Der Projekttitel wird zur Erzeugung eines Verzeichnisses für die Aufnahmen verwendet</string>
-    <string name="pref_project_path">Projektpfad</string>
-    <string name="pref_project_path_summ">Auswahl eines Verzeichnisses für das Projekt</string>
     <string name="pref_frame_rate">Video Abspielrate</string>
     <string name="pref_frame_size">Auflösung</string>
     <string name="pref_capture_rate">Kamera Abtastrate</string>

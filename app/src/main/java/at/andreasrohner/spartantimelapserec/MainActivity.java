@@ -18,11 +18,13 @@
 
 package at.andreasrohner.spartantimelapserec;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,6 +33,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
 
@@ -53,41 +60,49 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)!= PackageManager.PERMISSION_GRANTED){
+			ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.RECORD_AUDIO},123);
+		}
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED){
+			ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.CAMERA},124);
+		}
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
+			ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},125);
+		}
+
 		Context context = getApplicationContext();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		SettingsCommon.setDefaultValues(context, prefs);
 
 		// Display the fragment as the main content.
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			getFragmentManager().beginTransaction()
-					.replace(android.R.id.content, new SettingsFragment())
-					.commit();
-		} else {
-			setContentView(R.layout.main_activity_legacy);
-			Button btn = (Button) findViewById(R.id.button_start);
-			if (BackgroundService.isCreated()) {
-				setButtonToStop(btn);
-			} else {
-				setButtonToStart(btn);
-			}
-		}
+		getFragmentManager().beginTransaction()
+				.replace(android.R.id.content, new SettingsFragment())
+				.commit();
 	}
 
 	@SuppressLint("NewApi")
 	public void actionStart(MenuItem item) {
-		Intent intent = new Intent(MainActivity.this, BackgroundService.class);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		startService(intent);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-			invalidateOptionsMenu();
-		finish();
+		Intent intent = new Intent(this, ForegroundService.class);
+		if (ForegroundService.mIsRunning){
+			Toast.makeText(this, "Already running", Toast.LENGTH_SHORT).show();
+		} else startForegroundService(intent);
+
+		Intent intent2 = new Intent(MainActivity.this, BackgroundService.class);
+		intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		startService(intent2);
+
+		invalidateOptionsMenu();
+		//finish();
 	}
 
 	@SuppressLint("NewApi")
 	public void actionStop(MenuItem item) {
+		Intent intent = new Intent(this, ForegroundService.class);
+		intent.setAction(ForegroundService.ACTION_STOP_SERVICE);
+		startService(intent);
+
 		stopService(new Intent(MainActivity.this, BackgroundService.class));
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-			invalidateOptionsMenu();
+		invalidateOptionsMenu();
 	}
 
 	public void actionGallery(MenuItem item) {

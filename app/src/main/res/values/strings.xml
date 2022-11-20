@@ -23,8 +23,6 @@
     <string name="pref_rec_mode">Recording Mode</string>
     <string name="pref_project_title">Project Title</string>
     <string name="pref_project_title_summ">The project title is used as a directory and prefix for the created files</string>
-    <string name="pref_project_path">Project Path</string>
-    <string name="pref_project_path_summ">Select the directory where the projects will be saved</string>
     <string name="pref_frame_rate">Playback Frame Rate</string>
     <string name="pref_frame_size">Frame Size</string>
     <string name="pref_capture_rate">Camera Capture Rate</string>

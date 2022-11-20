@@ -13,16 +13,11 @@
             android:title="@string/pref_rec_mode" />
 
         <at.andreasrohner.spartantimelapserec.preference.NoKBEditTextPreference
-            android:defaultValue="Default"
+            android:defaultValue="TimeLapse"
             android:inputType="textNoSuggestions"
             android:key="pref_project_title"
             android:summary="@string/pref_project_title_summ"
             android:title="@string/pref_project_title" />
-        <at.andreasrohner.spartantimelapserec.preference.NoKBEditTextPreference
-            android:inputType="textNoSuggestions"
-            android:key="pref_project_path"
-            android:summary="@string/pref_project_path_summ"
-            android:title="@string/pref_project_path" />
 
         <at.andreasrohner.spartantimelapserec.preference.IconListPreference
             app:entryImages="@array/pref_notification_icon_icons"

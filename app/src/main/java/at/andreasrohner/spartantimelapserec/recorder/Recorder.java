@@ -32,6 +32,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.os.PowerManager.WakeLock;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
@@ -40,7 +41,6 @@ import at.andreasrohner.spartantimelapserec.sensor.OrientationSensor;
 public abstract class Recorder {
 	protected Context mContext;
 	protected RecSettings mSettings;
-	protected SurfaceHolder mSurfaceHolder;
 	protected Camera mCamera;
 	protected boolean mCanDisableShutterSound;
 	protected Handler mHandler;
@@ -51,31 +51,31 @@ public abstract class Recorder {
 	private int mFileIndex;
 
 	public static Recorder getInstance(RecSettings settings,
-			SurfaceHolder surfaceHolder, Context context, Handler handler,
+			 Context context, Handler handler,
 			WakeLock wakeLock) {
 		Recorder recorder;
 
 		switch (settings.getRecMode()) {
 		case VIDEO_TIME_LAPSE:
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-				recorder = new VideoRecorder(settings, surfaceHolder, context,
+				recorder = new VideoRecorder(settings,  context,
 						handler);
 			} else {
-				recorder = new VideoTimeLapseRecorder(settings, surfaceHolder,
+				recorder = new VideoTimeLapseRecorder(settings,
 						context, handler);
 			}
 			break;
 		case IMAGE_TIME_LAPSE:
 			if (settings.shouldUsePowerSaveMode()) {
 				recorder = new PowerSavingImageRecorder(settings,
-						surfaceHolder, context, handler, wakeLock);
+						 context, handler, wakeLock);
 			} else {
-				recorder = new ImageRecorder(settings, surfaceHolder, context,
+				recorder = new ImageRecorder(settings,  context,
 						handler);
 			}
 			break;
 		default:
-			recorder = new VideoRecorder(settings, surfaceHolder, context,
+			recorder = new VideoRecorder(settings,  context,
 					handler);
 			break;
 		}
@@ -84,15 +84,13 @@ public abstract class Recorder {
 	}
 
 	@SuppressLint("NewApi")
-	public Recorder(RecSettings settings, SurfaceHolder surfaceHolder,
-			Context context, Handler handler) {
+	public Recorder(RecSettings settings, 			Context context, Handler handler) {
 		mContext = context;
 
 		mOrientation = new OrientationSensor(context);
 		mOrientation.enable();
 
 		mSettings = settings;
-		mSurfaceHolder = surfaceHolder;
 		mHandler = handler;
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -106,7 +104,11 @@ public abstract class Recorder {
 				+ settings.getProjectName() + "/"
 				+ DateFormat.format("yyyy-MM-dd", System.currentTimeMillis())
 				+ "/");
-		mOutputDir.mkdirs();
+
+		if (!mOutputDir.exists() && !mOutputDir.mkdirs()) {
+			Log.e("TimeLapseCamera", "Failed to make directory: " + mOutputDir.toString());
+			return;
+		}
 
 		mInitDelay = settings.getInitDelay();
 	}
@@ -167,7 +169,6 @@ public abstract class Recorder {
 		unmuteShutter();
 
 		mHandler = null;
-		mSurfaceHolder = null;
 		mContext = null;
 		mMute = null;
 	}
@@ -190,7 +191,7 @@ public abstract class Recorder {
 			}
 		};
 
-		if (mHandler == null || mSurfaceHolder == null || mContext == null)
+		if (mHandler == null  || mContext == null)
 			return;
 
 		enableOrientationSensor();

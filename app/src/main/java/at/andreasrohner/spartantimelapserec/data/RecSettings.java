@@ -18,6 +18,8 @@
 
 package at.andreasrohner.spartantimelapserec.data;
 
+import static android.os.Environment.DIRECTORY_PICTURES;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -145,8 +147,7 @@ public class RecSettings {
 	public void load(Context context, SharedPreferences prefs) {
 		cameraId = getInteger(prefs, "pref_camera", 0);
 		projectName = prefs.getString("pref_project_title", "");
-		projectPath = prefs.getString("pref_project_path", Environment
-				.getExternalStorageDirectory().getPath() + "/SpartanVidRec");
+		projectPath = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).getPath();
 
 		recMode = getRecMode(prefs, "pref_rec_mode", RecMode.VIDEO_TIME_LAPSE);
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB

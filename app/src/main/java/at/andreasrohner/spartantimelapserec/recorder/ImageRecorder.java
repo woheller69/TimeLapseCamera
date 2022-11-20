@@ -28,6 +28,7 @@ import java.util.Set;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.ImageFormat;
+import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.ErrorCallback;
@@ -45,9 +46,9 @@ public class ImageRecorder extends Recorder implements Runnable,
 	protected long mStartPreviewTime;
 	protected boolean mUseAutoFocus;
 
-	public ImageRecorder(RecSettings settings, SurfaceHolder surfaceHolder,
+	public ImageRecorder(RecSettings settings,
 			Context context, Handler handler) {
-		super(settings, surfaceHolder, context, handler);
+		super(settings, context, handler);
 
 		if (settings.getStopRecAfter() > 0)
 			mEndTime = System.currentTimeMillis() + settings.getInitDelay()
@@ -200,7 +201,9 @@ public class ImageRecorder extends Recorder implements Runnable,
 
 		setCameraParams();
 
-		mCamera.setPreviewDisplay(mSurfaceHolder);
+		SurfaceTexture surfaceTexture = new SurfaceTexture(10);
+		mCamera.setPreviewTexture(surfaceTexture);
+		//mCamera.setPreviewDisplay(mSurfaceHolder);
 	}
 
 	protected void doRecord() {

@@ -1,7 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="at.andreasrohner.spartantimelapserec"
-    android:versionCode="1"
-    android:versionName="1.0" >
+    package="at.andreasrohner.spartantimelapserec">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -13,6 +11,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:allowBackup="true"
@@ -25,7 +24,6 @@
             android:windowSoftInputMode="stateUnchanged" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -44,6 +42,11 @@
             android:enabled="true"
             android:exported="false" >
         </service>
+
+        <service
+            android:exported="false"
+            android:foregroundServiceType="camera|microphone"
+            android:name="at.andreasrohner.spartantimelapserec.ForegroundService" />
 
         <receiver android:name="at.andreasrohner.spartantimelapserec.DeviceStatusReceiver" >
             <intent-filter>
