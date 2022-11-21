@@ -29,7 +29,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.hardware.Camera;
 import android.os.Build;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.ListPreference;
@@ -232,25 +231,6 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 	}
 
 	private void setRecMode(SharedPreferences prefs) {
-		// remove VIDEO_TIME_LAPSE on older android versions
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-			CharSequence[] oldEntries = prefRecMode.getEntries();
-			CharSequence[] oldValues = prefRecMode.getEntryValues();
-			List<CharSequence> entries = new ArrayList<CharSequence>();
-			List<CharSequence> values = new ArrayList<CharSequence>();
-
-			for (int i = 0; i < oldEntries.length; ++i) {
-				if (!oldValues[i].equals("VIDEO_TIME_LAPSE")) {
-					entries.add(oldEntries[i]);
-					values.add(oldValues[i]);
-				}
-
-				prefRecMode.setEntries(entries.toArray(new CharSequence[entries
-						.size()]));
-				prefRecMode.setEntryValues(values
-						.toArray(new CharSequence[values.size()]));
-			}
-		}
 
 		CharSequence entry = prefRecMode.getEntry();
 		if (entry != null) {
@@ -324,8 +304,9 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 			boolean mute = prefs.getBoolean(key,false);
 			//ToDo Show dialog and explain that this is needed to allow muting the phone
 			NotificationManager notificationManager =(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !notificationManager.isNotificationPolicyAccessGranted() && mute) {
+			if (!notificationManager.isNotificationPolicyAccessGranted() && mute) {
 				Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				context.startActivity(intent);
 			}
 		} else if (key.equals("pref_rec_mode")) {
@@ -424,10 +405,5 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 	static public void setDefaultValues(Context context, SharedPreferences prefs) {
 		PreferenceManager.setDefaultValues(context, R.xml.preferences, false);
 
-		// disable VIDEO_TIME_LAPSE if it is not supported
-		if (prefs.getString("pref_rec_mode", "").equals("VIDEO_TIME_LAPSE")
-				&& Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-			prefs.edit().putString("pref_rec_mode", "VIDEO").commit();
-		}
 	}
 }

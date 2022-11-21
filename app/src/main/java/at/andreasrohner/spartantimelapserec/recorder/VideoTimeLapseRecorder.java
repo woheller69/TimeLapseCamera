@@ -20,18 +20,14 @@ package at.andreasrohner.spartantimelapserec.recorder;
 
 import java.io.IOException;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
-import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
-import android.view.SurfaceHolder;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 
-@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class VideoTimeLapseRecorder extends VideoRecorder {
 
 	public VideoTimeLapseRecorder(RecSettings settings,

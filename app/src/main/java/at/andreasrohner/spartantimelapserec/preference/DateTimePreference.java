@@ -25,7 +25,6 @@ import java.util.Calendar;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Build;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
@@ -135,10 +134,8 @@ public class DateTimePreference extends DialogPreference implements
 		mDatePicker = (DatePicker) v.findViewById(R.id.dialog_date_preference_date);
 		mTimePicker = (TimePicker) v.findViewById(R.id.dialog_date_preference_time);
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			mDatePicker.setCalendarViewShown(false);
-			mDatePicker.setMinDate(System.currentTimeMillis() - 1000);
-		}
+		mDatePicker.setCalendarViewShown(false);
+		mDatePicker.setMinDate(System.currentTimeMillis() - 1000);
 
 		mDatePicker.updateDate(mCal.get(Calendar.YEAR),
 				mCal.get(Calendar.MONTH), mCal.get(Calendar.DAY_OF_MONTH));

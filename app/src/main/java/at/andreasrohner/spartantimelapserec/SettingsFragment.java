@@ -18,14 +18,10 @@
 
 package at.andreasrohner.spartantimelapserec;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
-import at.andreasrohner.spartantimelapserec.R;
 
-@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class SettingsFragment extends PreferenceFragment {
 	SettingsCommon settCommon;
 

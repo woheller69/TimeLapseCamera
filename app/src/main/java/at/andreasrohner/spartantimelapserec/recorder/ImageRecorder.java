@@ -146,9 +146,7 @@ public class ImageRecorder extends Recorder implements Runnable,
 
 	@SuppressLint("InlinedApi")
 	protected void setFocusMode(Camera.Parameters params, Set<String> suppModes) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
-				&& mSettings.getCaptureRate() < CONTINUOUS_CAPTURE_THRESHOLD
-				&& suppModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+		if (mSettings.getCaptureRate() < CONTINUOUS_CAPTURE_THRESHOLD && suppModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
 			params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
 		} else if (suppModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)
 				&& mSettings.getCaptureRate() < CONTINUOUS_CAPTURE_THRESHOLD) {

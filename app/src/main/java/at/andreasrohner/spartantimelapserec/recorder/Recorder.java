@@ -57,13 +57,8 @@ public abstract class Recorder {
 
 		switch (settings.getRecMode()) {
 		case VIDEO_TIME_LAPSE:
-			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-				recorder = new VideoRecorder(settings,  context,
-						handler);
-			} else {
-				recorder = new VideoTimeLapseRecorder(settings,
-						context, handler);
-			}
+			recorder = new VideoTimeLapseRecorder(settings,
+					context, handler);
 			break;
 		case IMAGE_TIME_LAPSE:
 			if (settings.shouldUsePowerSaveMode()) {

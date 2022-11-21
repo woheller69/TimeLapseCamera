@@ -95,15 +95,13 @@ public class MuteShutter {
 
 		storeSoundSettings();
 
-		for (int stream : streams) {
-			audioManager.setStreamVolume(stream, 0,
-					AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
-			audioManager.setStreamMute(stream, true);
-		}
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-			if (notificationManager.isNotificationPolicyAccessGranted()) audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-		} else {
+		if (notificationManager.isNotificationPolicyAccessGranted()) {
+			for (int stream : streams) {
+				audioManager.setStreamVolume(stream, 0,
+						AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+				audioManager.setStreamMute(stream, true);
+			}
 			audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
 		}
 

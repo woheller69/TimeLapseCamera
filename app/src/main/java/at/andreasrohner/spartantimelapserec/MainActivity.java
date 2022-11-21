@@ -25,7 +25,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -44,39 +43,37 @@ public class MainActivity extends Activity  {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) ||
+			(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)!= PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) ||
+			(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE))){
+			ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.CAMERA,Manifest.permission.RECORD_AUDIO,Manifest.permission.WRITE_EXTERNAL_STORAGE},123);
+		}
+
 		Context context = getApplicationContext();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		SettingsCommon.setDefaultValues(context, prefs);
-
 
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+		if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
+		&& ((ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED))
+		&& ((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED))) {
 			// Display the fragment as the main content.
 			getFragmentManager().beginTransaction()
 					.replace(android.R.id.content, new SettingsFragment())
 					.commit();
-		} else 	Toast.makeText(this, "Missing permission", Toast.LENGTH_SHORT).show();
+		} else 	Toast.makeText(this, getString(R.string.error_missing_permission), Toast.LENGTH_SHORT).show();
 
-		if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)){
-			ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.CAMERA},123);
-		}
-		if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)!= PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)){
-			ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.RECORD_AUDIO},124);
-		}
-		if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
-			ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},125);
-		}
 	}
 
 	@SuppressLint("NewApi")
 	public void actionStart(MenuItem item) {
 		Intent intent = new Intent(this, ForegroundService.class);
 		if (ForegroundService.mIsRunning){
-			Toast.makeText(this, "Already running", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, getString(R.string.error_already_running), Toast.LENGTH_SHORT).show();
 		} else startForegroundService(intent);
 
 		invalidateOptionsMenu();
@@ -93,13 +90,11 @@ public class MainActivity extends Activity  {
 	}
 
 	public void actionGallery(MenuItem item) {
-		Intent intent = new Intent(Intent.ACTION_VIEW,
-				Uri.parse("content://media/internal/images/media"));
-
-		// test if app is available that can handle the intent
-		if (intent.resolveActivity(getPackageManager()) != null) {
-			startActivity(intent);
-		}
+		Intent intent = new Intent();
+		intent.setAction(android.content.Intent.ACTION_VIEW);
+		intent.setType("image/*");
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(intent);
 	}
 
 	public void actionPreview(MenuItem item) {

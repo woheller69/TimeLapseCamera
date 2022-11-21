@@ -68,8 +68,7 @@ public class RecSettings {
 	@SuppressLint("NewApi")
 	private boolean checkRecProfile(int profile) {
 		try {
-			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB
-					|| CamcorderProfile.hasProfile(cameraId, profile)) {
+			if (CamcorderProfile.hasProfile(cameraId, profile)) {
 				return true;
 			}
 		} catch (Exception e) {}
@@ -79,29 +78,25 @@ public class RecSettings {
 
 	@SuppressLint("InlinedApi")
 	private int selectRecVideoProfile() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			if (checkRecProfile(CamcorderProfile.QUALITY_1080P)
-					&& frameHeight == 1080)
-				return CamcorderProfile.QUALITY_1080P;
-			if (checkRecProfile(CamcorderProfile.QUALITY_720P)
-					&& frameHeight == 720)
-				return CamcorderProfile.QUALITY_720P;
-			if (checkRecProfile(CamcorderProfile.QUALITY_480P)
-					&& frameHeight == 480)
-				return CamcorderProfile.QUALITY_480P;
-		}
+		if (checkRecProfile(CamcorderProfile.QUALITY_1080P)
+				&& frameHeight == 1080)
+			return CamcorderProfile.QUALITY_1080P;
+		if (checkRecProfile(CamcorderProfile.QUALITY_720P)
+				&& frameHeight == 720)
+			return CamcorderProfile.QUALITY_720P;
+		if (checkRecProfile(CamcorderProfile.QUALITY_480P)
+				&& frameHeight == 480)
+			return CamcorderProfile.QUALITY_480P;
 
 		if (checkRecProfile(CamcorderProfile.QUALITY_HIGH)
 				&& frameHeight >= 480)
 			return CamcorderProfile.QUALITY_HIGH;
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1
-				&& checkRecProfile(CamcorderProfile.QUALITY_QVGA)
+		if (checkRecProfile(CamcorderProfile.QUALITY_QVGA)
 				&& frameHeight == 240)
 			return CamcorderProfile.QUALITY_QVGA;
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
-				&& checkRecProfile(CamcorderProfile.QUALITY_QCIF)
+		if (checkRecProfile(CamcorderProfile.QUALITY_QCIF)
 				&& frameHeight == 144)
 			return CamcorderProfile.QUALITY_QCIF;
 
@@ -128,8 +123,7 @@ public class RecSettings {
 				&& frameHeight >= 480)
 			return CamcorderProfile.QUALITY_TIME_LAPSE_HIGH;
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1
-				&& checkRecProfile(CamcorderProfile.QUALITY_TIME_LAPSE_QVGA)
+		if (checkRecProfile(CamcorderProfile.QUALITY_TIME_LAPSE_QVGA)
 				&& frameHeight == 240)
 			return CamcorderProfile.QUALITY_TIME_LAPSE_QVGA;
 
@@ -149,9 +143,6 @@ public class RecSettings {
 		projectPath = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).getPath();
 
 		recMode = getRecMode(prefs, "pref_rec_mode", RecMode.VIDEO_TIME_LAPSE);
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB
-				&& recMode == RecMode.VIDEO_TIME_LAPSE)
-			recMode = RecMode.VIDEO;
 
 		frameRate = getInteger(prefs, "pref_frame_rate", 30);
 		captureRate = prefs.getInt("pref_capture_rate", 1000);
@@ -178,8 +169,7 @@ public class RecSettings {
 		}
 
 		if (recMode != RecMode.IMAGE_TIME_LAPSE) {
-			if (recMode == RecMode.VIDEO_TIME_LAPSE
-					&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+			if (recMode == RecMode.VIDEO_TIME_LAPSE)
 				recProfile = selectRecVideoTimeLapseProfile();
 			else
 				recProfile = selectRecVideoProfile();

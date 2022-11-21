@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="app_name">Spartan Time Lapse Recorder</string>
+    <string name="app_name">Time Lapse Recorder</string>
     <string name="action_start">Start</string>
     <string name="action_stop">Stop</string>
     <string name="action_unmute_all_streams">Lautstärke zurücksetzen</string>
@@ -14,8 +14,8 @@
     <string name="button_gallery">Galerie öffnen</string>
     <string name="button_preview">Vorschau öffnen</string>
     <string name="notification_content_text">Aufnahme läuft</string>
-    <string name="pref_mute_shutter">Verhindere Kameraauslösegeräusch</string>
-    <string name="pref_mute_shutter_summ">Versucht das Telefon auf stumm zu schalten um das Auslösegeräusch der Kamera zu unterdrücken</string>
+    <string name="pref_mute_shutter">Verhindere Kameraauslösegeräusch &amp; Klingelton</string>
+    <string name="pref_mute_shutter_summ">Versucht, das Telefon auf stumm zu schalten um das Auslösegeräusch der Kamera zu unterdrücken. Versucht außerdem, den Klingelton des Telefons abzustellen. Benötigt separate Berechtigung!</string>
     <string name="pref_camera">Kamera auswählen</string>
     <string name="pref_camera_camera">Kamera</string>
     <string name="pref_camera_front">vorne</string>
@@ -54,5 +54,7 @@
     <string name="time_format_hours">std</string>
     <string name="pref_exposure_compensation">Belichtungskorrektur</string>
     <string name="notification_preparing">Aufnahme wird vorbereitet</string>
+    <string name="error_missing_permission">Berechtigung fehlt</string>
+    <string name="error_already_running">Läuft bereits</string>
 
 </resources>

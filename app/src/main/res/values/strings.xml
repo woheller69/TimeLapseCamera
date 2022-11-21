@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="app_name">Spartan Time Lapse Recorder</string>
+    <string name="app_name">Time Lapse Recorder</string>
     <string name="action_start">Start</string>
     <string name="action_stop">Stop</string>
     <string name="action_unmute_all_streams">Reset Audio Volume</string>
@@ -14,8 +14,8 @@
     <string name="button_gallery">Open Gallery</string>
     <string name="button_preview">Open Preview</string>
     <string name="notification_content_text">Recording Video Now</string>
-    <string name="pref_mute_shutter">Mute Shutter Sound</string>
-    <string name="pref_mute_shutter_summ">Tries to mute the phone to prevent it from playing the shutter sound while taking a picture</string>
+    <string name="pref_mute_shutter">Mute Shutter Sound &amp; Ringtone</string>
+    <string name="pref_mute_shutter_summ">Tries to mute the phone to prevent it from playing the shutter sound while taking a picture. Also tries to mute the ringtone of the phone. Need permission!</string>
     <string name="pref_camera">Select Camera</string>
     <string name="pref_camera_camera">Camera</string>
     <string name="pref_camera_front">front</string>
@@ -54,5 +54,7 @@
     <string name="time_format_hours">hours</string>
     <string name="pref_exposure_compensation">Exposure Compensation</string>
     <string name="notification_preparing">Preparing recording</string>
+    <string name="error_missing_permission">Missing permission</string>
+    <string name="error_already_running">Already running</string>
 
 </resources>

@@ -29,7 +29,6 @@ import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
-import android.os.Build;
 
 public class CameraSettings {
 	private static final String STRING_SET_SEP = "\\{\\[\\$%\\]\\}";
@@ -53,50 +52,21 @@ public class CameraSettings {
 	@SuppressLint("NewApi")
 	private Set<String> getStringSet(SharedPreferences prefs, String key,
 			Set<String> defValues) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			return prefs.getStringSet(key, defValues);
-		}
-		String rawSet = prefs.getString(key, null);
-		if (rawSet == null || rawSet.isEmpty())
-			return defValues;
-
-		String[] rawArr = rawSet.split(STRING_SET_SEP);
-		Set<String> result = new TreeSet<String>();
-		for (String val : rawArr) {
-			result.add(val);
-		}
-
-		return result;
+		return prefs.getStringSet(key, defValues);
 	}
 
 	@SuppressLint("NewApi")
 	private void putStringSet(SharedPreferences prefs, String key,
 			Set<String> set) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			prefs.edit().putStringSet(key, set).commit();
-			return;
-		}
+		prefs.edit().putStringSet(key, set).commit();
+		return;
 
-		if (set.size() == 0)
-			return;
-
-		StringBuilder b = new StringBuilder();
-		int i = 0;
-		for (String val : set) {
-			b.append(val);
-			if (i < set.size() - 1)
-				b.append(STRING_SET_SEP);
-			++i;
-		}
-
-		prefs.edit().putString(key, b.toString()).commit();
 	}
 
 	@SuppressLint("NewApi")
 	private void addProfileFrameRate(int camId, List<Integer> list, int profile) {
 		try {
-			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB
-					|| CamcorderProfile.hasProfile(camId, profile)) {
+			if (CamcorderProfile.hasProfile(camId, profile)) {
 				CamcorderProfile p = CamcorderProfile.get(camId, profile);
 				list.add(p.videoFrameRate);
 			}
@@ -110,15 +80,12 @@ public class CameraSettings {
 
 		addProfileFrameRate(camId, list, CamcorderProfile.QUALITY_HIGH);
 		addProfileFrameRate(camId, list, CamcorderProfile.QUALITY_LOW);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			addProfileFrameRate(camId, list, CamcorderProfile.QUALITY_CIF);
-			addProfileFrameRate(camId, list, CamcorderProfile.QUALITY_1080P);
-			addProfileFrameRate(camId, list, CamcorderProfile.QUALITY_720P);
-			addProfileFrameRate(camId, list, CamcorderProfile.QUALITY_480P);
-			addProfileFrameRate(camId, list, CamcorderProfile.QUALITY_QCIF);
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
-				addProfileFrameRate(camId, list, CamcorderProfile.QUALITY_QVGA);
-		}
+		addProfileFrameRate(camId, list, CamcorderProfile.QUALITY_CIF);
+		addProfileFrameRate(camId, list, CamcorderProfile.QUALITY_1080P);
+		addProfileFrameRate(camId, list, CamcorderProfile.QUALITY_720P);
+		addProfileFrameRate(camId, list, CamcorderProfile.QUALITY_480P);
+		addProfileFrameRate(camId, list, CamcorderProfile.QUALITY_QCIF);
+		addProfileFrameRate(camId, list, CamcorderProfile.QUALITY_QVGA);
 
 		// deduplicate sizes
 		Set<Integer> set = new TreeSet<Integer>(list);
@@ -197,8 +164,7 @@ public class CameraSettings {
 	@SuppressLint("NewApi")
 	private void addProfileFrameSize(int camId, List<int[]> list, int profile) {
 		try {
-			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB
-					|| CamcorderProfile.hasProfile(camId, profile)) {
+			if (CamcorderProfile.hasProfile(camId, profile)) {
 				CamcorderProfile p = CamcorderProfile.get(camId, profile);
 				list.add(new int[] { p.videoFrameWidth, p.videoFrameHeight });
 			}
@@ -236,7 +202,7 @@ public class CameraSettings {
 	private List<int[]> getFrameSizesFromProfiles(int camId, boolean timeLapse) {
 		List<int[]> list = new ArrayList<int[]>();
 
-		if (timeLapse && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+		if (timeLapse) {
 			addProfileFrameSize(camId, list,
 					CamcorderProfile.QUALITY_TIME_LAPSE_HIGH);
 			addProfileFrameSize(camId, list,
@@ -251,22 +217,17 @@ public class CameraSettings {
 					CamcorderProfile.QUALITY_TIME_LAPSE_480P);
 			addProfileFrameSize(camId, list,
 					CamcorderProfile.QUALITY_TIME_LAPSE_QCIF);
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
-				addProfileFrameSize(camId, list,
-						CamcorderProfile.QUALITY_TIME_LAPSE_QVGA);
+			addProfileFrameSize(camId, list,
+					CamcorderProfile.QUALITY_TIME_LAPSE_QVGA);
 		} else {
 			addProfileFrameSize(camId, list, CamcorderProfile.QUALITY_HIGH);
 			addProfileFrameSize(camId, list, CamcorderProfile.QUALITY_LOW);
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-				addProfileFrameSize(camId, list, CamcorderProfile.QUALITY_CIF);
-				addProfileFrameSize(camId, list, CamcorderProfile.QUALITY_1080P);
-				addProfileFrameSize(camId, list, CamcorderProfile.QUALITY_720P);
-				addProfileFrameSize(camId, list, CamcorderProfile.QUALITY_480P);
-				addProfileFrameSize(camId, list, CamcorderProfile.QUALITY_QCIF);
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
-					addProfileFrameSize(camId, list,
-							CamcorderProfile.QUALITY_QVGA);
-			}
+			addProfileFrameSize(camId, list, CamcorderProfile.QUALITY_CIF);
+			addProfileFrameSize(camId, list, CamcorderProfile.QUALITY_1080P);
+			addProfileFrameSize(camId, list, CamcorderProfile.QUALITY_720P);
+			addProfileFrameSize(camId, list, CamcorderProfile.QUALITY_480P);
+			addProfileFrameSize(camId, list, CamcorderProfile.QUALITY_QCIF);
+			addProfileFrameSize(camId, list, CamcorderProfile.QUALITY_QVGA);
 		}
 
 		prepareSizeList(list);
@@ -277,8 +238,6 @@ public class CameraSettings {
 	@SuppressLint("NewApi")
 	public List<int[]> getFrameSizes(SharedPreferences prefs, int camId,
 			boolean timeLapse) {
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
-			return getFrameSizesFromProfiles(camId, timeLapse);
 
 		Set<String> sizes = getStringSet(prefs, "pref_frame_size_values_"
 				+ camId, null);
