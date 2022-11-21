@@ -38,6 +38,7 @@ import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
 
 public class MainActivity extends Activity  {
 
+	SettingsFragment settingsFragment;
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +63,12 @@ public class MainActivity extends Activity  {
 		&& ((ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED))
 		&& ((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED))) {
 			// Display the fragment as the main content.
-			getFragmentManager().beginTransaction()
-					.replace(android.R.id.content, new SettingsFragment())
-					.commit();
+			if (settingsFragment==null) {
+				settingsFragment = new SettingsFragment();
+				getFragmentManager().beginTransaction()
+						.replace(android.R.id.content, settingsFragment)
+						.commit();
+			}
 		} else 	Toast.makeText(this, getString(R.string.error_missing_permission), Toast.LENGTH_SHORT).show();
 
 	}
