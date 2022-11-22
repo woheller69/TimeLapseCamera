@@ -316,4 +316,12 @@ public class CameraSettings {
 		return params.getMaxExposureCompensation();
 	}
 
+	public int getMaxZoom(int camId){
+		Camera.Parameters params = getCameraParameters(camId);
+		if (params.isZoomSupported())
+			return params.getMaxZoom();
+		else
+			return 0;
+	}
+
 }

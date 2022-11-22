@@ -243,6 +243,7 @@ public abstract class Recorder {
 	protected void setExposureCompensation() {
 		Camera.Parameters params = mCamera.getParameters();
 		params.setExposureCompensation(mSettings.getExposureCompensation());
+		params.setZoom(mSettings.getZoom());
 		mCamera.setParameters(params);
 	}
 

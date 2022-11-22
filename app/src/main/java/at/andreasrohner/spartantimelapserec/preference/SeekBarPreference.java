@@ -116,6 +116,7 @@ public class SeekBarPreference extends DialogPreference implements
 		mSeekBar.setMax(getLogValue(mMaxValue - mMinValue));
 		mSeekBar.setOnSeekBarChangeListener(this);
 		mSeekBar.setProgress(getLogValue(mValue - mMinValue));
+		mValueDisp.setText(Integer.toString(mValue));
 	}
 
 	@Override

@@ -32,6 +32,11 @@
             android:key="pref_exposurecomp"
             android:title="@string/pref_exposure_compensation" />
 
+        <at.andreasrohner.spartantimelapserec.preference.SeekBarPreference
+            android:defaultValue="0"
+            android:key="pref_zoom"
+            android:title="@string/pref_zoom" />
+
         <ListPreference
             android:dialogTitle="@string/pref_frame_size"
             android:key="pref_frame_size"

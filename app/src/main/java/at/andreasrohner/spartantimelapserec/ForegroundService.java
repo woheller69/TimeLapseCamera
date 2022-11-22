@@ -108,24 +108,24 @@ public class ForegroundService extends Service implements Handler.Callback {
     public void onDestroy() {
 
         File projectDir = null;
-
-        final Handler handler = new Handler(handlerThread.getLooper());
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (recorder != null)
-                    recorder.stop();
-                handlerThread.quit();
+        if (handlerThread!=null){
+            final Handler handler = new Handler(handlerThread.getLooper());
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (recorder != null)
+                        recorder.stop();
+                    handlerThread.quit();
+                }
+            });
+            try {
+                handlerThread.join(5000);
+                if (handlerThread.isAlive()) {
+                    handlerThread.quit();
+                    handlerThread.join(2000);
+                }
+            } catch (Exception e) {
             }
-        });
-
-        try {
-            handlerThread.join(5000);
-            if (handlerThread.isAlive()) {
-                handlerThread.quit();
-                handlerThread.join(2000);
-            }
-        } catch (Exception e) {
         }
 
         if (recorder != null) {

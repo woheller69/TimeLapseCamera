@@ -54,6 +54,7 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 	private DateTimePreference prefScheduleRec;
 	private SeekBarPreference prefStopRecAfter;
 	private SeekBarPreference prefExposureComp;
+	private SeekBarPreference prefZoom;
 
 	private int calcGcd(int a, int b) {
 		if (b == 0)
@@ -299,6 +300,7 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 			setFrameRates(prefs);
 			setFrameSizes(prefs);
 			setExposureCompRange(prefs);
+			setZoomRange(prefs);
 			prefs.edit().putInt("pref_exposurecomp",0).apply();
 		} else if (key.equals("pref_mute_shutter")) {
 			boolean mute = prefs.getBoolean(key,false);
@@ -355,6 +357,8 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 		prefScheduleRec = (DateTimePreference) screen.findPreference("pref_schedule_recording");
 		prefStopRecAfter = (SeekBarPreference) screen.findPreference("pref_stop_recording_after");
 		prefExposureComp = (SeekBarPreference) screen.findPreference("pref_exposurecomp");
+		prefZoom = (SeekBarPreference) screen.findPreference("pref_zoom");
+		setZoomRange(prefs);
 		setExposureCompRange(prefs);
 		setCameras(prefs);
 		setRecMode(prefs);
@@ -384,6 +388,12 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 			prefStopRecAfter.setSummary(onFormatOutputValue(value, "min"));
 
 		updatePrefStatus(prefs);
+	}
+
+	private void setZoomRange(SharedPreferences prefs) {
+		int camId = RecSettings.getInteger(prefs, "pref_camera", 0);
+		prefZoom.setMinValue(0);
+		prefZoom.setMaxValue(cameraSettings.getMaxZoom(camId));
 	}
 
 	private void setExposureCompRange(SharedPreferences prefs) {

@@ -150,6 +150,7 @@ public class PreviewActivity extends Activity implements ErrorCallback,
 			setFocusMode(params, suppModes);
 		}
 		params.setExposureCompensation(mSettings.getExposureCompensation());
+		params.setZoom(mSettings.getZoom());
 
 		mCamera.setParameters(params);
 
@@ -391,13 +392,7 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
 	public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
 		requestLayout();
 
-		// Now that the size is known, set up the camera parameters and begin
-		// the preview.
-		Camera.Parameters parameters = mCamera.getParameters();
-		parameters.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
-
-		mCamera.setParameters(parameters);
-
+		mCamera.getParameters().setPreviewSize(mPreviewSize.width, mPreviewSize.height);
 		mCamera.startPreview();
 	}
 

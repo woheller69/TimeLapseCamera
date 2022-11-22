@@ -121,6 +121,7 @@ public class VideoRecorder extends Recorder implements OnInfoListener,
 			}
 		}
 		params.setExposureCompensation(mSettings.getExposureCompensation());
+		params.setZoom(mSettings.getZoom());
 		mCamera.setParameters(params);
 	}
 
