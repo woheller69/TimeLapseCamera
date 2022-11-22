@@ -38,7 +38,7 @@ import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
 
 public class MainActivity extends Activity  {
 
-	SettingsFragment settingsFragment;
+	private static SettingsFragment settingsFragment;
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +65,7 @@ public class MainActivity extends Activity  {
 			// Display the fragment as the main content.
 			if (settingsFragment==null) {
 				settingsFragment = new SettingsFragment();
+				settingsFragment.setRetainInstance(true);  //do not recreate if orientation is changed
 				getFragmentManager().beginTransaction()
 						.replace(android.R.id.content, settingsFragment)
 						.commit();
