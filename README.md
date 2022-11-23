@@ -1,4 +1,4 @@
-SpartanTimeLapseRecorder
+TimeLapseCam
 ========================
 
 Minimalistic android app that records time lapse videos in the background
