@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="app_name">Time Lapse Recorder</string>
+    <string name="app_name">TimeLapseCam</string>
     <string name="action_start">Start</string>
     <string name="action_stop">Stop</string>
     <string name="action_unmute_all_streams">Lautstärke zurücksetzen</string>
@@ -57,5 +57,11 @@
     <string name="error_missing_permission">Berechtigung fehlt</string>
     <string name="error_already_running">Läuft bereits</string>
     <string name="pref_zoom">Zoom</string>
+
+    <!-- StarDialog -->
+    <string name="dialog_OK_button">OK</string>
+    <string name="dialog_NO_button">Nein</string>
+    <string name="dialog_Later_button">Vielleicht später</string>
+    <string name="dialog_StarOnGitHub">Mögen Sie diese App? Bitte vergeben Sie einen Stern auf GitHub.</string>
 
 </resources>

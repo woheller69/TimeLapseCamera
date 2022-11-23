@@ -13,7 +13,7 @@
             android:title="@string/pref_rec_mode" />
 
         <at.andreasrohner.spartantimelapserec.preference.NoKBEditTextPreference
-            android:defaultValue="TimeLapse"
+            android:defaultValue="@string/app_name"
             android:inputType="textNoSuggestions"
             android:key="pref_project_title"
             android:summary="@string/pref_project_title_summ"

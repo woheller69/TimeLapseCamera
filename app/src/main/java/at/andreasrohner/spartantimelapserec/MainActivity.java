@@ -20,7 +20,6 @@ package at.andreasrohner.spartantimelapserec;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,12 +30,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
 
-public class MainActivity extends Activity  {
+public class MainActivity extends AppCompatActivity  {
 
 	private static SettingsFragment settingsFragment;
 	@SuppressLint("NewApi")
@@ -53,7 +53,7 @@ public class MainActivity extends Activity  {
 		Context context = getApplicationContext();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		SettingsCommon.setDefaultValues(context, prefs);
-
+		if (GithubStar.shouldShowStarDialog(this)) GithubStar.starDialog(this,"https://github.com/woheller69/gpscockpit");
 	}
 
 	@Override
@@ -66,10 +66,11 @@ public class MainActivity extends Activity  {
 			if (settingsFragment==null) {
 				settingsFragment = new SettingsFragment();
 				settingsFragment.setRetainInstance(true);  //do not recreate if orientation is changed
+			}
 				getFragmentManager().beginTransaction()
 						.replace(android.R.id.content, settingsFragment)
 						.commit();
-			}
+
 		} else 	Toast.makeText(this, getString(R.string.error_missing_permission), Toast.LENGTH_SHORT).show();
 
 	}
