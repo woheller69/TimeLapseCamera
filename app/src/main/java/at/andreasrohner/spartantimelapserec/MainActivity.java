@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity  {
 		Context context = getApplicationContext();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		SettingsCommon.setDefaultValues(context, prefs);
-		if (GithubStar.shouldShowStarDialog(this)) GithubStar.starDialog(this,"https://github.com/woheller69/gpscockpit");
+		if (GithubStar.shouldShowStarDialog(this)) GithubStar.starDialog(this,"https://github.com/woheller69/timelapsecamera");
 	}
 
 	@Override
