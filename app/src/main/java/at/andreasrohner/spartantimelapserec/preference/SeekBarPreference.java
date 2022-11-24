@@ -56,7 +56,7 @@ public class SeekBarPreference extends DialogPreference implements
 		mMinValue = a.getInteger(R.styleable.TimeLapse_min,  0);
 		mLog = a.getFloat(R.styleable.TimeLapse_log,  0);
 		mStickyValue = a.getInteger(R.styleable.TimeLapse_stickyValue,  0);
-
+		a.recycle();
 		setDialogLayoutResource(R.layout.dialog_seekbar_preference);
 	}
 

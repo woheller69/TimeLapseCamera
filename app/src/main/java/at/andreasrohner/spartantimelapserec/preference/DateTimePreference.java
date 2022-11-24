@@ -22,7 +22,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
@@ -42,7 +41,6 @@ public class DateTimePreference extends DialogPreference implements
 	DatePicker mDatePicker;
 	TimePicker mTimePicker;
 
-	@SuppressLint("NewApi")
 	public DateTimePreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
 
@@ -124,7 +122,6 @@ public class DateTimePreference extends DialogPreference implements
 		checkBox.setOnCheckedChangeListener(this);
 	}
 
-	@SuppressLint("NewApi")
 	@Override
 	protected void onBindDialogView(View v) {
 		super.onBindDialogView(v);

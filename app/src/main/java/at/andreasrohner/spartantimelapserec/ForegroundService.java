@@ -213,8 +213,6 @@ public class ForegroundService extends Service implements Handler.Callback {
         String tag = m.getData().getString("tag");
         String msg = m.getData().getString("msg");
 
-        String name = getString(R.string.app_name);
-
         if ("error".equals(status)) {
             Log.e(tag, "Error: " + msg);
 

@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
@@ -89,7 +88,6 @@ public class PreviewActivity extends Activity implements ErrorCallback,
 		}
 	}
 
-	@SuppressLint("InlinedApi")
 	private void setFocusMode(Camera.Parameters params, Set<String> suppModes) {
 		if (suppModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
 			params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
@@ -263,7 +261,6 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
 	private Size mPreviewSize;
 	private List<Size> mSupportedPreviewSizes;
 
-	@SuppressWarnings("deprecation")
 	Preview(Context context, RecSettings settings) {
 		super(context);
 

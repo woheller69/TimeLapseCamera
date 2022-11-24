@@ -24,14 +24,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
 
 public class CameraSettings {
-	private static final String STRING_SET_SEP = "\\{\\[\\$%\\]\\}";
+
 	private Camera.Parameters[] cameraParams;
 
 	private synchronized Camera.Parameters getCameraParameters(int camId) {
@@ -49,13 +48,11 @@ public class CameraSettings {
 		return params;
 	}
 
-	@SuppressLint("NewApi")
 	private Set<String> getStringSet(SharedPreferences prefs, String key,
 			Set<String> defValues) {
 		return prefs.getStringSet(key, defValues);
 	}
 
-	@SuppressLint("NewApi")
 	private void putStringSet(SharedPreferences prefs, String key,
 			Set<String> set) {
 		prefs.edit().putStringSet(key, set).commit();
@@ -63,7 +60,6 @@ public class CameraSettings {
 
 	}
 
-	@SuppressLint("NewApi")
 	private void addProfileFrameRate(int camId, List<Integer> list, int profile) {
 		try {
 			if (CamcorderProfile.hasProfile(camId, profile)) {
@@ -74,7 +70,6 @@ public class CameraSettings {
 		}
 	}
 
-	@SuppressLint("InlinedApi")
 	private List<Integer> getFrameRatesFromCameraProfile(int camId) {
 		List<Integer> list = new ArrayList<Integer>();
 
@@ -161,7 +156,6 @@ public class CameraSettings {
 		return fpsIntList;
 	}
 
-	@SuppressLint("NewApi")
 	private void addProfileFrameSize(int camId, List<int[]> list, int profile) {
 		try {
 			if (CamcorderProfile.hasProfile(camId, profile)) {
@@ -198,7 +192,6 @@ public class CameraSettings {
 		Collections.sort(sizes, comp);
 	}
 
-	@SuppressLint("InlinedApi")
 	private List<int[]> getFrameSizesFromProfiles(int camId, boolean timeLapse) {
 		List<int[]> list = new ArrayList<int[]>();
 
@@ -235,7 +228,6 @@ public class CameraSettings {
 		return list;
 	}
 
-	@SuppressLint("NewApi")
 	public List<int[]> getFrameSizes(SharedPreferences prefs, int camId,
 			boolean timeLapse) {
 

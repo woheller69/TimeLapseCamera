@@ -11,14 +11,14 @@ import androidx.appcompat.app.AlertDialog;
 
 public class GithubStar {
     public static void setAskForStar(boolean askForStar, Context context){
-        SharedPreferences prefManager = PreferenceManager.getDefaultSharedPreferences(context);;
+        SharedPreferences prefManager = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefManager.edit();
         editor.putBoolean("askForStar", askForStar);
         editor.apply();
     }
 
     static boolean shouldShowStarDialog(Context context) {
-        SharedPreferences prefManager = PreferenceManager.getDefaultSharedPreferences(context);;
+        SharedPreferences prefManager = PreferenceManager.getDefaultSharedPreferences(context);
         int versionCode = prefManager.getInt("versionCode",0);
         boolean askForStar=prefManager.getBoolean("askForStar",true);
 

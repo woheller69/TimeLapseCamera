@@ -25,7 +25,6 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.PowerManager.WakeLock;
 import android.os.SystemClock;
-import android.view.SurfaceHolder;
 import at.andreasrohner.spartantimelapserec.PowerSavingReceiver;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 
@@ -48,7 +47,7 @@ public class PowerSavingImageRecorder extends ImageRecorder {
 		if (mContext != null && mAlarmMgr != null) {
 			Intent intent = new Intent(mContext, PowerSavingReceiver.class);
 			PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, 0,
-					intent, 0);
+					intent, PendingIntent.FLAG_IMMUTABLE);
 			mAlarmMgr.cancel(alarmIntent);
 			mAlarmMgr = null;
 		}
@@ -60,7 +59,7 @@ public class PowerSavingImageRecorder extends ImageRecorder {
 		if (mContext != null && mAlarmMgr != null) {
 			Intent intent = new Intent(mContext, PowerSavingReceiver.class);
 			PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, 0,
-					intent, 0);
+					intent, PendingIntent.FLAG_IMMUTABLE);
 
 			long diffTime = SystemClock.elapsedRealtime() - mStartPreviewTime;
 			long delay = mSettings.getCaptureRate() - diffTime;

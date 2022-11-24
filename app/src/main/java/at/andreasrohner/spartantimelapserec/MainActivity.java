@@ -19,11 +19,11 @@
 package at.andreasrohner.spartantimelapserec;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -39,7 +39,7 @@ import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
 public class MainActivity extends AppCompatActivity  {
 
 	private static SettingsFragment settingsFragment;
-	@SuppressLint("NewApi")
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -75,18 +75,22 @@ public class MainActivity extends AppCompatActivity  {
 
 	}
 
-	@SuppressLint("NewApi")
 	public void actionStart(MenuItem item) {
 		Intent intent = new Intent(this, ForegroundService.class);
 		if (ForegroundService.mIsRunning){
 			Toast.makeText(this, getString(R.string.error_already_running), Toast.LENGTH_SHORT).show();
-		} else startForegroundService(intent);
+		} else {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+				startForegroundService(intent);
+			} else {
+				startService(intent);
+			}
+		}
 
 		invalidateOptionsMenu();
 
 	}
 
-	@SuppressLint("NewApi")
 	public void actionStop(MenuItem item) {
 		Intent intent = new Intent(this, ForegroundService.class);
 		intent.setAction(ForegroundService.ACTION_STOP_SERVICE);

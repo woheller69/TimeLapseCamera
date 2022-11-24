@@ -20,14 +20,11 @@ package at.andreasrohner.spartantimelapserec.data;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
 
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.CamcorderProfile;
-import android.os.Build;
 import android.os.Environment;
-import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.preference.DateTimePreference;
 
 public class RecSettings {
@@ -66,7 +63,6 @@ public class RecSettings {
 		return def;
 	}
 
-	@SuppressLint("NewApi")
 	private boolean checkRecProfile(int profile) {
 		try {
 			if (CamcorderProfile.hasProfile(cameraId, profile)) {
@@ -77,7 +73,6 @@ public class RecSettings {
 		return false;
 	}
 
-	@SuppressLint("InlinedApi")
 	private int selectRecVideoProfile() {
 		if (checkRecProfile(CamcorderProfile.QUALITY_1080P)
 				&& frameHeight == 1080)
@@ -107,8 +102,6 @@ public class RecSettings {
 		return CamcorderProfile.QUALITY_HIGH;
 	}
 
-	@SuppressLint("InlinedApi")
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private int selectRecVideoTimeLapseProfile() {
 		if (checkRecProfile(CamcorderProfile.QUALITY_TIME_LAPSE_1080P)
 				&& frameHeight == 1080)

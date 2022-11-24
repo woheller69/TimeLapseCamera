@@ -21,7 +21,6 @@ package at.andreasrohner.spartantimelapserec.sensor;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.media.AudioManager;
-import android.os.Build;
 import android.os.Handler;
 
 public class MuteShutter {

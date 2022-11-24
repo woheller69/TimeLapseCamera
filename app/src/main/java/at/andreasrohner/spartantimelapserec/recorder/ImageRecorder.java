@@ -25,17 +25,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.ErrorCallback;
-import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.view.SurfaceHolder;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 
 public class ImageRecorder extends Recorder implements Runnable,
@@ -144,7 +141,6 @@ public class ImageRecorder extends Recorder implements Runnable,
 		}
 	}
 
-	@SuppressLint("InlinedApi")
 	protected void setFocusMode(Camera.Parameters params, Set<String> suppModes) {
 		if (mSettings.getCaptureRate() < CONTINUOUS_CAPTURE_THRESHOLD && suppModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
 			params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
