@@ -1,0 +1,16 @@
+Minimalistische App, die Zeitraffervideos im Hintergrund bei ausgeschaltetem Bildschirm aufzeichnet.
+Zeitraffervideos können in verschiedenen Auflösungen gespeichert werden als MP4-Videodatei oder als einzelne JPEG-Dateien.
+Während der Aufnahme ist keine Vorschau sichtbar und der Bildschirm kann ausgeschaltet werden.
+Es gibt kein Aufnahmelimit, aber die App stoppt die Aufnahme, wenn der Akku Ladezustand oder der Speicherplatz niedrig ist.
+
+Funktionen:
+
+* Normales Video aufnehmen (MP4)
+* Zeitraffervideo aufnehmen (MP4/JPEG)
+* Wählen Sie verschiedene Auflösungen
+* Wählen Sie die zu verwendende Kamera aus
+* Planen Sie die Aufnahme an einem bestimmten Datum
+* Vorschau mit ausgewählter Auflösung
+* Benachrichtigungssymbol auswählen
+* Verschlussgeräusch deaktivieren
+

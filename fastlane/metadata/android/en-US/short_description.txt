@@ -1,0 +1,1 @@
+Minimalistic app that records time lapse videos
