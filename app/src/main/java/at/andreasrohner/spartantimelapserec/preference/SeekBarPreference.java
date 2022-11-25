@@ -116,7 +116,7 @@ public class SeekBarPreference extends DialogPreference implements
 		mSeekBar.setMax(getLogValue(mMaxValue - mMinValue));
 		mSeekBar.setOnSeekBarChangeListener(this);
 		mSeekBar.setProgress(getLogValue(mValue - mMinValue));
-		mValueDisp.setText(Integer.toString(mValue));
+		mValueDisp.setText(formatValue(mValue));
 	}
 
 	@Override
@@ -150,6 +150,12 @@ public class SeekBarPreference extends DialogPreference implements
 		value += mMinValue;
 		mValue = value;
 
+		String text = formatValue(value);
+		if (mValueDisp != null)
+			mValueDisp.setText(text);
+	}
+
+	private String formatValue(int value) {
 		String text;
 		if (mFormatListener != null) {
 			text = mFormatListener.onFormatOutputValue(value, mSuffix);
@@ -158,8 +164,7 @@ public class SeekBarPreference extends DialogPreference implements
 			if (mSuffix != null)
 				text += " " + mSuffix;
 		}
-		if (mValueDisp != null)
-			mValueDisp.setText(text);
+		return text;
 	}
 
 	@Override
