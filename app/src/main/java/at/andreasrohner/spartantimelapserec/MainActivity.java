@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity  {
 
 	@Override
 	protected void onDestroy() {
-		if (broadcastReceiver!=null && broadcastReceiver.isOrderedBroadcast()) unregisterReceiver(broadcastReceiver);
+		broadcastReceiver = null;
 		super.onDestroy();
 	}
 

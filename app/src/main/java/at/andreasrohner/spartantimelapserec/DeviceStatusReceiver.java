@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 public class DeviceStatusReceiver extends BroadcastReceiver {
 
@@ -42,5 +43,6 @@ public class DeviceStatusReceiver extends BroadcastReceiver {
 			context.startService(stopintent);
 		}
 
+		//if (intent.getAction().equals(Intent.ACTION_AIRPLANE_MODE_CHANGED)) Log.d("DeviceStatusReceiver","Test");
 	}
 }

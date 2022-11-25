@@ -106,6 +106,11 @@ public class ForegroundService extends Service implements Handler.Callback {
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
+    }
+
+
+    private void stop() {
 
         File projectDir = null;
         if (handlerThread!=null){
@@ -140,13 +145,9 @@ public class ForegroundService extends Service implements Handler.Callback {
             sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                     Uri.fromFile(projectDir)));
 
-        stop();
-        super.onDestroy();
-    }
 
-
-    private void stop() {
         mIsRunning = false;
+        stopForeground(true);
         stopSelf();
     }
 
