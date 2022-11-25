@@ -19,8 +19,10 @@
 package at.andreasrohner.spartantimelapserec;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -39,10 +41,18 @@ import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
 public class MainActivity extends AppCompatActivity  {
 
 	private static SettingsFragment settingsFragment;
+	private static BroadcastReceiver broadcastReceiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		if (broadcastReceiver==null) broadcastReceiver = new DeviceStatusReceiver();
+		IntentFilter filter = new IntentFilter();
+		filter.addAction("android.intent.action.ACTION_BATTERY_LOW");
+		filter.addAction("android.intent.action.ACTION_DEVICE_STORAGE_LOW");
+		//filter.addAction("android.intent.action.AIRPLANE_MODE"); //for testing
+		ContextCompat.registerReceiver(getApplicationContext(),broadcastReceiver, filter, ContextCompat.RECEIVER_EXPORTED);
 
 		if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) ||
 			(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)!= PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) ||
@@ -89,6 +99,12 @@ public class MainActivity extends AppCompatActivity  {
 
 		invalidateOptionsMenu();
 
+	}
+
+	@Override
+	protected void onDestroy() {
+		if (broadcastReceiver!=null && broadcastReceiver.isOrderedBroadcast()) unregisterReceiver(broadcastReceiver);
+		super.onDestroy();
 	}
 
 	public void actionStop(MenuItem item) {
