@@ -32,7 +32,10 @@ import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.ErrorCallback;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
+import android.util.Log;
+
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 
 public class ImageRecorder extends Recorder implements Runnable,
@@ -42,6 +45,9 @@ public class ImageRecorder extends Recorder implements Runnable,
 	protected long mEndTime;
 	protected long mStartPreviewTime;
 	protected boolean mUseAutoFocus;
+	protected Camera.PictureCallback pictureCallback;
+	protected AutoFocusCallback autoFocusCallback;
+	protected boolean mWaitCamReady;
 
 	public ImageRecorder(RecSettings settings,
 			Context context, Handler handler) {
@@ -53,6 +59,9 @@ public class ImageRecorder extends Recorder implements Runnable,
 
 		if (mCanDisableShutterSound)
 			mMute = null;
+
+		pictureCallback=this;
+		autoFocusCallback=this;
 	}
 
 	@Override
@@ -68,10 +77,9 @@ public class ImageRecorder extends Recorder implements Runnable,
 	protected void scheduleNextPicture() {
 		long diffTime = SystemClock.elapsedRealtime() - mStartPreviewTime;
 		long delay = mSettings.getCaptureRate() - diffTime;
-
-		if (delay >= RELEASE_CAMERA_THRESHOLD
-				&& mSettings.getCaptureRate() >= CONTINUOUS_CAPTURE_THRESHOLD)
+		if (delay >= RELEASE_CAMERA_THRESHOLD && mSettings.getCaptureRate() >= CONTINUOUS_CAPTURE_THRESHOLD){
 			releaseCamera();
+		}
 
 		if (delay <= 0)
 			mHandler.post(this);
@@ -86,7 +94,7 @@ public class ImageRecorder extends Recorder implements Runnable,
 			FileOutputStream out = new FileOutputStream(file);
 			out.write(data);
 			out.close();
-
+			mWaitCamReady = false;
 			scheduleNextPicture();
 		} catch (Exception e) {
 			handleError(getClass().getSimpleName(), e.getMessage());
@@ -97,8 +105,12 @@ public class ImageRecorder extends Recorder implements Runnable,
 	public void onAutoFocus(boolean success, Camera camera) {
 		try {
 			muteShutter();
+			new Handler(Looper.getMainLooper()).postDelayed(() -> {
+				if (mCamera!=null) {
+					camera.takePicture(null, null, pictureCallback);
+				}
+			}, mWaitCamReady ? mSettings.getCameraTriggerDelay() : 0);
 
-			camera.takePicture(null, null, this);
 		} catch (Exception e) {
 			e.printStackTrace();
 			handleError(getClass().getSimpleName(), e.getMessage());
@@ -119,16 +131,22 @@ public class ImageRecorder extends Recorder implements Runnable,
 			if (mCamera == null)
 				prepareRecord();
 
-			setCameraOrientation(mSettings.getCameraId());
-			setExposureCompensation();
+			Log.d("Camera","Wait:"+ mWaitCamReady);
 
-			mCamera.startPreview();
+			new Handler(Looper.getMainLooper()).postDelayed(() -> {
+				if (mCamera!=null) {
+					mCamera.startPreview();
+					if (mUseAutoFocus) {
+						mCamera.autoFocus(autoFocusCallback);
+					}
+					else {
+						onAutoFocus(true, mCamera);
+					}
+				}
+			}, mWaitCamReady ? mSettings.getCameraInitDelay() : 0);
 
-			if (mUseAutoFocus)
-				mCamera.autoFocus(this);
-			else
-				onAutoFocus(true, mCamera);
 		} catch (Exception e) {
+			Log.e("Error","startPreview");
 			e.printStackTrace();
 			handleError(getClass().getSimpleName(), e.getMessage());
 		}
@@ -182,13 +200,16 @@ public class ImageRecorder extends Recorder implements Runnable,
 				mSettings.getFrameHeight());
 
 		params.setJpegQuality(mSettings.getJpegQuality());
-
+		params.setRotation(getCameraRotation(mSettings.getCameraId()));
+		params.setExposureCompensation(mSettings.getExposureCompensation());
+		params.setZoom(mSettings.getZoom());
 		mCamera.setParameters(params);
 
 		mCamera.setErrorCallback(this);
 	}
 
 	protected void prepareRecord() throws IOException {
+		mWaitCamReady = mCamera == null;
 		releaseCamera();
 
 		mCamera = Camera.open(mSettings.getCameraId());
@@ -197,7 +218,7 @@ public class ImageRecorder extends Recorder implements Runnable,
 
 		SurfaceTexture surfaceTexture = new SurfaceTexture(10);
 		mCamera.setPreviewTexture(surfaceTexture);
-		//mCamera.setPreviewDisplay(mSurfaceHolder);
+
 	}
 
 	protected void doRecord() {

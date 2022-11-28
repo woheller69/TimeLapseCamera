@@ -70,6 +70,27 @@
             android:summary="@string/pref_mute_shutter_summ"
             android:title="@string/pref_mute_shutter" />
     </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_camera_hardware_settings" >
+        <at.andreasrohner.spartantimelapserec.preference.SeekBarPreference
+            app:suffix="ms"
+            android:defaultValue="500"
+            android:dialogMessage="@string/pref_camera_init_delay_summ"
+            android:key="pref_camera_init_delay"
+            app:min="0"
+            app:max="2000"
+            android:title="@string/pref_camera_init_delay" />
+        <at.andreasrohner.spartantimelapserec.preference.SeekBarPreference
+            app:suffix="ms"
+            android:defaultValue="1000"
+            android:dialogMessage="@string/pref_camera_trigger_delay_summ"
+            android:key="pref_camera_trigger_delay"
+            app:min="0"
+            app:max="2000"
+            android:title="@string/pref_camera_trigger_delay" />
+
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref_schedule_settings_category" >
         <at.andreasrohner.spartantimelapserec.preference.SeekBarPreference
             app:log="1.2"

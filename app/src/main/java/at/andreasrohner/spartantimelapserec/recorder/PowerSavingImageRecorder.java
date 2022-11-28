@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.PowerManager.WakeLock;
 import android.os.SystemClock;
+import at.andreasrohner.spartantimelapserec.MainActivity;
 import at.andreasrohner.spartantimelapserec.PowerSavingReceiver;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 
@@ -55,19 +56,23 @@ public class PowerSavingImageRecorder extends ImageRecorder {
 		super.stop();
 	}
 
+	@Override
 	protected void scheduleNextPicture() {
 		if (mContext != null && mAlarmMgr != null) {
 			Intent intent = new Intent(mContext, PowerSavingReceiver.class);
-			PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, 0,
-					intent, PendingIntent.FLAG_IMMUTABLE);
+			PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+			Intent intent2 = new Intent(mContext, MainActivity.class);
+			intent2.setAction(Intent.ACTION_MAIN);
+			intent2.addCategory(Intent.CATEGORY_LAUNCHER);
+			PendingIntent openIntent = PendingIntent.getActivity(mContext, 0, intent2, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
 			long diffTime = SystemClock.elapsedRealtime() - mStartPreviewTime;
 			long delay = mSettings.getCaptureRate() - diffTime;
 			if (delay < 0)
 				delay = 0;
 
-			mAlarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-					SystemClock.elapsedRealtime() + delay, alarmIntent);
+			mAlarmMgr.setAlarmClock(new AlarmManager.AlarmClockInfo(System.currentTimeMillis() + delay, openIntent), alarmIntent);
 		}
 
 		disableOrientationSensor();

@@ -61,8 +61,7 @@ public class ForegroundService extends Service implements Handler.Callback {
                 PendingIntent alarmIntent = PendingIntent.getBroadcast(
                         getApplicationContext(), 0, newintent, PendingIntent.FLAG_IMMUTABLE);
 
-                alarmMgr.set(AlarmManager.RTC_WAKEUP, settings.getSchedRecTime(),
-                        alarmIntent);
+                alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, settings.getSchedRecTime(), alarmIntent);
 
             } else {
 
@@ -216,11 +215,9 @@ public class ForegroundService extends Service implements Handler.Callback {
 
         if ("error".equals(status)) {
             Log.e(tag, "Error: " + msg);
-
-
+            stop();
         }
 
-        stop();
         return true;
     }
 

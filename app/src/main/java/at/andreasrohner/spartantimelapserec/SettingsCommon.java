@@ -54,6 +54,8 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 	private SeekBarPreference prefStopRecAfter;
 	private SeekBarPreference prefExposureComp;
 	private SeekBarPreference prefZoom;
+	private SeekBarPreference prefCameraInitDelay;
+	private SeekBarPreference prefCameraTriggerDelay;
 
 	private int calcGcd(int a, int b) {
 		if (b == 0)
@@ -243,8 +245,8 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 			return millis + " ms";
 
 		double secs = ((double) (millis % 60000)) / 1000;
-		String formatSec = context.getString(R.string.time_format_sec);
-		String formatSecs = context.getString(R.string.time_format_secs);
+		String formatSec = " " + context.getString(R.string.time_format_sec);
+		String formatSecs = " " + context.getString(R.string.time_format_secs);
 		DecimalFormat df = new DecimalFormat("#.##");
 
 		if (millis >= 1000 && millis < 60000)
@@ -254,10 +256,10 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 		int mins = (millis % 3600000) / 1000 / 60;
 		int hours = (millis / 1000 / 60 / 60);
 
-		String formatMin = context.getString(R.string.time_format_min);
-		String formatMins = context.getString(R.string.time_format_mins);
-		String formatHour = context.getString(R.string.time_format_hour);
-		String formatHours = context.getString(R.string.time_format_hours);
+		String formatMin = " " + context.getString(R.string.time_format_min);
+		String formatMins = " " + context.getString(R.string.time_format_mins);
+		String formatHour = " " + context.getString(R.string.time_format_hour);
+		String formatHours = " " + context.getString(R.string.time_format_hours);
 		String res = "";
 		if (hours == 1)
 			res += hours + formatHour;
@@ -335,6 +337,14 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 			int value = prefs.getInt(key, -1);
 			if (value != -1)
 				prefStopRecAfter.setSummary(onFormatOutputValue(value, "min"));
+		}else if (key.equals("pref_exposurecomp")){
+			prefExposureComp.setSummary(Integer.toString(prefExposureComp.getmValue()));
+		}else if (key.equals("pref_zoom")){
+			prefZoom.setSummary(Integer.toString(prefZoom.getmValue()));
+		}else if (key.equals("pref_camera_init_delay")) {
+			prefCameraInitDelay.setSummary(formatTime(prefCameraInitDelay.getmValue()));
+		}else if (key.equals("pref_camera_trigger_delay")) {
+			prefCameraTriggerDelay.setSummary(formatTime(prefCameraTriggerDelay.getmValue()));
 		}
 
 		updatePrefStatus(prefs);
@@ -357,6 +367,8 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 		prefStopRecAfter = (SeekBarPreference) screen.findPreference("pref_stop_recording_after");
 		prefExposureComp = (SeekBarPreference) screen.findPreference("pref_exposurecomp");
 		prefZoom = (SeekBarPreference) screen.findPreference("pref_zoom");
+		prefCameraInitDelay = (SeekBarPreference) screen.findPreference("pref_camera_init_delay");
+		prefCameraTriggerDelay = (SeekBarPreference) screen.findPreference("pref_camera_trigger_delay");
 		setZoomRange(prefs);
 		setExposureCompRange(prefs);
 		setCameras(prefs);
@@ -385,6 +397,11 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 		value = prefs.getInt("pref_stop_recording_after", -1);
 		if (value != -1)
 			prefStopRecAfter.setSummary(onFormatOutputValue(value, "min"));
+
+		prefExposureComp.setSummary(Integer.toString(prefExposureComp.getmValue()));
+		prefZoom.setSummary(Integer.toString(prefZoom.getmValue()));
+		prefCameraInitDelay.setSummary(formatTime(prefCameraInitDelay.getmValue()));
+		prefCameraTriggerDelay.setSummary(formatTime(prefCameraTriggerDelay.getmValue()));
 
 		updatePrefStatus(prefs);
 	}

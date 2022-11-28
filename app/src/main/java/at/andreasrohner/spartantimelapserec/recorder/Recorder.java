@@ -227,19 +227,6 @@ public abstract class Recorder {
 		return 0;
 	}
 
-	protected void setCameraOrientation(int cameraId) {
-		Camera.Parameters params = mCamera.getParameters();
-
-		params.setRotation(getCameraRotation(cameraId));
-
-		mCamera.setParameters(params);
-	}
-	protected void setExposureCompensation() {
-		Camera.Parameters params = mCamera.getParameters();
-		params.setExposureCompensation(mSettings.getExposureCompensation());
-		params.setZoom(mSettings.getZoom());
-		mCamera.setParameters(params);
-	}
 
 	protected void muteShutter() {
 		if (mSettings != null && mSettings.isMuteShutter()) {

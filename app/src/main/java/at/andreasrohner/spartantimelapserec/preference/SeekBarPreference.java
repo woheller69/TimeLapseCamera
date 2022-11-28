@@ -167,6 +167,8 @@ public class SeekBarPreference extends DialogPreference implements
 		return text;
 	}
 
+	public int getmValue(){return mValue;}
+
 	@Override
 	public void onStartTrackingTouch(SeekBar arg0) {
 	}
