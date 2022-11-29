@@ -23,5 +23,8 @@
         android:id="@+id/action_unmute_all_streams"
         android:onClick="actionUnmuteAllStreams"
         android:title="@string/action_unmute_all_streams"/>
-
+    <item
+        android:id="@+id/action_about"
+        android:onClick="actionAbout"
+        android:title="@string/action_about"/>
 </menu>

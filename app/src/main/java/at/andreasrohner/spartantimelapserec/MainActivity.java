@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -133,6 +134,9 @@ public class MainActivity extends AppCompatActivity  {
 		mute.maxAllStreams();
 	}
 
+	public void actionAbout(MenuItem item) {
+		startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/woheller69/timelapsecamera")));
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

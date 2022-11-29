@@ -68,5 +68,6 @@
     <string name="pref_camera_trigger_delay_summ">Delay before camera takes picture. If too low, image may be dark!</string>
     <string name="pref_camera_init_delay">Camera init delay</string>
     <string name="pref_camera_trigger_delay">Camera trigger delay</string>
+    <string name="action_about">About</string>
 
 </resources>
