@@ -1,6 +1,8 @@
 TimeLapseCam
 ========================
 
+<a href="https://f-droid.org/packages/org.woheller69.TimeLapseCam"><img alt="Get it on F-Droid" src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="100"></a>
+
 Minimalistic android app that records time lapse videos in the background
 with the screen turned off. Time lapse videos can be saved in various resolutions
 as a MP4 video file, or as individual JPEG files. If possible the shutter sound
@@ -17,7 +19,6 @@ level or disk space is low.
 * Select camera to use
 * Schedule recording on specific date
 * Preview with selected resolution
-* Select notification icon
 * Disable shutter sound
 
 ## License

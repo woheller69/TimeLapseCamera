@@ -11,6 +11,5 @@ Funktionen:
 * Wählen Sie die zu verwendende Kamera aus
 * Planen Sie die Aufnahme an einem bestimmten Datum
 * Vorschau mit ausgewählter Auflösung
-* Benachrichtigungssymbol auswählen
 * Verschlussgeräusch deaktivieren
 

@@ -11,5 +11,4 @@ Features:
 * Select camera to use
 * Schedule recording on specific date
 * Preview with selected resolution
-* Select notification icon
 * Disable shutter sound
