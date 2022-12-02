@@ -169,7 +169,7 @@ public class ForegroundService extends Service implements Handler.Callback {
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setContentText(getString(R.string.notification_content_text))
+                .setContentText(getString(R.string.info_recording_running))
                 .setContentTitle(getString(R.string.app_name)).build();
 
                 mNotificationManager.notify(NOTIF_ID,notification);

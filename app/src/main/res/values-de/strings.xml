@@ -13,7 +13,7 @@
     <string name="button_settings">Einstellungen</string>
     <string name="button_gallery">Galerie öffnen</string>
     <string name="button_preview">Vorschau öffnen</string>
-    <string name="notification_content_text">Aufnahme läuft</string>
+    <string name="info_recording_running">Aufnahme läuft</string>
     <string name="pref_mute_shutter">Verhindere Kameraauslösegeräusch &amp; Klingelton</string>
     <string name="pref_mute_shutter_summ">Versucht, das Telefon auf stumm zu schalten um das Auslösegeräusch der Kamera zu unterdrücken. Versucht außerdem, den Klingelton des Telefons abzustellen. Benötigt separate Berechtigung!</string>
     <string name="pref_camera">Kamera auswählen</string>

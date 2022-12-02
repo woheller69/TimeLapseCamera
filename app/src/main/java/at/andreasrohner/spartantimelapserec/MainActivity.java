@@ -125,8 +125,12 @@ public class MainActivity extends AppCompatActivity  {
 	}
 
 	public void actionPreview(MenuItem item) {
-		Intent intent = new Intent(MainActivity.this, PreviewActivity.class);
-		startActivity(intent);
+		if (!ForegroundService.mIsRunning) {
+			Intent intent = new Intent(MainActivity.this, PreviewActivity.class);
+			startActivity(intent);
+		} else {
+			Toast.makeText(this, getString(R.string.info_recording_running), Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	public void actionUnmuteAllStreams(MenuItem item) {
