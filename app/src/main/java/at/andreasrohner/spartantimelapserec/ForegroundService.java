@@ -40,7 +40,16 @@ public class ForegroundService extends Service implements Handler.Callback {
     private Recorder recorder;
     private HandlerThread handlerThread;
     private WakeLock mWakeLock;
+    private static statusListener listener;
     private NotificationManager mNotificationManager;
+
+    public interface statusListener {
+        void onServiceStatusChange(boolean status);
+    }
+
+    public static void registerStatusListener(statusListener l){
+        listener = l;
+    }
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -87,6 +96,7 @@ public class ForegroundService extends Service implements Handler.Callback {
                 updateNotif();
             }
 
+            if (listener!=null) listener.onServiceStatusChange(true);
             return START_STICKY;
         }
         else {
@@ -144,8 +154,8 @@ public class ForegroundService extends Service implements Handler.Callback {
             sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                     Uri.fromFile(projectDir)));
 
-
         mIsRunning = false;
+        if (listener!=null) listener.onServiceStatusChange(false);
         stopForeground(true);
         stopSelf();
     }

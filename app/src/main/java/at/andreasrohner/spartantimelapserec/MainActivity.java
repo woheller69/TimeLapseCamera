@@ -39,7 +39,7 @@ import androidx.core.content.ContextCompat;
 
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity implements ForegroundService.statusListener {
 
 	private static SettingsFragment settingsFragment;
 	private static BroadcastReceiver broadcastReceiver;
@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity  {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		ForegroundService.registerStatusListener(this);
 		if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
 		&& ((ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED))
 		&& ((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED))) {
@@ -145,7 +146,17 @@ public class MainActivity extends AppCompatActivity  {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
+		if (ForegroundService.mIsRunning){
+			menu.findItem(R.id.action_start).setEnabled(false);
+			menu.findItem(R.id.action_preview).setEnabled(false);
+		} else {
+			menu.findItem(R.id.action_stop).setEnabled(false);
+		}
 		return true;
 	}
 
+	@Override
+	public void onServiceStatusChange(boolean status) {
+		invalidateOptionsMenu();
+	}
 }
