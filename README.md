@@ -1,6 +1,8 @@
 TimeLapseCam
 ========================
 
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01.png" width="150"/>
+
 <a href="https://f-droid.org/packages/org.woheller69.TimeLapseCam"><img alt="Get it on F-Droid" src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="100"></a>
 
 Minimalistic android app that records time lapse videos in the background
