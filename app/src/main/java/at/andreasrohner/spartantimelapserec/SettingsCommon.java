@@ -33,6 +33,7 @@ import android.os.Looper;
 import android.preference.ListPreference;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+import android.preference.SwitchPreference;
 import at.andreasrohner.spartantimelapserec.data.RecMode;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 import at.andreasrohner.spartantimelapserec.preference.DateTimePreference;
@@ -56,6 +57,7 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 	private SeekBarPreference prefZoom;
 	private SeekBarPreference prefCameraInitDelay;
 	private SeekBarPreference prefCameraTriggerDelay;
+	private SwitchPreference prefFlash;
 
 	private int calcGcd(int a, int b) {
 		if (b == 0)
@@ -197,16 +199,19 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 			prefFrameRate.setEnabled(false);
 			prefCaptureRate.setEnabled(true);
 			prefJpegQuality.setEnabled(true);
+			prefFlash.setEnabled(true);
 			break;
 		case VIDEO:
 			prefFrameRate.setEnabled(true);
 			prefCaptureRate.setEnabled(false);
 			prefJpegQuality.setEnabled(false);
+			prefFlash.setEnabled(false);
 			break;
 		default:
 			prefFrameRate.setEnabled(true);
 			prefCaptureRate.setEnabled(true);
 			prefJpegQuality.setEnabled(false);
+			prefFlash.setEnabled(false);
 			break;
 		}
 
@@ -369,6 +374,7 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 		prefZoom = (SeekBarPreference) screen.findPreference("pref_zoom");
 		prefCameraInitDelay = (SeekBarPreference) screen.findPreference("pref_camera_init_delay");
 		prefCameraTriggerDelay = (SeekBarPreference) screen.findPreference("pref_camera_trigger_delay");
+		prefFlash = (SwitchPreference) screen.findPreference("pref_flash");
 		setZoomRange(prefs);
 		setExposureCompRange(prefs);
 		setCameras(prefs);

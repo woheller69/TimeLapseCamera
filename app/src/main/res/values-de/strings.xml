@@ -68,6 +68,7 @@
     <string name="pref_camera_trigger_delay_summ">Verzögerung, bevor die Kamera ein Bild aufnimmt. Wenn zu niedrig, kann das Bild dunkel sein!</string>
     <string name="pref_camera_init_delay">Verzögerung für Kamerainitialisierung</string>
     <string name="pref_camera_trigger_delay">Verzögerung für Kameraauslöser</string>
-    <string name="action_about">About</string>
+    <string name="action_about">Über</string>
+    <string name="pref_flash">Blitz verwenden, falls verfügbar</string>
 
 </resources>

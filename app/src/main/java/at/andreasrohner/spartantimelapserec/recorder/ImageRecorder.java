@@ -203,6 +203,7 @@ public class ImageRecorder extends Recorder implements Runnable,
 		params.setRotation(getCameraRotation(mSettings.getCameraId()));
 		params.setExposureCompensation(mSettings.getExposureCompensation());
 		params.setZoom(mSettings.getZoom());
+		params.setFlashMode(mSettings.getCameraFlash() ? Camera.Parameters.FLASH_MODE_ON : Camera.Parameters.FLASH_MODE_OFF);
 		mCamera.setParameters(params);
 
 		mCamera.setErrorCallback(this);

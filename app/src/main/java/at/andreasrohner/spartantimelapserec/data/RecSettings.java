@@ -49,6 +49,7 @@ public class RecSettings {
 	private int zoom;
 	private int cameraInitDelay;
 	private int cameraTriggerDelay;
+	private boolean cameraFlash;
 
 	public static int getInteger(SharedPreferences prefs, String key, int def) {
 		try {
@@ -152,6 +153,7 @@ public class RecSettings {
 		zoom = prefs.getInt("pref_zoom",0);
 		cameraInitDelay = prefs.getInt("pref_camera_init_delay", 500);
 		cameraTriggerDelay = prefs.getInt("pref_camera_trigger_delay", 1000);
+		cameraFlash = prefs.getBoolean("pref_flash",false);
 		// negative value disables the limit
 		if (stopRecAfter >= 47 * 60)
 			stopRecAfter = -1;
@@ -335,5 +337,7 @@ public class RecSettings {
 	public int getCameraInitDelay() {return cameraInitDelay;}
 
 	public int getCameraTriggerDelay() {return cameraTriggerDelay;}
+
+	public boolean getCameraFlash() {return cameraFlash;}
 
 }
