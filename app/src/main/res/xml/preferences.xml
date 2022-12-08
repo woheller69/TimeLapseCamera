@@ -46,14 +46,11 @@
             android:key="pref_frame_rate"
             android:title="@string/pref_frame_rate" />
 
-        <at.andreasrohner.spartantimelapserec.preference.SeekBarPreference
-            app:log="1.2"
-            app:stickyValue="250"
-            app:suffix="ms"
+        <at.andreasrohner.spartantimelapserec.preference.IntervalPickerPreference
+
             android:defaultValue="1000"
             android:dialogMessage="@string/pref_capture_rate_summ"
             android:key="pref_capture_rate"
-            app:max="600000"
             android:title="@string/pref_capture_rate" />
         <at.andreasrohner.spartantimelapserec.preference.SeekBarPreference
             app:min="1"
@@ -78,7 +75,7 @@
 
     <PreferenceCategory android:title="@string/pref_camera_hardware_settings" >
         <at.andreasrohner.spartantimelapserec.preference.SeekBarPreference
-            app:suffix="ms"
+            app:suffix="@string/time_format_msec"
             android:defaultValue="500"
             android:dialogMessage="@string/pref_camera_init_delay_summ"
             android:key="pref_camera_init_delay"
@@ -86,7 +83,7 @@
             app:max="2000"
             android:title="@string/pref_camera_init_delay" />
         <at.andreasrohner.spartantimelapserec.preference.SeekBarPreference
-            app:suffix="ms"
+            app:suffix="@string/time_format_msec"
             android:defaultValue="1000"
             android:dialogMessage="@string/pref_camera_trigger_delay_summ"
             android:key="pref_camera_trigger_delay"
@@ -100,7 +97,7 @@
         <at.andreasrohner.spartantimelapserec.preference.SeekBarPreference
             app:log="1.2"
             app:stickyValue="250"
-            app:suffix="ms"
+            app:suffix="@string/time_format_msec"
             android:defaultValue="1000"
             android:dialogMessage="@string/pref_initial_delay_summ"
             android:key="pref_initial_delay"
@@ -109,10 +106,10 @@
         <at.andreasrohner.spartantimelapserec.preference.SeekBarPreference
             app:log="1.2"
             app:stickyValue="60"
-            app:suffix="min"
+            app:suffix="@string/time_format_min"
             android:defaultValue="2880"
             android:key="pref_stop_recording_after"
-            app:max="28800"
+            app:max="2880"
             android:title="@string/pref_stop_recording_after" />
 
         <at.andreasrohner.spartantimelapserec.preference.DateTimePreference

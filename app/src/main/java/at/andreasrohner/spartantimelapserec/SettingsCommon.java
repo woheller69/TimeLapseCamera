@@ -37,6 +37,7 @@ import android.preference.SwitchPreference;
 import at.andreasrohner.spartantimelapserec.data.RecMode;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 import at.andreasrohner.spartantimelapserec.preference.DateTimePreference;
+import at.andreasrohner.spartantimelapserec.preference.IntervalPickerPreference;
 import at.andreasrohner.spartantimelapserec.preference.SeekBarPreference;
 import at.andreasrohner.spartantimelapserec.sensor.CameraSettings;
 
@@ -49,7 +50,7 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 	private ListPreference prefCamera;
 	private ListPreference prefRecMode;
 	private SeekBarPreference prefInitialDelay;
-	private SeekBarPreference prefCaptureRate;
+	private IntervalPickerPreference prefCaptureRate;
 	private SeekBarPreference prefJpegQuality;
 	private DateTimePreference prefScheduleRec;
 	private SeekBarPreference prefStopRecAfter;
@@ -131,7 +132,7 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 				defInd = fpsList.size();
 
 			fpsListVal.add(fps);
-			fpsList.add(fps + " fps");
+			fpsList.add(fps + " " + context.getString(R.string.format_fps));
 		}
 
 		final int index = defInd;
@@ -247,7 +248,7 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 
 	private String formatTime(int millis) {
 		if (millis < 1000)
-			return millis + " ms";
+			return millis + " "+ context.getString(R.string.time_format_msec);
 
 		double secs = ((double) (millis % 60000)) / 1000;
 		String formatSec = " " + context.getString(R.string.time_format_sec);
@@ -321,17 +322,11 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 			setRecMode(prefs);
 			setFrameSizes(prefs);
 		} else if (key.equals("pref_capture_rate")) {
-			int value = prefs.getInt(key, -1);
-			if (value != -1)
-				prefCaptureRate.setSummary(formatTime(value));
+			prefCaptureRate.setSummary(formatTime(prefCaptureRate.getmValue()));
 		} else if (key.equals("pref_initial_delay")) {
-			int value = prefs.getInt(key, -1);
-			if (value != -1)
-				prefInitialDelay.setSummary(formatTime(value));
+			prefInitialDelay.setSummary(formatTime(prefInitialDelay.getmValue()));
 		} else if (key.equals("pref_jpeg_quality")) {
-			int value = prefs.getInt(key, -1);
-			if (value != -1)
-				prefJpegQuality.setSummary(value + " %");
+			prefJpegQuality.setSummary(prefJpegQuality.getmValue() + " %");
 		} else if (key.equals("pref_frame_size")) {
 			prefFrameSize.setSummary(prefFrameSize.getEntry());
 		} else if (key.equals("pref_frame_rate")) {
@@ -339,9 +334,7 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 		} else if (key.equals("pref_schedule_recording")) {
 			prefScheduleRec.setSummary(prefScheduleRec.formatDateTime());
 		} else if (key.equals("pref_stop_recording_after")) {
-			int value = prefs.getInt(key, -1);
-			if (value != -1)
-				prefStopRecAfter.setSummary(onFormatOutputValue(value, "min"));
+			prefStopRecAfter.setSummary(onFormatOutputValue(prefStopRecAfter.getmValue(), "min"));
 		}else if (key.equals("pref_exposurecomp")){
 			prefExposureComp.setSummary(Integer.toString(prefExposureComp.getmValue()));
 		}else if (key.equals("pref_zoom")){
@@ -365,7 +358,7 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 		prefFrameRate = (ListPreference) screen.findPreference("pref_frame_rate");
 		prefCamera = (ListPreference) screen.findPreference("pref_camera");
 		prefRecMode = (ListPreference) screen.findPreference("pref_rec_mode");
-		prefCaptureRate = (SeekBarPreference) screen.findPreference("pref_capture_rate");
+		prefCaptureRate = (IntervalPickerPreference) screen.findPreference("pref_capture_rate");
 		prefJpegQuality = (SeekBarPreference) screen.findPreference("pref_jpeg_quality");
 		prefInitialDelay = (SeekBarPreference) screen.findPreference("pref_initial_delay");
 		prefScheduleRec = (DateTimePreference) screen.findPreference("pref_schedule_recording");
@@ -383,7 +376,6 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 		// fetch the params can take some time
 		delayedInit(prefs);
 
-		prefCaptureRate.setOnFormatOutputValueListener(this);
 		int value = prefs.getInt("pref_capture_rate", -1);
 		if (value != -1)
 			prefCaptureRate.setSummary(formatTime(value));

@@ -25,7 +25,7 @@
     <string name="pref_project_title_summ">The project title is used as a directory and prefix for the created files</string>
     <string name="pref_frame_rate">Playback Frame Rate</string>
     <string name="pref_frame_size">Frame Size</string>
-    <string name="pref_capture_rate">Camera Capture Rate</string>
+    <string name="pref_capture_rate">Camera Capture Interval</string>
     <string name="pref_capture_rate_summ">Select the capture interval</string>
     <string name="pref_initial_delay">Initial Delay</string>
     <string name="pref_initial_delay_summ">Select the delay before capturing starts</string>
@@ -46,6 +46,8 @@
     <string name="pref_schedule_settings_category">Scheduling settings</string>
     <string name="pref_notification_icon">Notification Icon</string>
     <string name="pref_notification_icon_summ">Select the notification icon shown while recording</string>
+    <string name="format_fps">fps</string>
+    <string name="time_format_msec">ms</string>
     <string name="time_format_sec">sec</string>
     <string name="time_format_secs">secs</string>
     <string name="time_format_min">min</string>
