@@ -1,0 +1,2 @@
+Improved setting for capture interval
+Option to use flash in JPG mode

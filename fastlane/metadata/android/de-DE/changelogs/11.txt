@@ -1,0 +1,2 @@
+Verbesserte Einstellung für das Aufnahmeintervall
+Option für Blitz im JPG Modus
