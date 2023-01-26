@@ -64,7 +64,7 @@
     <string name="dialog_OK_button">OK</string>
     <string name="dialog_NO_button">Nein</string>
     <string name="dialog_Later_button">Vielleicht später</string>
-    <string name="dialog_StarOnGitHub">Mögen Sie diese App? Bitte vergeben Sie einen Stern auf GitHub.</string>
+    <string name="dialog_StarOnGitHub">Mögen Sie diese App? Bitte vergeben Sie einen Stern auf GitHub oder spendieren Sie dem Entwickler einen Kaffee über PayPal.</string>
     <string name="pref_camera_hardware_settings">Hardware spezifische Einstellungen</string>
     <string name="pref_camera_init_delay_summ">Verzögerung für Kamerastart. Wenn zu niedrig, kann es zum Absturz kommen!</string>
     <string name="pref_camera_trigger_delay_summ">Verzögerung, bevor die Kamera ein Bild aufnimmt. Wenn zu niedrig, kann das Bild dunkel sein!</string>
