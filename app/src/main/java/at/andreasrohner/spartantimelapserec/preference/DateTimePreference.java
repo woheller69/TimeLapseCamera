@@ -181,7 +181,7 @@ public class DateTimePreference extends DialogPreference implements
 
 		mEnabled = value;
 		if (mEnabled) {
-			if (!(mCal.getTimeInMillis() >= System.currentTimeMillis() + 10000)) {
+			if (!(mCal.getTimeInMillis() >= System.currentTimeMillis())) {
 				mEnabled = false;
 				check.setChecked(false);
 			}
