@@ -62,14 +62,13 @@ public class ForegroundService extends Service implements Handler.Callback {
             initNotif();
             mIsRunning = true;
 
-            if (settings.isSchedRecEnabled()
-                    && settings.getSchedRecTime() > System.currentTimeMillis() + 10000) {
-                AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                Intent newintent = new Intent(getApplicationContext(),
-                        ScheduleReceiver.class);
-                PendingIntent alarmIntent = PendingIntent.getBroadcast(
-                        getApplicationContext(), 0, newintent, PendingIntent.FLAG_IMMUTABLE);
+            settings = new RecSettings();
+            settings.load(getApplicationContext(), PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
 
+            if (settings.isSchedRecEnabled() && settings.getSchedRecTime() > System.currentTimeMillis() + 10000) {
+                AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                Intent newintent = new Intent(getApplicationContext(), ScheduleReceiver.class);
+                PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, newintent, PendingIntent.FLAG_IMMUTABLE);
                 alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, settings.getSchedRecTime(), alarmIntent);
 
             } else {
@@ -107,9 +106,6 @@ public class ForegroundService extends Service implements Handler.Callback {
 
     @Override
     public void onCreate() {
-        settings = new RecSettings();
-        settings.load(getApplicationContext(), PreferenceManager
-                .getDefaultSharedPreferences(getApplicationContext()));
 
     }
 

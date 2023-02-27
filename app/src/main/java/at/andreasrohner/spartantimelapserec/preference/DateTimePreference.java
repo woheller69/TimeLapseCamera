@@ -115,6 +115,9 @@ public class DateTimePreference extends DialogPreference implements
 		CheckBox checkBox = (CheckBox) view
 				.findViewById(R.id.dialog_date_preference_enabled);
 
+        String persisted = getPersistedString(null);
+        mEnabled = parseEnabled(persisted);
+
 		if (mEnabled) {
 			if (!(mCal.getTimeInMillis() >= System.currentTimeMillis() + 10000)) mEnabled = false;
 		}
@@ -175,8 +178,6 @@ public class DateTimePreference extends DialogPreference implements
 
 	@Override
 	public void onCheckedChanged(CompoundButton check, boolean value) {
-		String persisted = getPersistedString(null);
-		parseValue(persisted);
 
 		mEnabled = value;
 		if (mEnabled) {
@@ -186,9 +187,9 @@ public class DateTimePreference extends DialogPreference implements
 			}
 		}
 
-		String created = createValue();
-		if (!persisted.equals(created)) {
-			persistString(created);
+		String time = createValue();
+		if (callChangeListener(time)) {
+			persistString(time);
 		}
 	}
 }

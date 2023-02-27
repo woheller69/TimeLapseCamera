@@ -35,7 +35,6 @@ import android.preference.ListPreference;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
-import android.widget.Toast;
 import at.andreasrohner.spartantimelapserec.data.RecMode;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 import at.andreasrohner.spartantimelapserec.preference.DateTimePreference;
@@ -337,16 +336,12 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 			prefScheduleRec.setSummary(prefScheduleRec.formatDateTime());
 			RecSettings settings = new RecSettings();
 			settings.load(context, PreferenceManager.getDefaultSharedPreferences(context));
-			if (settings.isSchedRecEnabled() && settings.getSchedRecTime() > System.currentTimeMillis() + 10000){
+			if (settings.isSchedRecEnabled() && settings.getSchedRecTime() > System.currentTimeMillis()){
 				Intent intent = new Intent(context, ForegroundService.class);
-				if (ForegroundService.mIsRunning){
-					Toast.makeText(context, context.getString(R.string.error_already_running), Toast.LENGTH_SHORT).show();
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+					context.startForegroundService(intent);
 				} else {
-					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-						context.startForegroundService(intent);
-					} else {
-						context.startService(intent);
-					}
+					context.startService(intent);
 				}
 			} else {
 				Intent intent = new Intent(context, ForegroundService.class);
