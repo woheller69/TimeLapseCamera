@@ -92,17 +92,13 @@ public class DateTimePreference extends DialogPreference implements
 	public String formatDateTime() {
 		DateFormat f = SimpleDateFormat.getDateTimeInstance(
 				SimpleDateFormat.MEDIUM, SimpleDateFormat.SHORT);
-		String enabled = getContext().getString(R.string.pref_date_time_enabled);
-		String disabled = getContext().getString(R.string.pref_date_time_disabled);
 
-		return f.format(mCal.getTime()) + " ("
-				+ (mEnabled ? enabled : disabled) + ")";
+		return f.format(mCal.getTime());
 	}
 
 	private void parseValue(String value) {
 		mCal.setTimeInMillis(parseTime(value));
 		mCal.set(Calendar.SECOND, 0);
-		mEnabled = parseEnabled(value);
 	}
 
 	private String createValue() {
@@ -118,6 +114,10 @@ public class DateTimePreference extends DialogPreference implements
 
 		CheckBox checkBox = (CheckBox) view
 				.findViewById(R.id.dialog_date_preference_enabled);
+
+		if (mEnabled) {
+			if (!(mCal.getTimeInMillis() >= System.currentTimeMillis() + 10000)) mEnabled = false;
+		}
 		checkBox.setChecked(mEnabled);
 		checkBox.setOnCheckedChangeListener(this);
 	}
@@ -179,9 +179,14 @@ public class DateTimePreference extends DialogPreference implements
 		parseValue(persisted);
 
 		mEnabled = value;
+		if (mEnabled) {
+			if (!(mCal.getTimeInMillis() >= System.currentTimeMillis() + 10000)) {
+				mEnabled = false;
+				check.setChecked(false);
+			}
+		}
 
 		String created = createValue();
-
 		if (!persisted.equals(created)) {
 			persistString(created);
 		}

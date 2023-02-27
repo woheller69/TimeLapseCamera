@@ -37,8 +37,6 @@
     <string name="pref_stop_low_storage_summ">Stop recording if the storage space gets low</string>
     <string name="pref_schedule_recording">Schedule Recording</string>
     <string name="pref_stop_recording_after">Stop Recording After</string>
-    <string name="pref_date_time_enabled">enabled</string>
-    <string name="pref_date_time_disabled">disabled</string>
     <string name="pref_infinite">Infinite</string>
     <string name="pref_icon">Icon</string>
     <string name="pref_project_settings_category">Project settings</string>

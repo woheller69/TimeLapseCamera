@@ -37,8 +37,6 @@
     <string name="pref_stop_low_storage_summ">Aufnahme stoppen wenn der Speicherplatz zur Neige geht</string>
     <string name="pref_schedule_recording">Aufnahme Planen</string>
     <string name="pref_stop_recording_after">Aufnahme stoppen nach</string>
-    <string name="pref_date_time_enabled">aktiv</string>
-    <string name="pref_date_time_disabled">nicht aktiv</string>
     <string name="pref_infinite">Unendlich</string>
     <string name="pref_icon">Bild</string>
     <string name="pref_project_settings_category">Projekt Einstellungen</string>

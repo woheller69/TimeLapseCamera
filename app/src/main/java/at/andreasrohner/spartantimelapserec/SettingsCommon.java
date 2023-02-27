@@ -28,12 +28,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.hardware.Camera;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.ListPreference;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
+import android.widget.Toast;
 import at.andreasrohner.spartantimelapserec.data.RecMode;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 import at.andreasrohner.spartantimelapserec.preference.DateTimePreference;
@@ -333,6 +335,24 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 			prefFrameRate.setSummary(prefFrameRate.getEntry());
 		} else if (key.equals("pref_schedule_recording")) {
 			prefScheduleRec.setSummary(prefScheduleRec.formatDateTime());
+			RecSettings settings = new RecSettings();
+			settings.load(context, PreferenceManager.getDefaultSharedPreferences(context));
+			if (settings.isSchedRecEnabled() && settings.getSchedRecTime() > System.currentTimeMillis() + 10000){
+				Intent intent = new Intent(context, ForegroundService.class);
+				if (ForegroundService.mIsRunning){
+					Toast.makeText(context, context.getString(R.string.error_already_running), Toast.LENGTH_SHORT).show();
+				} else {
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+						context.startForegroundService(intent);
+					} else {
+						context.startService(intent);
+					}
+				}
+			} else {
+				Intent intent = new Intent(context, ForegroundService.class);
+				intent.setAction(ForegroundService.ACTION_STOP_SERVICE);
+				context.startService(intent);
+			}
 		} else if (key.equals("pref_stop_recording_after")) {
 			prefStopRecAfter.setSummary(onFormatOutputValue(prefStopRecAfter.getmValue(), "min"));
 		}else if (key.equals("pref_exposurecomp")){
