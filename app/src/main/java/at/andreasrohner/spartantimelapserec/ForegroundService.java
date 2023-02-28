@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import android.net.Uri;
+import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Handler;
@@ -99,6 +100,12 @@ public class ForegroundService extends Service implements Handler.Callback {
             return START_STICKY;
         }
         else {
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            intent = new Intent(this, ScheduleReceiver.class);
+            PendingIntent alarmIntent;
+            alarmIntent = PendingIntent.getBroadcast(getApplicationContext(),0,intent,PendingIntent.FLAG_IMMUTABLE);
+            alarmManager.cancel(alarmIntent);
+
             stop();
             return START_NOT_STICKY;
         }
