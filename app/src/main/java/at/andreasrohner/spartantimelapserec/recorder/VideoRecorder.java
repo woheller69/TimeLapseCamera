@@ -200,8 +200,7 @@ public class VideoRecorder extends Recorder implements OnInfoListener,
 	public void onInfo(MediaRecorder mr, int what, int extra) {
 		switch (what) {
 		case MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED:
-			success();
-			stop();
+			success();  //tell service to stop
 			break;
 		}
 	}

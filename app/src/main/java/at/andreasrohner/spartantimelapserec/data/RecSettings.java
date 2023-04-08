@@ -148,7 +148,7 @@ public class RecSettings {
 		stopOnLowStorage = prefs.getBoolean("pref_stop_low_storage", true);
 		initDelay = prefs.getInt("pref_initial_delay", 1000);
 		jpegQuality = prefs.getInt("pref_jpeg_quality", 90);
-		stopRecAfter = prefs.getInt("pref_stop_recording_after", 48 * 60);
+		stopRecAfter = prefs.getInt("pref_stop_recording_after", 60 * 48);  //two days
 		exposureCompensation = prefs.getInt("pref_exposurecomp",0);
 		zoom = prefs.getInt("pref_zoom",0);
 		cameraInitDelay = prefs.getInt("pref_camera_init_delay", 500);
@@ -158,7 +158,7 @@ public class RecSettings {
 		if (stopRecAfter >= 47 * 60)
 			stopRecAfter = -1;
 		else
-			stopRecAfter *= 60 * 1000;
+			stopRecAfter *= 60 * 1000;  //convert to milli seconds
 
 		String[] size = prefs.getString("pref_frame_size", "1920x1080").split("x");
 		try {

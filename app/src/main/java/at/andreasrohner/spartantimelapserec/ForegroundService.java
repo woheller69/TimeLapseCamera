@@ -98,8 +98,7 @@ public class ForegroundService extends Service implements Handler.Callback {
 
             if (listener!=null) listener.onServiceStatusChange(true);
             return START_STICKY;
-        }
-        else {
+        } else {
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             intent = new Intent(this, ScheduleReceiver.class);
             PendingIntent alarmIntent;
@@ -125,27 +124,9 @@ public class ForegroundService extends Service implements Handler.Callback {
     private void stop() {
 
         File projectDir = null;
-        if (handlerThread!=null){
-            final Handler handler = new Handler(handlerThread.getLooper());
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (recorder != null)
-                        recorder.stop();
-                    handlerThread.quit();
-                }
-            });
-            try {
-                handlerThread.join(5000);
-                if (handlerThread.isAlive()) {
-                    handlerThread.quit();
-                    handlerThread.join(2000);
-                }
-            } catch (Exception e) {
-            }
-        }
 
         if (recorder != null) {
+            recorder.stop();
             projectDir = recorder.getOutputDir();
             recorder = null;
         }
@@ -228,6 +209,9 @@ public class ForegroundService extends Service implements Handler.Callback {
 
         if ("error".equals(status)) {
             Log.e(tag, "Error: " + msg);
+            stop();
+        } else if ("success".equals(status)){
+            Log.e(tag, "Success");
             stop();
         }
 

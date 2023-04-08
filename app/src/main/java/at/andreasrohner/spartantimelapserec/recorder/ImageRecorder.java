@@ -121,8 +121,7 @@ public class ImageRecorder extends Recorder implements Runnable,
 	public void run() {
 		try {
 			if (mEndTime > 0 && mEndTime < System.currentTimeMillis()) {
-				success();
-				stop();
+				success();  //tell service to stop
 				return;
 			}
 
