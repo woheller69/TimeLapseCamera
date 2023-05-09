@@ -70,5 +70,9 @@
     <string name="pref_camera_trigger_delay">Camera trigger delay</string>
     <string name="action_about">About</string>
     <string name="pref_flash">Use Flash if available</string>
-
+    <string name="pref_video_enc_summ">Set 0 for maximum rate (default). The actual bitrate may be affected by the minimum quality required by the codec.</string>
+    <string name="format_bps">%s bit/s</string>
+    <string name="encode_best">Best quality</string>
+    <string name="pref_video_enc_hint">Enter value in bit/s</string>
+    <string name="pref_video_enc">Video Encoding Bit Rate</string>
 </resources>

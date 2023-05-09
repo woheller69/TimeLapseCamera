@@ -50,6 +50,7 @@ public class RecSettings {
 	private int cameraInitDelay;
 	private int cameraTriggerDelay;
 	private boolean cameraFlash;
+	private int videoEncodingBitRate;
 
 	public static int getInteger(SharedPreferences prefs, String key, int def) {
 		try {
@@ -135,6 +136,7 @@ public class RecSettings {
 	}
 
 	public void load(Context context, SharedPreferences prefs) {
+		videoEncodingBitRate = getInteger(prefs,"pref_video_encoding_br", 0);
 		cameraId = getInteger(prefs, "pref_camera", 0);
 		projectName = prefs.getString("pref_project_title", "");
 		projectPath = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).getPath();
@@ -340,4 +342,5 @@ public class RecSettings {
 
 	public boolean getCameraFlash() {return cameraFlash;}
 
+	public int getVideoEncodingBitRate() {return  videoEncodingBitRate;}
 }

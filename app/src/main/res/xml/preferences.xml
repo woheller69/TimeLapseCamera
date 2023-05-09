@@ -61,6 +61,14 @@
             android:key="pref_jpeg_quality"
             android:title="@string/pref_jpeg_quality" />
 
+        <EditTextPreference
+            android:key="pref_video_encoding_br"
+            android:inputType="number"
+            android:hint="@string/pref_video_enc_hint"
+            android:dialogMessage="@string/pref_video_enc_summ"
+            android:title="@string/pref_video_enc"
+                />
+
         <SwitchPreference
             android:defaultValue="false"
             android:key="pref_flash"

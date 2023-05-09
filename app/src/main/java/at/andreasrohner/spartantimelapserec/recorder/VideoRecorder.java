@@ -174,7 +174,7 @@ public class VideoRecorder extends Recorder implements OnInfoListener,
 
 		Log.i(getClass().getSimpleName(), "Starting video recording");
 		mMediaRecorder.setOnErrorListener(this);
-
+		if (mSettings.getVideoEncodingBitRate()>0) mMediaRecorder.setVideoEncodingBitRate(mSettings.getVideoEncodingBitRate());
 		mMediaRecorder.prepare();
 
 		mMediaRecorder.start();

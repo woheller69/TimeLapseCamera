@@ -70,5 +70,10 @@
     <string name="pref_camera_trigger_delay">Verzögerung für Kameraauslöser</string>
     <string name="action_about">Über</string>
     <string name="pref_flash">Blitz verwenden, falls verfügbar</string>
+    <string name="pref_video_enc_summ">Für maximale Rate auf 0 setzen (Voreinstellung). Die tatsächliche Bitrate kann durch die Mindestqualität des Codecs beeinflusst werden.</string>
+    <string name="format_bps">%s bit/s</string>
+    <string name="encode_best">Beste Qualität</string>
+    <string name="pref_video_enc_hint">Wert in bit/s eingeben</string>
+    <string name="pref_video_enc">Bitrate der Videocodierung</string>
 
 </resources>

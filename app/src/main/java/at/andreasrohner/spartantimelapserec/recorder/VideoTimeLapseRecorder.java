@@ -80,7 +80,7 @@ public class VideoTimeLapseRecorder extends VideoRecorder {
 
 		Log.i(getClass().getSimpleName(), "Starting video recording");
 		mMediaRecorder.setOnErrorListener(this);
-
+		if (mSettings.getVideoEncodingBitRate()>0) mMediaRecorder.setVideoEncodingBitRate(mSettings.getVideoEncodingBitRate());
 		mMediaRecorder.prepare();
 
 		mMediaRecorder.start();

@@ -31,6 +31,7 @@ import android.hardware.Camera;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
@@ -59,6 +60,7 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 	private SeekBarPreference prefZoom;
 	private SeekBarPreference prefCameraInitDelay;
 	private SeekBarPreference prefCameraTriggerDelay;
+	private EditTextPreference prefVideoEncodingBitRate;
 	private SwitchPreference prefFlash;
 
 	private int calcGcd(int a, int b) {
@@ -199,18 +201,21 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 		switch (RecSettings.getRecMode(prefs, "pref_rec_mode", RecMode.VIDEO_TIME_LAPSE)) {
 		case IMAGE_TIME_LAPSE:
 			prefFrameRate.setEnabled(false);
+			prefVideoEncodingBitRate.setEnabled(false);
 			prefCaptureRate.setEnabled(true);
 			prefJpegQuality.setEnabled(true);
 			prefFlash.setEnabled(true);
 			break;
 		case VIDEO:
 			prefFrameRate.setEnabled(true);
+			prefVideoEncodingBitRate.setEnabled(true);
 			prefCaptureRate.setEnabled(false);
 			prefJpegQuality.setEnabled(false);
 			prefFlash.setEnabled(false);
 			break;
 		default:
 			prefFrameRate.setEnabled(true);
+			prefVideoEncodingBitRate.setEnabled(true);
 			prefCaptureRate.setEnabled(true);
 			prefJpegQuality.setEnabled(false);
 			prefFlash.setEnabled(false);
@@ -358,6 +363,14 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 			prefCameraInitDelay.setSummary(formatTime(prefCameraInitDelay.getmValue()));
 		}else if (key.equals("pref_camera_trigger_delay")) {
 			prefCameraTriggerDelay.setSummary(formatTime(prefCameraTriggerDelay.getmValue()));
+		}else if (key.equals("pref_video_encoding_br")){
+			if (RecSettings.getInteger(prefs,"pref_video_encoding_br", 0)==0){  //reset to undefined, so hint is shown again
+				SharedPreferences.Editor editor = prefs.edit();
+				editor.remove("pref_video_encoding_br");
+				editor.commit();
+				prefVideoEncodingBitRate.setText("");  //show hint again
+			}
+			prefVideoEncodingBitRate.setSummary(RecSettings.getInteger(prefs,"pref_video_encoding_br", 0)==0 ? context.getString(R.string.encode_best) : context.getString(R.string.format_bps, prefs.getString("pref_video_encoding_br","0")));
 		}
 
 		updatePrefStatus(prefs);
@@ -368,7 +381,7 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 		SharedPreferences prefs = screen.getSharedPreferences();
 		cameraSettings = new CameraSettings();
 		cameraSettings.prefetch(prefs);
-
+		prefVideoEncodingBitRate = (EditTextPreference) screen.findPreference("pref_video_encoding_br");
 		prefFrameSize = (ListPreference) screen.findPreference("pref_frame_size");
 		prefFrameRate = (ListPreference) screen.findPreference("pref_frame_rate");
 		prefCamera = (ListPreference) screen.findPreference("pref_camera");
@@ -410,7 +423,7 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 		value = prefs.getInt("pref_stop_recording_after", -1);
 		if (value != -1)
 			prefStopRecAfter.setSummary(onFormatOutputValue(value, "min"));
-
+		prefVideoEncodingBitRate.setSummary(RecSettings.getInteger(prefs,"pref_video_encoding_br", 0)==0 ? context.getString(R.string.encode_best) : context.getString(R.string.format_bps, prefs.getString("pref_video_encoding_br","0")));
 		prefExposureComp.setSummary(Integer.toString(prefExposureComp.getmValue()));
 		prefZoom.setSummary(Integer.toString(prefZoom.getmValue()));
 		prefCameraInitDelay.setSummary(formatTime(prefCameraInitDelay.getmValue()));
