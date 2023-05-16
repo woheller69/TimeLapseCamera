@@ -1,0 +1,1 @@
+Neue Option: Bitrate der Videocodierung einstellen
