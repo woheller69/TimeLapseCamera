@@ -169,16 +169,20 @@ public class MainActivity extends AppCompatActivity implements ForegroundService
 		getMenuInflater().inflate(R.menu.main, menu);
 		if (ForegroundService.mIsRunning){
 			menu.findItem(R.id.action_start).setEnabled(false);
+			menu.findItem(R.id.action_start).setIcon(ContextCompat.getDrawable(this,R.drawable.ic_radio_button_checked_disabled_24px));
 			menu.findItem(R.id.action_preview).setEnabled(false);
+			menu.findItem(R.id.action_preview).setIcon(ContextCompat.getDrawable(this,R.drawable.ic_visibility_disabled_24px));
 
 			RecSettings settings = new RecSettings();
 			settings.load(getApplicationContext(), PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
 			if (settings.isSchedRecEnabled() && settings.getSchedRecTime() > System.currentTimeMillis()){
 				menu.findItem(R.id.action_stop).setEnabled(false);
+				menu.findItem(R.id.action_stop).setIcon(ContextCompat.getDrawable(this,R.drawable.ic_stop_circle_disabled_24px));
 			}
 
 		} else {
 			menu.findItem(R.id.action_stop).setEnabled(false);
+			menu.findItem(R.id.action_stop).setIcon(ContextCompat.getDrawable(this,R.drawable.ic_stop_circle_disabled_24px));
 		}
 		return true;
 	}
