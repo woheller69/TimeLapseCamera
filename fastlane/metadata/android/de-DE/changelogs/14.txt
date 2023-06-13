@@ -1,0 +1,1 @@
+Start/Stop/Vorschau in ActionBar verschoben
