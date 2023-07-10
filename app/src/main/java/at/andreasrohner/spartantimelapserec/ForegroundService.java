@@ -159,7 +159,7 @@ public class ForegroundService extends Service implements Handler.Callback {
                 .setOnlyAlertOnce(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT) // For N and below
                 .setContentIntent(pi)
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(R.drawable.ic_camera)
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -186,7 +186,7 @@ public class ForegroundService extends Service implements Handler.Callback {
                 .setOnlyAlertOnce(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT) // For N and below
                 .setContentIntent(pi)
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(R.drawable.ic_camera)
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
