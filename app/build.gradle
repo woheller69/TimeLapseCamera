@@ -8,9 +8,9 @@ android {
     defaultConfig {
         applicationId "org.woheller69.TimeLapseCam"
         minSdk 23
-        targetSdk 31
-        versionCode 14
-        versionName "1.4"
+        targetSdk 33
+        versionCode 15
+        versionName "1.5"
 
     }
 
