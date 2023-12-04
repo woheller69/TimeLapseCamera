@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">延时摄影相机</string>
+    <string name="app_name">阿宅相机</string>
     <string name="action_start">开始</string>
     <string name="action_stop">停止</string>
     <string name="action_unmute_all_streams">重置音频音量</string>
