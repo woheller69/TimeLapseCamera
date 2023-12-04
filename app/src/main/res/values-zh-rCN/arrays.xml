@@ -1,1 +1,12 @@
-
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <string-array name="pref_rec_mode_entries">
+        <item>普通视频（MP4）</item>
+        <item>延时视频（MP4）</item>
+        <item>延时图像（JPG）</item>
+    </string-array>
+    <string-array name="pref_rec_mode_values">
+        <item>视频</item>
+        <item>延时视频</item>
+        <item>延时图像</item>
+    </string-array>
+</resources>
