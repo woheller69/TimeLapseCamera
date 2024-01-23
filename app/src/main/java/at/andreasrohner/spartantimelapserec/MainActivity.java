@@ -72,8 +72,9 @@ public class MainActivity extends AppCompatActivity implements ForegroundService
 			}
 		}
 
-		//SCHEDULE_EXACT_ALARM: on Android 12 this permission is automatically granted by the Android system but on Android 13 we need to check if the user has granted this permission.
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+		//SCHEDULE_EXACT_ALARM: on Android 12 this permission should usually be automatically granted by the Android system
+		//For Android 13+ we use USE_EXACT_ALARM
+		if (android.os.Build.VERSION.SDK_INT == android.os.Build.VERSION_CODES.S) {
 			AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 			if (!alarmManager.canScheduleExactAlarms()) {
 				Intent intent2 = new Intent();

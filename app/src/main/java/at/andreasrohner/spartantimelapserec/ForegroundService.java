@@ -11,6 +11,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 
+import android.content.pm.ServiceInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION;
@@ -194,7 +195,7 @@ public class ForegroundService extends Service implements Handler.Callback {
                 .setContentTitle(getString(R.string.app_name)).build();
 
         if (VERSION.SDK_INT >= VERSION_CODES.Q) {
-            startForeground(NOTIF_ID, notification, FOREGROUND_SERVICE_TYPE_MANIFEST);
+            startForeground(NOTIF_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA);
         } else {
             startForeground(NOTIF_ID, notification);
         }

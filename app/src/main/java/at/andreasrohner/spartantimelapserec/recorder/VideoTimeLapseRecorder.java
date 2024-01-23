@@ -25,6 +25,7 @@ import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 
@@ -63,14 +64,13 @@ public class VideoTimeLapseRecorder extends VideoRecorder {
 						mSettings.getRecProfile()).videoFrameRate;
 			}
 
-			int duration = (int) (((double) (mSettings.getStopRecAfter() / mSettings
-					.getCaptureRate())) / mRate * 1000);
-
+			int duration = (int) (((double) (mSettings.getStopRecAfter() / mSettings.getCaptureRate())) / mRate * 1000); //Duration of the video
 			if (duration < 500) {
 				handleError(getClass().getSimpleName(),
 						mContext.getString(R.string.pref_stop_recording_after)
 								+ " is too short in relation to the "
 								+ mContext.getString(R.string.pref_capture_rate));
+				Toast.makeText(mContext, mContext.getString(R.string.error_too_short), Toast.LENGTH_SHORT).show();
 				return;
 			}
 
