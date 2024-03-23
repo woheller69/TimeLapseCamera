@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements ForegroundService
 		IntentFilter filter = new IntentFilter();
 		filter.addAction("android.intent.action.ACTION_BATTERY_LOW");
 		filter.addAction("android.intent.action.ACTION_DEVICE_STORAGE_LOW");
+		filter.addAction("android.intent.action.ACTION_SHUTDOWN");
 		//filter.addAction("android.intent.action.AIRPLANE_MODE"); //for testing
 		ContextCompat.registerReceiver(getApplicationContext(),broadcastReceiver, filter, ContextCompat.RECEIVER_EXPORTED);
 

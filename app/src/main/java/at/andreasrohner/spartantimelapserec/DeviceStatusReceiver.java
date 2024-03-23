@@ -37,12 +37,13 @@ public class DeviceStatusReceiver extends BroadcastReceiver {
 		 * battery or storage is low if we don't stop the recording the mp4
 		 * files get corrupted and are not playable any more
 		 */
-		if ((stopOnLowBattery && intent.getAction().equals(Intent.ACTION_BATTERY_LOW)) || (stopOnLowStorage && intent.getAction().equals(Intent.ACTION_DEVICE_STORAGE_LOW))){
+		if ((stopOnLowBattery && intent.getAction().equals(Intent.ACTION_BATTERY_LOW)) || (stopOnLowStorage && intent.getAction().equals(Intent.ACTION_DEVICE_STORAGE_LOW)) || intent.getAction().equals(Intent.ACTION_SHUTDOWN)){
 			Intent stopintent = new Intent(context, ForegroundService.class);
 			stopintent.setAction(ForegroundService.ACTION_STOP_SERVICE);
 			context.startService(stopintent);
 		}
 
-		//if (intent.getAction().equals(Intent.ACTION_AIRPLANE_MODE_CHANGED)) Log.d("DeviceStatusReceiver","Test");
+		//if (intent.getAction().equals(Intent.ACTION_AIRPLANE_MODE_CHANGED)) Log.d("DeviceStatusReceiver","ACTION_AIRPLANE_MODE_CHANGED");  //for testing: Activate filter in MainActivity
+
 	}
 }
