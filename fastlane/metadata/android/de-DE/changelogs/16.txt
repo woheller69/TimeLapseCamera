@@ -1,0 +1,2 @@
+Update auf Android 13 SDK
+Aufnahme stoppen, wenn Gerät ausgeschaltet wird
