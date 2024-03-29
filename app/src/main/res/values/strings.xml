@@ -54,6 +54,7 @@
     <string name="time_format_hours">hours</string>
     <string name="pref_exposure_compensation">Exposure Compensation</string>
     <string name="notification_preparing">Preparing recording</string>
+    <string name="notification_took_img">Took Image</string>
     <string name="error_missing_permission">Missing permission</string>
     <string name="error_already_running">Already running</string>
     <string name="pref_zoom">Zoom</string>

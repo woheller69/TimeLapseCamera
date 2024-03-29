@@ -76,4 +76,5 @@
     <string name="pref_video_enc_hint">Wert in bit/s eingeben</string>
     <string name="pref_video_enc">Bitrate der Videocodierung</string>
     <string name="error_too_short">Video zu kurz</string>
+    <string name="notification_took_img">Photos erstellt</string>
 </resources>

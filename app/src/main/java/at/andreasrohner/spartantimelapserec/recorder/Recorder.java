@@ -31,51 +31,58 @@ import android.os.SystemClock;
 import android.os.PowerManager.WakeLock;
 import android.text.format.DateFormat;
 import android.util.Log;
+
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
 import at.andreasrohner.spartantimelapserec.sensor.OrientationSensor;
 
 public abstract class Recorder {
+
 	protected Context mContext;
+
 	protected RecSettings mSettings;
+
 	protected Camera mCamera;
+
 	protected boolean mCanDisableShutterSound;
+
 	protected Handler mHandler;
+
 	protected int mInitDelay;
+
 	private OrientationSensor mOrientation;
+
 	protected MuteShutter mMute;
+
 	private File mOutputDir;
+
 	private int mFileIndex;
 
-	public static Recorder getInstance(RecSettings settings,
-			 Context context, Handler handler,
-			WakeLock wakeLock) {
+	private int mImageCount = 0;
+
+	public static Recorder getInstance(RecSettings settings, Context context, Handler handler, WakeLock wakeLock) {
 		Recorder recorder;
 
 		switch (settings.getRecMode()) {
-		case VIDEO_TIME_LAPSE:
-			recorder = new VideoTimeLapseRecorder(settings,
-					context, handler);
-			break;
-		case IMAGE_TIME_LAPSE:
-			if (settings.shouldUsePowerSaveMode()) {
-				recorder = new PowerSavingImageRecorder(settings,
-						 context, handler, wakeLock);
-			} else {
-				recorder = new ImageRecorder(settings,  context,
-						handler);
-			}
-			break;
-		default:
-			recorder = new VideoRecorder(settings,  context,
-					handler);
-			break;
+			case VIDEO_TIME_LAPSE:
+				recorder = new VideoTimeLapseRecorder(settings, context, handler);
+				break;
+			case IMAGE_TIME_LAPSE:
+				if (settings.shouldUsePowerSaveMode()) {
+					recorder = new PowerSavingImageRecorder(settings, context, handler, wakeLock);
+				} else {
+					recorder = new ImageRecorder(settings, context, handler);
+				}
+				break;
+			default:
+				recorder = new VideoRecorder(settings, context, handler);
+				break;
 		}
 
 		return recorder;
 	}
 
-	public Recorder(RecSettings settings, 			Context context, Handler handler) {
+	public Recorder(RecSettings settings, Context context, Handler handler) {
 		mContext = context;
 
 		mOrientation = new OrientationSensor(context);
@@ -89,10 +96,7 @@ public abstract class Recorder {
 		mCanDisableShutterSound = info.canDisableShutterSound;
 
 		mMute = new MuteShutter(context);
-		mOutputDir = new File(settings.getProjectPath() + "/"
-				+ settings.getProjectName() + "/"
-				+ DateFormat.format("yyyy-MM-dd", System.currentTimeMillis())
-				+ "/");
+		mOutputDir = new File(settings.getProjectPath() + "/" + settings.getProjectName() + "/" + DateFormat.format("yyyy-MM-dd", System.currentTimeMillis()) + "/");
 
 		if (!mOutputDir.exists() && !mOutputDir.mkdirs()) {
 			Log.e("TimeLapseCamera", "Failed to make directory: " + mOutputDir.toString());
@@ -116,28 +120,29 @@ public abstract class Recorder {
 	}
 
 	protected void handleError(String tag, String msg) {
-		if (mHandler != null) {
-			Message m = new Message();
-			Bundle b = new Bundle();
-			b.putString("status", "error");
-			b.putString("tag", tag);
-			b.putString("msg", msg);
-			m.setData(b);
-			m.setTarget(mHandler);
-			mHandler.sendMessage(m);
-			mHandler = null;
-		}
+		Bundle b = new Bundle();
+		b.putString("status", "error");
+		b.putString("tag", tag);
+		b.putString("msg", msg);
+		sendMessage(b);
+		mHandler = null;
 	}
 
 	protected void success() {
-		if (mHandler != null) {
-			Message m = new Message();
-			Bundle b = new Bundle();
-			b.putString("status", "success");
-			m.setData(b);
-			m.setTarget(mHandler);
-			mHandler.sendMessage(m);
+		Bundle b = new Bundle();
+		b.putString("status", "success");
+		sendMessage(b);
+	}
+
+	protected void sendMessage(Bundle b) {
+		if (mHandler == null) {
+			return;
 		}
+
+		Message m = new Message();
+		m.setData(b);
+		m.setTarget(mHandler);
+		mHandler.sendMessage(m);
 	}
 
 	protected void disableOrientationSensor() {
@@ -160,6 +165,7 @@ public abstract class Recorder {
 		mHandler = null;
 		mContext = null;
 		mMute = null;
+		mImageCount = 0;
 	}
 
 	protected abstract void prepareRecord() throws Exception;
@@ -180,7 +186,7 @@ public abstract class Recorder {
 			}
 		};
 
-		if (mHandler == null  || mContext == null)
+		if (mHandler == null || mContext == null)
 			return;
 
 		enableOrientationSensor();
@@ -210,13 +216,18 @@ public abstract class Recorder {
 	protected File getOutputFile(String ext) throws IOException {
 		File outFile;
 		do {
-			outFile = new File(mOutputDir, mSettings.getProjectName()
-					+ mFileIndex + "." + ext);
+			outFile = new File(mOutputDir, mSettings.getProjectName() + mFileIndex + "." + ext);
 			mFileIndex++;
 		} while (outFile.isFile());
 
 		if (!mOutputDir.isDirectory())
 			throw new IOException("Could not open directory");
+
+		mImageCount++;
+		Bundle b = new Bundle();
+		b.putString("status", "image");
+		b.putInt("id", mImageCount);
+		sendMessage(b);
 
 		return outFile;
 	}
@@ -226,7 +237,6 @@ public abstract class Recorder {
 			return mOrientation.getCameraRotation(cameraId);
 		return 0;
 	}
-
 
 	protected void muteShutter() {
 		if (mSettings != null && mSettings.isMuteShutter()) {

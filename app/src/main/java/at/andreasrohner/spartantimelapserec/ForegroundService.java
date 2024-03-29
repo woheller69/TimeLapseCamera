@@ -11,7 +11,9 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 
+import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION;
@@ -26,30 +28,42 @@ import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationCompat.Builder;
 
 import java.io.File;
 
+import androidx.core.app.NotificationManagerCompat;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 import at.andreasrohner.spartantimelapserec.recorder.Recorder;
 
 public class ForegroundService extends Service implements Handler.Callback {
 
     public static final String ACTION_STOP_SERVICE = "TimeLapse.action.STOP_SERVICE";
+
+    public static final int LED_NOTIFICATION_ID = 1001;
+
     public static boolean mIsRunning = false;
+
     private RecSettings settings;
+
     private Recorder recorder;
+
     private HandlerThread handlerThread;
+
     private WakeLock mWakeLock;
+
     private static statusListener listener;
+
     private NotificationManager mNotificationManager;
 
     public interface statusListener {
+
         void onServiceStatusChange(boolean status);
     }
 
-    public static void registerStatusListener(statusListener l){
+    public static void registerStatusListener(statusListener l) {
         listener = l;
     }
 
@@ -85,8 +99,7 @@ public class ForegroundService extends Service implements Handler.Callback {
                 Context context = getApplicationContext();
                 Handler handler = new Handler(handlerThread.getLooper(), this);
 
-                recorder = Recorder.getInstance(settings, context,
-                        handler, mWakeLock);
+                recorder = Recorder.getInstance(settings, context, handler, mWakeLock);
 
                 handler.post(new Runnable() {
                     @Override
@@ -97,13 +110,14 @@ public class ForegroundService extends Service implements Handler.Callback {
                 updateNotif();
             }
 
-            if (listener!=null) listener.onServiceStatusChange(true);
+            if (listener != null)
+                listener.onServiceStatusChange(true);
             return START_STICKY;
         } else {
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             intent = new Intent(this, ScheduleReceiver.class);
             PendingIntent alarmIntent;
-            alarmIntent = PendingIntent.getBroadcast(getApplicationContext(),0,intent,PendingIntent.FLAG_IMMUTABLE);
+            alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
             alarmManager.cancel(alarmIntent);
 
             stop();
@@ -121,7 +135,6 @@ public class ForegroundService extends Service implements Handler.Callback {
         super.onDestroy();
     }
 
-
     private void stop() {
 
         File projectDir = null;
@@ -136,38 +149,30 @@ public class ForegroundService extends Service implements Handler.Callback {
             mWakeLock.release();
 
         if (projectDir != null && projectDir.exists())
-            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                    Uri.fromFile(projectDir)));
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(projectDir)));
 
         mIsRunning = false;
-        if (listener!=null) listener.onServiceStatusChange(false);
+        if (listener != null)
+            listener.onServiceStatusChange(false);
         stopForeground(true);
         stopSelf();
     }
 
     private static final int NOTIF_ID = 123;
+
     private static final String CHANNEL_ID = "TimeLapseID";
 
-    private void updateNotif(){
+    private void updateNotif() {
 
         Intent intent = new Intent(this, MainActivity.class);
         intent.setAction(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         PendingIntent pi = PendingIntent.getActivity(this, NOTIF_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-        Notification notification = new Builder(this, CHANNEL_ID)
-                .setSilent(true)
-                .setOnlyAlertOnce(true)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT) // For N and below
-                .setContentIntent(pi)
-                .setSmallIcon(R.drawable.ic_camera)
-                .setAutoCancel(false)
-                .setOngoing(true)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setContentText(getString(R.string.info_recording_running))
-                .setContentTitle(getString(R.string.app_name)).build();
+        Notification notification = new Builder(this, CHANNEL_ID).setSilent(true).setOnlyAlertOnce(true).setPriority(NotificationCompat.PRIORITY_DEFAULT) // For N and below
+              .setContentIntent(pi).setSmallIcon(R.drawable.ic_camera).setAutoCancel(false).setOngoing(true).setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setContentText(getString(R.string.info_recording_running)).setContentTitle(getString(R.string.app_name)).build();
 
-                mNotificationManager.notify(NOTIF_ID,notification);
+        mNotificationManager.notify(NOTIF_ID, notification);
     }
 
     private void initNotif() {
@@ -182,17 +187,8 @@ public class ForegroundService extends Service implements Handler.Callback {
         PendingIntent pi = PendingIntent.getActivity(this, NOTIF_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         // For N and below
-        Notification notification = new Builder(this, CHANNEL_ID)
-                .setSilent(true)
-                .setOnlyAlertOnce(true)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT) // For N and below
-                .setContentIntent(pi)
-                .setSmallIcon(R.drawable.ic_camera)
-                .setAutoCancel(false)
-                .setOngoing(true)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setContentText(getString(R.string.notification_preparing))
-                .setContentTitle(getString(R.string.app_name)).build();
+        Notification notification = new Builder(this, CHANNEL_ID).setSilent(true).setOnlyAlertOnce(true).setPriority(NotificationCompat.PRIORITY_DEFAULT) // For N and below
+              .setContentIntent(pi).setSmallIcon(R.drawable.ic_camera).setAutoCancel(false).setOngoing(true).setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setContentText(getString(R.string.notification_preparing)).setContentTitle(getString(R.string.app_name)).build();
 
         if (VERSION.SDK_INT >= VERSION_CODES.Q) {
             startForeground(NOTIF_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA);
@@ -211,9 +207,33 @@ public class ForegroundService extends Service implements Handler.Callback {
         if ("error".equals(status)) {
             Log.e(tag, "Error: " + msg);
             stop();
-        } else if ("success".equals(status)){
+        } else if ("success".equals(status)) {
             Log.e(tag, "Success");
             stop();
+        } else if ("image".equals(status)) {
+            int count = m.getData().getInt("id");
+            Log.e(tag, "Image count: " + count);
+
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            // clear previous notification
+            notificationManager.cancel(LED_NOTIFICATION_ID);
+
+            Builder notification = new Builder(this, CHANNEL_ID)
+                  .setPriority(NotificationCompat.PRIORITY_HIGH) // For N and below
+                  .setSmallIcon(R.drawable.ic_camera)
+                  .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                  .setContentText(String.valueOf(count))
+                  .setContentTitle(getString(R.string.notification_took_img))
+                  .setDefaults(Notification.DEFAULT_LIGHTS| Notification.DEFAULT_SOUND);
+
+            // Show different notifications
+            if (count % 2 == 0) {
+                notification.setLights(Color.MAGENTA, 100, 100);
+            } else {
+                notification.setLights(Color.CYAN, 100, 100);
+            }
+
+            notificationManager.notify(LED_NOTIFICATION_ID, notification.build());
         }
 
         return true;
