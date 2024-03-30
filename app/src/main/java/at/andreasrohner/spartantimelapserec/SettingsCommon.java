@@ -36,31 +36,50 @@ import android.preference.ListPreference;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
+import android.widget.Toast;
+
 import at.andreasrohner.spartantimelapserec.data.RecMode;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 import at.andreasrohner.spartantimelapserec.preference.DateTimePreference;
 import at.andreasrohner.spartantimelapserec.preference.IntervalPickerPreference;
 import at.andreasrohner.spartantimelapserec.preference.SeekBarPreference;
+import at.andreasrohner.spartantimelapserec.rest.RestService;
 import at.andreasrohner.spartantimelapserec.sensor.CameraSettings;
 
-public class SettingsCommon implements OnSharedPreferenceChangeListener,
-		SeekBarPreference.OnFormatOutputValueListener {
+public class SettingsCommon implements OnSharedPreferenceChangeListener, SeekBarPreference.OnFormatOutputValueListener {
+
 	private Context context;
+
 	private CameraSettings cameraSettings;
+
 	private ListPreference prefFrameSize;
+
 	private ListPreference prefFrameRate;
+
 	private ListPreference prefCamera;
+
 	private ListPreference prefRecMode;
+
 	private SeekBarPreference prefInitialDelay;
+
 	private IntervalPickerPreference prefCaptureRate;
+
 	private SeekBarPreference prefJpegQuality;
+
 	private DateTimePreference prefScheduleRec;
+
 	private SeekBarPreference prefStopRecAfter;
+
 	private SeekBarPreference prefExposureComp;
+
 	private SeekBarPreference prefZoom;
+
 	private SeekBarPreference prefCameraInitDelay;
+
 	private SeekBarPreference prefCameraTriggerDelay;
+
 	private EditTextPreference prefVideoEncodingBitRate;
+
 	private SwitchPreference prefFlash;
 
 	private int calcGcd(int a, int b) {
@@ -75,15 +94,15 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 
 		final List<int[]> sizes;
 		switch (RecSettings.getRecMode(prefs, "pref_rec_mode", RecMode.VIDEO_TIME_LAPSE)) {
-		case IMAGE_TIME_LAPSE:
-			sizes = cameraSettings.getPictureSizes(prefs, camId);
-			break;
-		case VIDEO:
-			sizes = cameraSettings.getFrameSizes(prefs, camId, false);
-			break;
-		default:
-			sizes = cameraSettings.getFrameSizes(prefs, camId, true);
-			break;
+			case IMAGE_TIME_LAPSE:
+				sizes = cameraSettings.getPictureSizes(prefs, camId);
+				break;
+			case VIDEO:
+				sizes = cameraSettings.getFrameSizes(prefs, camId, false);
+				break;
+			default:
+				sizes = cameraSettings.getFrameSizes(prefs, camId, true);
+				break;
 		}
 
 		final ArrayList<String> sizesList = new ArrayList<String>();
@@ -96,8 +115,7 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 			if (defSize.equals(value))
 				defInd = sizesListVal.size();
 
-			sizesList.add(value + " (" + (size[0] / gcd) + ":"
-					+ (size[1] / gcd) + ")");
+			sizesList.add(value + " (" + (size[0] / gcd) + ":" + (size[1] / gcd) + ")");
 			sizesListVal.add(value);
 
 		}
@@ -159,6 +177,8 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 		prefFrameRate.setEnabled(false);
 		prefFrameSize.setEnabled(false);
 
+		startStopRestApiServer();
+
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -177,8 +197,7 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 
 		for (int i = 0; i < cameraCount; ++i) {
 			Camera.getCameraInfo(i, cameraInfo);
-			String item = context.getString(R.string.pref_camera_camera) + " "
-					+ i + " (";
+			String item = context.getString(R.string.pref_camera_camera) + " " + i + " (";
 
 			if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT)
 				item += context.getString(R.string.pref_camera_front);
@@ -199,46 +218,43 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 
 	private void updatePrefStatus(SharedPreferences prefs) {
 		switch (RecSettings.getRecMode(prefs, "pref_rec_mode", RecMode.VIDEO_TIME_LAPSE)) {
-		case IMAGE_TIME_LAPSE:
-			prefFrameRate.setEnabled(false);
-			prefVideoEncodingBitRate.setEnabled(false);
-			prefCaptureRate.setEnabled(true);
-			prefJpegQuality.setEnabled(true);
-			prefFlash.setEnabled(true);
-			break;
-		case VIDEO:
-			prefFrameRate.setEnabled(true);
-			prefVideoEncodingBitRate.setEnabled(true);
-			prefCaptureRate.setEnabled(false);
-			prefJpegQuality.setEnabled(false);
-			prefFlash.setEnabled(false);
-			break;
-		default:
-			prefFrameRate.setEnabled(true);
-			prefVideoEncodingBitRate.setEnabled(true);
-			prefCaptureRate.setEnabled(true);
-			prefJpegQuality.setEnabled(false);
-			prefFlash.setEnabled(false);
-			break;
+			case IMAGE_TIME_LAPSE:
+				prefFrameRate.setEnabled(false);
+				prefVideoEncodingBitRate.setEnabled(false);
+				prefCaptureRate.setEnabled(true);
+				prefJpegQuality.setEnabled(true);
+				prefFlash.setEnabled(true);
+				break;
+			case VIDEO:
+				prefFrameRate.setEnabled(true);
+				prefVideoEncodingBitRate.setEnabled(true);
+				prefCaptureRate.setEnabled(false);
+				prefJpegQuality.setEnabled(false);
+				prefFlash.setEnabled(false);
+				break;
+			default:
+				prefFrameRate.setEnabled(true);
+				prefVideoEncodingBitRate.setEnabled(true);
+				prefCaptureRate.setEnabled(true);
+				prefJpegQuality.setEnabled(false);
+				prefFlash.setEnabled(false);
+				break;
 		}
 
 		// disable the empty lists
-		if (prefFrameRate.getEntries() == null
-				|| prefFrameRate.getEntries().length == 0) {
+		if (prefFrameRate.getEntries() == null || prefFrameRate.getEntries().length == 0) {
 			prefFrameRate.setSummary(null);
 			prefFrameRate.setEnabled(false);
 		}
 
-		if (prefFrameSize.getEntries() == null
-				|| prefFrameSize.getEntries().length == 0) {
+		if (prefFrameSize.getEntries() == null || prefFrameSize.getEntries().length == 0) {
 			prefFrameSize.setSummary(null);
 			prefFrameSize.setEnabled(false);
 		} else {
 			prefFrameSize.setEnabled(true);
 		}
 
-		if (prefCamera.getEntries() == null
-				|| prefCamera.getEntries().length == 0) {
+		if (prefCamera.getEntries() == null || prefCamera.getEntries().length == 0) {
 			prefCamera.setSummary(null);
 			prefCamera.setEnabled(false);
 		}
@@ -254,7 +270,7 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 
 	private String formatTime(int millis) {
 		if (millis < 1000)
-			return millis + " "+ context.getString(R.string.time_format_msec);
+			return millis + " " + context.getString(R.string.time_format_msec);
 
 		double secs = ((double) (millis % 60000)) / 1000;
 		String formatSec = " " + context.getString(R.string.time_format_sec);
@@ -314,11 +330,11 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 			setFrameSizes(prefs);
 			setExposureCompRange(prefs);
 			setZoomRange(prefs);
-			prefs.edit().putInt("pref_exposurecomp",0).apply();
+			prefs.edit().putInt("pref_exposurecomp", 0).apply();
 		} else if (key.equals("pref_mute_shutter")) {
-			boolean mute = prefs.getBoolean(key,false);
+			boolean mute = prefs.getBoolean(key, false);
 			//ToDo Show dialog and explain that this is needed to allow muting the phone
-			NotificationManager notificationManager =(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+			NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 			if (!notificationManager.isNotificationPolicyAccessGranted() && mute) {
 				Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
 				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -341,9 +357,9 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 			prefScheduleRec.setSummary(prefScheduleRec.formatDateTime());
 			RecSettings settings = new RecSettings();
 			settings.load(context, PreferenceManager.getDefaultSharedPreferences(context));
-			if (settings.isSchedRecEnabled() && settings.getSchedRecTime() > System.currentTimeMillis()){
+			if (settings.isSchedRecEnabled() && settings.getSchedRecTime() > System.currentTimeMillis()) {
 				Intent intent = new Intent(context, ForegroundService.class);
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 					context.startForegroundService(intent);
 				} else {
 					context.startService(intent);
@@ -355,25 +371,59 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 			}
 		} else if (key.equals("pref_stop_recording_after")) {
 			prefStopRecAfter.setSummary(onFormatOutputValue(prefStopRecAfter.getmValue(), "min"));
-		}else if (key.equals("pref_exposurecomp")){
+		} else if (key.equals("pref_exposurecomp")) {
 			prefExposureComp.setSummary(Integer.toString(prefExposureComp.getmValue()));
-		}else if (key.equals("pref_zoom")){
+		} else if (key.equals("pref_zoom")) {
 			prefZoom.setSummary(Integer.toString(prefZoom.getmValue()));
-		}else if (key.equals("pref_camera_init_delay")) {
+		} else if (key.equals("pref_camera_init_delay")) {
 			prefCameraInitDelay.setSummary(formatTime(prefCameraInitDelay.getmValue()));
-		}else if (key.equals("pref_camera_trigger_delay")) {
+		} else if (key.equals("pref_camera_trigger_delay")) {
 			prefCameraTriggerDelay.setSummary(formatTime(prefCameraTriggerDelay.getmValue()));
-		}else if (key.equals("pref_video_encoding_br")){
-			if (RecSettings.getInteger(prefs,"pref_video_encoding_br", 0)==0){  //reset to undefined, so hint is shown again
+		} else if (key.equals("pref_video_encoding_br")) {
+			if (RecSettings.getInteger(prefs, "pref_video_encoding_br", 0) == 0) {  //reset to undefined, so hint is shown again
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.remove("pref_video_encoding_br");
 				editor.commit();
 				prefVideoEncodingBitRate.setText("");  //show hint again
 			}
-			prefVideoEncodingBitRate.setSummary(RecSettings.getInteger(prefs,"pref_video_encoding_br", 0)==0 ? context.getString(R.string.encode_best) : context.getString(R.string.format_bps, prefs.getString("pref_video_encoding_br","0")));
+			prefVideoEncodingBitRate.setSummary(RecSettings.getInteger(prefs, "pref_video_encoding_br", 0) == 0 ? context.getString(R.string.encode_best) : context.getString(R.string.format_bps, prefs.getString("pref_video_encoding_br", "0")));
+		} else if (key.equals("pref_restapi_enabled")) {
+			startStopRestApiServer();
 		}
 
 		updatePrefStatus(prefs);
+	}
+
+	/**
+	 * Start or stop REST API Server, as set by the preference 'pref_restapi_enabled'.
+	 * If already in the correct state, it does nothing.
+	 */
+	private void startStopRestApiServer() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		boolean restApiEnabled = prefs.getBoolean("pref_restapi_enabled", false);
+
+		if (RestService.isRunning() == restApiEnabled) {
+			// The service and settings are in the same state - nothing to do
+			return;
+		}
+
+		if (restApiEnabled) {
+			Intent intent = new Intent(context, RestService.class);
+			if (!RestService.isRunning()) {
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+					context.startForegroundService(intent);
+				} else {
+					context.startService(intent);
+				}
+			}
+
+			Toast.makeText(context, context.getText(R.string.info_restapi_started), Toast.LENGTH_SHORT).show();
+		} else {
+			Intent intent = new Intent(context, RestService.class);
+			context.stopService(intent);
+
+			Toast.makeText(context, context.getText(R.string.info_restapi_stopped), Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	public void onCreate(Context context, PreferenceScreen screen) {
@@ -423,7 +473,7 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 		value = prefs.getInt("pref_stop_recording_after", -1);
 		if (value != -1)
 			prefStopRecAfter.setSummary(onFormatOutputValue(value, "min"));
-		prefVideoEncodingBitRate.setSummary(RecSettings.getInteger(prefs,"pref_video_encoding_br", 0)==0 ? context.getString(R.string.encode_best) : context.getString(R.string.format_bps, prefs.getString("pref_video_encoding_br","0")));
+		prefVideoEncodingBitRate.setSummary(RecSettings.getInteger(prefs, "pref_video_encoding_br", 0) == 0 ? context.getString(R.string.encode_best) : context.getString(R.string.format_bps, prefs.getString("pref_video_encoding_br", "0")));
 		prefExposureComp.setSummary(Integer.toString(prefExposureComp.getmValue()));
 		prefZoom.setSummary(Integer.toString(prefZoom.getmValue()));
 		prefCameraInitDelay.setSummary(formatTime(prefCameraInitDelay.getmValue()));
@@ -445,13 +495,11 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener,
 	}
 
 	public void onResume(PreferenceScreen screen) {
-		screen.getSharedPreferences().registerOnSharedPreferenceChangeListener(
-				this);
+		screen.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 	}
 
 	public void onPause(PreferenceScreen screen) {
-		screen.getSharedPreferences()
-				.unregisterOnSharedPreferenceChangeListener(this);
+		screen.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
 	}
 
 	static public void setDefaultValues(Context context, SharedPreferences prefs) {

@@ -121,19 +121,10 @@ public class MainActivity extends AppCompatActivity implements ForegroundService
 	}
 
 	public void actionStart(MenuItem item) {
-		Intent intent = new Intent(this, ForegroundService.class);
-		if (ForegroundService.mIsRunning){
-			Toast.makeText(this, getString(R.string.error_already_running), Toast.LENGTH_SHORT).show();
-		} else {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-				startForegroundService(intent);
-			} else {
-				startService(intent);
-			}
-		}
+		ServiceHelper helper = new ServiceHelper(getApplicationContext());
+		helper.start();
 
 		invalidateOptionsMenu();
-
 	}
 
 	@Override
@@ -143,9 +134,8 @@ public class MainActivity extends AppCompatActivity implements ForegroundService
 	}
 
 	public void actionStop(MenuItem item) {
-		Intent intent = new Intent(this, ForegroundService.class);
-		intent.setAction(ForegroundService.ACTION_STOP_SERVICE);
-		startService(intent);
+		ServiceHelper helper = new ServiceHelper(getApplicationContext());
+		helper.stop();
 
 		invalidateOptionsMenu();
 	}
