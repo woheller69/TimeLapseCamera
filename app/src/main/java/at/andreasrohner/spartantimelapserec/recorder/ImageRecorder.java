@@ -49,6 +49,11 @@ public class ImageRecorder extends Recorder implements Runnable,
 	protected AutoFocusCallback autoFocusCallback;
 	protected boolean mWaitCamReady;
 
+	/**
+	 * Current / last recorded image
+	 */
+	private static File currentRecordedImage;
+
 	public ImageRecorder(RecSettings settings,
 			Context context, Handler handler) {
 		super(settings, context, handler);
@@ -62,6 +67,13 @@ public class ImageRecorder extends Recorder implements Runnable,
 
 		pictureCallback=this;
 		autoFocusCallback=this;
+	}
+
+	/**
+	 * @return Current / last recorded image
+	 */
+	public static File getCurrentRecordedImage() {
+		return currentRecordedImage;
 	}
 
 	@Override
@@ -91,6 +103,7 @@ public class ImageRecorder extends Recorder implements Runnable,
 	public void onPictureTaken(byte[] data, Camera camera) {
 		try {
 			File file = getOutputFile("jpg");
+			currentRecordedImage = file;
 			FileOutputStream out = new FileOutputStream(file);
 			out.write(data);
 			out.close();

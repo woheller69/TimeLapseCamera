@@ -7,6 +7,7 @@ GET /1/ctrl/status: Get current state: [stopped/running]
 GET /1/ctrl/start: Start recording
 GET /1/ctrl/stop: Stop recording
 GET /1/ctrl/param: Get parameter
+GET /1/current/img: Current / last recorded image
 GET /1/img/list: List image folders
 GET /1/img/listhtml: user clickable HTML page
 GET /1/img/<folder>/list: List folder / images

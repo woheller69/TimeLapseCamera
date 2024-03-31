@@ -28,6 +28,7 @@ import at.andreasrohner.spartantimelapserec.BuildConfig;
 import at.andreasrohner.spartantimelapserec.ForegroundService;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.ServiceHelper;
+import at.andreasrohner.spartantimelapserec.recorder.ImageRecorder;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
 import static at.andreasrohner.spartantimelapserec.R.*;
@@ -143,24 +144,8 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	 */
 	private void processRequest(String method, String url, String protocol, Map<String, String> header) throws IOException {
 		if ("GET".equals(method)) {
-			if ("/".equals(url)) {
-				replyFile(R.raw.help, "text/plain");
+			if(processGetRequest(url, header)) {
 				return;
-			}
-			if ("/favicon.ico".equals(url)) {
-				replyFile(raw.favicon, "image/x-icon");
-				return;
-			}
-
-			if (url.startsWith("/1/ctrl/")) {
-				if (processControlRequest(url.substring(8))) {
-					return;
-				}
-			}
-			if (url.startsWith("/1/img/")) {
-				if (processImageRequest(url.substring(6))) {
-					return;
-				}
 			}
 		}
 
@@ -169,6 +154,45 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 		sendLine("File not found");
 		sendLine("");
 		sendFooter();
+	}
+
+	/**
+	 * Process a GET Request
+	 * @param url URL
+	 * @param header Header fields
+	 * @return true if processed
+	 */
+	private boolean processGetRequest(String url, Map<String, String> header) throws IOException {
+		if ("/".equals(url)) {
+			replyFile(R.raw.help, "text/plain");
+			return true;
+		}
+
+		if ("/favicon.ico".equals(url)) {
+			replyFile(raw.favicon, "image/x-icon");
+			return true;
+		}
+
+		if ("/1/current/img".equals(url)) {
+			File lastImg = ImageRecorder.getCurrentRecordedImage();
+			if (lastImg != null && lastImg.isFile()) {
+				sendFileFromFilesystem(lastImg);
+				return true;
+			}
+		}
+
+		if (url.startsWith("/1/ctrl/")) {
+			if (processControlRequest(url.substring(8))) {
+				return true;
+			}
+		}
+		if (url.startsWith("/1/img/")) {
+			if (processImageRequest(url.substring(6))) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -228,24 +252,32 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 		// Download a file
 		File requestedFile = new File(rootDir, req);
 		if (requestedFile.isFile()) {
-			Map<String, String> additionalFields = new HashMap<>();
-			additionalFields.put("Content-length", String.valueOf(requestedFile.length()));
-			String mime = "application/octet-stream";
-
-			if (requestedFile.getName().endsWith(".jpg")) {
-				mime = "image/jpeg";
-			} else if (requestedFile.getName().endsWith(".mp4")) {
-				mime = "video/mp4";
-			}
-
-			sendReplyHeader(ReplyCode.FOUND, mime, additionalFields);
-			try (InputStream in = new FileInputStream(requestedFile)) {
-				copy(in, this.out);
-			}
+			sendFileFromFilesystem(requestedFile);
 			return true;
 		}
 
 		return false;
+	}
+
+	/**
+	 * Send a file from Filesystem
+	 * @param file File
+	 */
+	private void sendFileFromFilesystem(File file) throws IOException {
+		Map<String, String> additionalFields = new HashMap<>();
+		additionalFields.put("Content-length", String.valueOf(file.length()));
+		String mime = "application/octet-stream";
+
+		if (file.getName().endsWith(".jpg")) {
+			mime = "image/jpeg";
+		} else if (file.getName().endsWith(".mp4")) {
+			mime = "video/mp4";
+		}
+
+		sendReplyHeader(ReplyCode.FOUND, mime, additionalFields);
+		try (InputStream in = new FileInputStream(file)) {
+			copy(in, this.out);
+		}
 	}
 
 	/**
@@ -302,30 +334,6 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Reply help
-	 */
-	private void replyHelp() throws IOException {
-		sendReplyHeader(ReplyCode.FOUND, "text/plain");
-
-		sendLine("HELP");
-		sendLine("");
-		sendLine("GET /: Show this Help");
-		sendLine("");
-		sendLine("REST API v1:");
-		sendLine("GET /1/ctrl/status: Get current state: [stopped/running]");
-		sendLine("GET /1/ctrl/start: Start recording");
-		sendLine("GET /1/ctrl/stop: Stop recording");
-		sendLine("GET /1/ctrl/param: Get parameter");
-		sendLine("GET /1/img/list: List image folders");
-		sendLine("GET /1/img/listhtml: user clickable HTML page");
-		sendLine("GET /1/img/<folder>/list: List folder / images");
-		sendLine("GET /1/img/<folder>/<folder>/list: List folder / images");
-		sendLine("GET /1/img/<folder>/.../<image>: Download image");
-
-		sendFooter();
 	}
 
 	/**
