@@ -18,6 +18,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -25,9 +26,11 @@ import java.util.StringJoiner;
 
 import at.andreasrohner.spartantimelapserec.BuildConfig;
 import at.andreasrohner.spartantimelapserec.ForegroundService;
+import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.ServiceHelper;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
+import static at.andreasrohner.spartantimelapserec.R.*;
 
 /**
  * Handle one HTTP Connection
@@ -50,48 +53,6 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	 * Pattern for Header Date / Time
 	 */
 	private final SimpleDateFormat HTTP_DATE_FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH);
-
-	/**
-	 * HTTP Reply codes
-	 */
-	public enum ReplyCode {
-
-		/**
-		 * Found
-		 */
-		FOUND(200, "Found"),
-
-		/**
-		 * Forbidden
-		 */
-		FORBIDDEN(403, "Forbidden"),
-
-		/**
-		 * File was not found
-		 */
-		NOT_FOUND(404, "Not found");
-
-		/**
-		 * HTTP Code
-		 */
-		private final int code;
-
-		/**
-		 * Result Text
-		 */
-		private final String text;
-
-		/**
-		 * Constructor
-		 *
-		 * @param code HTTP Code
-		 * @param text Result Text
-		 */
-		private ReplyCode(int code, String text) {
-			this.code = code;
-			this.text = text;
-		}
-	}
 
 	/**
 	 * TCP Socket
@@ -183,8 +144,11 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	private void processRequest(String method, String url, String protocol, Map<String, String> header) throws IOException {
 		if ("GET".equals(method)) {
 			if ("/".equals(url)) {
-				// Reply with Help
-				replyHelp();
+				replyFile(R.raw.help, "text/plain");
+				return;
+			}
+			if ("/favicon.ico".equals(url)) {
+				replyFile(raw.favicon, "image/x-icon");
 				return;
 			}
 
@@ -205,6 +169,21 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 		sendLine("File not found");
 		sendLine("");
 		sendFooter();
+	}
+
+	/**
+	 * Reply a file from RAW resources
+	 *
+	 * @param fileId      File ID
+	 * @param contentType Content Type
+	 * @throws IOException
+	 */
+	private void replyFile(int fileId, String contentType) throws IOException {
+		sendReplyHeader(ReplyCode.FOUND, contentType);
+
+		try (InputStream in = restService.getApplicationContext().getResources().openRawResource(fileId)) {
+			copy(in, this.out);
+		}
 	}
 
 	/**
@@ -246,9 +225,20 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 			return list.output(req.substring(0, req.length() - 9));
 		}
 
+		// Download a file
 		File requestedFile = new File(rootDir, req);
 		if (requestedFile.isFile()) {
-			sendReplyHeader(ReplyCode.FOUND, "image/jpeg");
+			Map<String, String> additionalFields = new HashMap<>();
+			additionalFields.put("Content-length", String.valueOf(requestedFile.length()));
+			String mime = "application/octet-stream";
+
+			if (requestedFile.getName().endsWith(".jpg")) {
+				mime = "image/jpeg";
+			} else if (requestedFile.getName().endsWith(".mp4")) {
+				mime = "video/mp4";
+			}
+
+			sendReplyHeader(ReplyCode.FOUND, mime, additionalFields);
 			try (InputStream in = new FileInputStream(requestedFile)) {
 				copy(in, this.out);
 			}
@@ -346,14 +336,30 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 		sendLine("TimeLapseCam");
 	}
 
-	@Override
-	public void sendReplyHeader(ReplyCode code, String contentType) throws IOException {
+	/**
+	 * Send HTTP Header
+	 *
+	 * @param code             Code
+	 * @param contentType      Content Type
+	 * @param additionalFields Additional header fields
+	 * @throws IOException
+	 */
+	public void sendReplyHeader(ReplyCode code, String contentType, Map<String, String> additionalFields) throws IOException {
 		sendLine("HTTP/1.1 " + code.code + " " + code.text);
 		sendLine("Date: " + HTTP_DATE_FORMAT.format(System.currentTimeMillis()));
 		sendLine("Server: TimeLapseCam/" + BuildConfig.VERSION_NAME + " (Android)");
 		sendLine("Content-Type: " + contentType);
+		for (Map.Entry<String, String> e : additionalFields.entrySet()) {
+			sendLine(e.getKey() + ": " + e.getValue());
+		}
+
 		// Empty line / end of header
 		sendLine("");
+	}
+
+	@Override
+	public void sendReplyHeader(ReplyCode code, String contentType) throws IOException {
+		sendReplyHeader(code, contentType, Collections.emptyMap());
 	}
 
 	@Override

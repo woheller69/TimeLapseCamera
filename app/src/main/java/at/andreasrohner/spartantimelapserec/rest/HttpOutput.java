@@ -14,7 +14,7 @@ public interface HttpOutput {
 	 * @param contentType Content Type
 	 * @throws IOException
 	 */
-	public void sendReplyHeader(HttpThread.ReplyCode code, String contentType) throws IOException;
+	public void sendReplyHeader(ReplyCode code, String contentType) throws IOException;
 
 	/**
 	 * Send Line

@@ -36,7 +36,7 @@ public class ListFolderHtml extends ListFolderPlain {
 
 	@Override
 	protected void writeHeader() throws IOException {
-		out.sendReplyHeader(HttpThread.ReplyCode.FOUND, "text/html");
+		out.sendReplyHeader(ReplyCode.FOUND, "text/html");
 		out.sendLine("<html><head><title>TimeLapsCam</title></head><body>");
 		out.sendLine("<h1>List folder</h1>");
 	}

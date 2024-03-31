@@ -67,7 +67,7 @@ public class ListFolderPlain {
 	 * Write out HTTP Header
 	 */
 	protected void writeHeader() throws IOException {
-		out.sendReplyHeader(HttpThread.ReplyCode.FOUND, "text/plain");
+		out.sendReplyHeader(ReplyCode.FOUND, "text/plain");
 	}
 
 	/**
