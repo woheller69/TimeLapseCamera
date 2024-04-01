@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="x-ua-compatible" content="ie=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+
+:root {
+  --tlapse-color: #f7382c;
+}
+
+* {
+	font-family: sans-serif;
+	padding: 0;
+	margin: 0;
+}
+
+h1 {
+	color: #f7382c;
+	border-bottom: 1px solid var(--tlapse-color);
+	padding: 10px;
+	text-align: center;
+	font-size: 2em;
+}
+
+body {
+	background-color: #3b3b3b;
+	font-size: 15px;
+}
+
+div.button {
+	border-bottom: 1px solid var(--tlapse-color);
+	text-align: center;
+}
+
+div.state {
+	border-bottom: 1px solid var(--tlapse-color);
+	color: white;
+	padding-left: 3em;
+}
+
+div.button div {
+	display: inline-block;
+	text-align: center;
+	background-color: #b0b0b0;
+	font-size: 1.5em;
+	padding: 0.2em;
+	margin: 0.2em;
+}
+
+div.button div:HOVER {
+	outline: 1px solid var(--tlapse-color);
+}
+
+th {
+	font-weight: bold;
+	text-align: left;
+}
+
+td {
+	text-align: left;
+	padding-left: 1em;
+}
+
+#contents {
+	text-align: center;
+	padding: 1em;
+}
+
+#contents {
+	color: white;
+	text-align: center;
+}
+
+</style>
+
+<title>TimeLapseCam</title>
+</head>
+
+<body>
+	<h1>TimeLapseCam</h1>
+	<div class="button">
+		<div>START</div>
+		<div>STOP</div>
+		<div>REFRESH</div>
+	</div>
+	<div class="state">
+		<table>
+			<tr>
+				<th>Last refresh</th>
+				<td>xx.xx.xx xx:xx:xx</td>
+			</tr>
+			<tr>
+				<th>State</th>
+				<td>x</td>
+			</tr>
+			<tr>
+				<th>Battery</th>
+				<td>xx%</td>
+			</tr>
+			<tr>
+				<th>Last image</th>
+				<td>xx.xx.xx xx:xx:xx</td>
+			</tr>
+			<tr>
+				<th>Image count</th>
+				<td>x</td>
+			</tr>
+			<tr>
+				<th>Interval</th>
+				<td>x</td>
+			</tr>
+		</table>
+	</div>
+	<div id="contents">
+		<span>Refresh to get current image</span>
+	</div>
+</body>
+</html>
