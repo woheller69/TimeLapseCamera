@@ -1,7 +1,10 @@
 package at.andreasrohner.spartantimelapserec.rest;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.BatteryManager;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -22,7 +25,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.StringJoiner;
 
 import at.andreasrohner.spartantimelapserec.BuildConfig;
 import at.andreasrohner.spartantimelapserec.ForegroundService;
@@ -31,7 +33,7 @@ import at.andreasrohner.spartantimelapserec.ServiceHelper;
 import at.andreasrohner.spartantimelapserec.recorder.ImageRecorder;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
-import static at.andreasrohner.spartantimelapserec.R.*;
+import static at.andreasrohner.spartantimelapserec.R.raw;
 
 /**
  * Handle one HTTP Connection
@@ -68,7 +70,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	/**
 	 * HTTP REST API Service
 	 */
-	private RestService restService;
+	private final RestService restService;
 
 	/**
 	 * Constructor
@@ -144,7 +146,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	 */
 	private void processRequest(String method, String url, String protocol, Map<String, String> header) throws IOException {
 		if ("GET".equals(method)) {
-			if(processGetRequest(url, header)) {
+			if (processGetRequest(url, header)) {
 				return;
 			}
 		}
@@ -157,13 +159,35 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	}
 
 	/**
+	 * Query battery level
+	 *
+	 * @return Battery level in percent
+	 */
+	private float getBatteryLevel() {
+		Intent batteryStatus = restService.getApplicationContext().registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+		int batteryLevel = -1;
+		int batteryScale = 1;
+		if (batteryStatus != null) {
+			batteryLevel = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, batteryLevel);
+			batteryScale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, batteryScale);
+		}
+		return batteryLevel / (float) batteryScale * 100;
+	}
+
+	/**
 	 * Process a GET Request
-	 * @param url URL
+	 *
+	 * @param url    URL
 	 * @param header Header fields
 	 * @return true if processed
 	 */
 	private boolean processGetRequest(String url, Map<String, String> header) throws IOException {
 		if ("/".equals(url)) {
+			replyFile(raw.index, "text/html");
+			return true;
+		}
+
+		if ("/rest".equals(url)) {
 			replyFile(R.raw.help, "text/plain");
 			return true;
 		}
@@ -173,10 +197,14 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 			return true;
 		}
 
-		if ("/1/current/img".equals(url)) {
-			File lastImg = ImageRecorder.getCurrentRecordedImage();
-			if (lastImg != null && lastImg.isFile()) {
-				sendFileFromFilesystem(lastImg);
+		if (url.startsWith("/1/device/battery")) {
+			sendReplyHeader(ReplyCode.FOUND, "text/plain");
+			sendLine(String.valueOf(getBatteryLevel()));
+			return true;
+		}
+
+		if (url.startsWith("/1/current/")) {
+			if (processCurrentRequest(url.substring(11))) {
 				return true;
 			}
 		}
@@ -186,10 +214,49 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 				return true;
 			}
 		}
+
 		if (url.startsWith("/1/img/")) {
 			if (processImageRequest(url.substring(6))) {
 				return true;
 			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Process Current Request
+	 *
+	 * @param command Command
+	 * @return true on success, false if not a valid command
+	 */
+	private boolean processCurrentRequest(String command) throws IOException {
+		if ("img".equals(command)) {
+			File lastImg = ImageRecorder.getCurrentRecordedImage();
+			if (lastImg != null && lastImg.isFile()) {
+				sendFileFromFilesystem(lastImg);
+				return true;
+			}
+		}
+
+		String result = null;
+		if ("imgcount".equals(command)) {
+			result = String.valueOf(ImageRecorder.getRecordedImagesCount());
+		} else if ("lastimg".equals(command)) {
+			File lastImg = ImageRecorder.getCurrentRecordedImage();
+			if (lastImg == null) {
+				result = "null";
+			} else {
+				File rootDir = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).getPath());
+				String relative = rootDir.toURI().relativize(lastImg.toURI()).getPath();
+				result = lastImg.getName() + "\r\n" + lastImg.lastModified() + "\r\n" + relative;
+			}
+		}
+
+		if (result != null) {
+			sendReplyHeader(ReplyCode.FOUND, "text/plain");
+			sendLine(result);
+			return true;
 		}
 
 		return false;
@@ -230,7 +297,6 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 		}
 
 		Context ctx = restService.getApplicationContext();
-		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
 		File rootDir = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).getPath());
 
 		if (!rootDir.isDirectory()) {
@@ -261,6 +327,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 
 	/**
 	 * Send a file from Filesystem
+	 *
 	 * @param file File
 	 */
 	private void sendFileFromFilesystem(File file) throws IOException {
@@ -307,14 +374,14 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 			result = ForegroundService.mIsRunning ? "running" : "stopped";
 		} else if ("start".equals(command)) {
 			ServiceHelper helper = new ServiceHelper(restService.getApplicationContext());
-			helper.start();
+			helper.start(false);
 			result = "ok";
 		} else if ("stop".equals(command)) {
 			ServiceHelper helper = new ServiceHelper(restService.getApplicationContext());
 			helper.stop();
 			result = "ok";
 		} else if ("param".equals(command)) {
-			StringBuffer b = new StringBuffer();
+			StringBuilder b = new StringBuilder();
 
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(restService.getApplicationContext());
 			for (Map.Entry<String, ?> e : prefs.getAll().entrySet()) {

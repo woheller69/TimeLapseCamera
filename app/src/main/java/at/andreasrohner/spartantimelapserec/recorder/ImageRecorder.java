@@ -54,6 +54,11 @@ public class ImageRecorder extends Recorder implements Runnable,
 	 */
 	private static File currentRecordedImage;
 
+	/**
+	 * Count of recorded images within the whole app session
+	 */
+	private static int recordedImagesCount = 0;
+
 	public ImageRecorder(RecSettings settings,
 			Context context, Handler handler) {
 		super(settings, context, handler);
@@ -74,6 +79,13 @@ public class ImageRecorder extends Recorder implements Runnable,
 	 */
 	public static File getCurrentRecordedImage() {
 		return currentRecordedImage;
+	}
+
+	/**
+	 * @return Count of recorded images within the whole app session
+	 */
+	public static int getRecordedImagesCount() {
+		return recordedImagesCount;
 	}
 
 	@Override
@@ -108,6 +120,7 @@ public class ImageRecorder extends Recorder implements Runnable,
 			out.write(data);
 			out.close();
 			mWaitCamReady = false;
+			recordedImagesCount++;
 			scheduleNextPicture();
 		} catch (Exception e) {
 			handleError(getClass().getSimpleName(), e.getMessage());

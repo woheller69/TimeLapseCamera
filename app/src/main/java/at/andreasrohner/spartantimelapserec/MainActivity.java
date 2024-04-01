@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements ForegroundService
 
 	public void actionStart(MenuItem item) {
 		ServiceHelper helper = new ServiceHelper(getApplicationContext());
-		helper.start();
+		helper.start(true);
 
 		invalidateOptionsMenu();
 	}
