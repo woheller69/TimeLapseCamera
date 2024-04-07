@@ -83,11 +83,7 @@ td {
 #contents {
 	text-align: center;
 	padding: 1em;
-}
-
-#contents {
 	color: white;
-	text-align: center;
 }
 
 #infoImg {
@@ -97,6 +93,11 @@ td {
 </style>
 
 <script>
+
+/**
+ * Refresh interval
+ */
+let g_refreshIntervalId = null;
 
 /**
  * Loading animation interval
@@ -134,6 +135,13 @@ function stopWaitInterval() {
 function waitAnimationTimer() {
 	g_loadingIntervalCounter++;
 
+	// Show animation only after 1s (200ms * 5)
+	if (g_loadingIntervalCounter > 5) {
+		let loading = document.getElementById('loading');
+		loading.style.display = 'block'
+		loading.innerHTML = 'loading ';
+	}
+
 	let loading = document.getElementById('loading');
 	loading.innerHTML += '.';
 
@@ -150,10 +158,6 @@ function waitAnimate() {
 
 	stopWaitInterval();
 	g_loadingIntervalCounter = 0;
-
-	let loading = document.getElementById('loading');
-	loading.style.display = 'block'
-	loading.innerHTML = 'loading ';
 	
 	g_loadingIntervalId = setInterval(waitAnimationTimer, 200);
 }
@@ -166,8 +170,17 @@ function loadRest(url, callback) {
 	let xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function(){
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-			callback(xmlhttp.responseText);
+			callback(xmlhttp.responseText.trim());
 			stopWaitInterval();
+		} else if (xmlhttp.readyState == 4 && xmlhttp.status == 0) {
+			console.log(" ++++ " + xmlhttp.readyState + " / " + xmlhttp.status);
+			// Show error and stop refreshing
+			stopWaitInterval();
+			stopAutoRefresh();
+			
+			let loading = document.getElementById('loading');
+			loading.style.display = 'block'
+			loading.innerHTML = 'Loading failed!';
 		}
 	}
 	xmlhttp.open('GET', url, true);
@@ -180,8 +193,8 @@ function loadRest(url, callback) {
 function btStart() {
 	waitAnimate();
 	loadRest('/1/ctrl/start', function(data) {
-		if (data.trim() != 'ok') {
-			alert('Start failed: «' + data.trim() + '»');
+		if (data != 'ok') {
+			alert('Start failed: «' + data + '»');
 		}
 
 		btRefresh();
@@ -196,8 +209,8 @@ function btStop() {
 		waitAnimate();
 
 		loadRest('/1/ctrl/stop', function(data) {
-			if (data.trim() != 'ok') {
-				alert('Stop failed: «' + data.trim() + '»');
+			if (data != 'ok') {
+				alert('Stop failed: «' + data + '»');
 			}
 
 			btRefresh();
@@ -212,7 +225,15 @@ function btRefresh() {
 	waitAnimate();
 	
 	loadRest('/1/ctrl/status', function(data) {
-		document.getElementById('txtState').innerHTML = data;
+		let txtState = document.getElementById('txtState');
+		txtState.innerHTML = data;
+
+		if (data == 'unsure') {
+			txtState.style.backgroundColor = '#a62100';
+		} else {
+			txtState.style.backgroundColor = '';
+		}
+
 	});
 
 	loadRest('/1/device/battery', function(data) {
@@ -253,7 +274,7 @@ function btRefresh() {
 
 				let dateDiffSeconds = (new Date() - timestamp) / 1000;
 
-				if (dateDiffSeconds > 10) {
+				if (dateDiffSeconds > 10 && "running" == document.getElementById('txtState').innerHTML) {
 					txtNextImage.style.backgroundColor = '#a62100';
 					txtNextImage.innerHTML += ' overdue ' + dateDiffSeconds + 's';
 				} else {
@@ -295,6 +316,9 @@ function btRefresh() {
 			rowImageCount.style.display = '';
 			let rowNextImage = document.getElementById('rowNextImage');
 			rowNextImage.style.display = '';
+
+			let contents = document.getElementById('contents');
+			contents.style.display = '';
 		} else {
 			let rowLastImage = document.getElementById('rowLastImage');
 			rowLastImage.style.display = 'none';
@@ -302,11 +326,44 @@ function btRefresh() {
 			rowImageCount.style.display = 'none';
 			let rowNextImage = document.getElementById('rowNextImage');
 			rowNextImage.style.display = 'none';
+
+			// Last image not displayed in video mode, as this is currently not available
+			let contents = document.getElementById('contents');
+			contents.style.display = 'none';
 		}
 	});
 
 	var d = new Date();
 	document.getElementById('txtLastRefresh').innerHTML = d.toLocaleString();
+}
+
+/**
+ * Stop auto refresh
+ */
+function stopAutoRefresh() {
+	let btAutoRefresh = document.getElementById('btAutoRefresh');
+	btAutoRefresh.innerHTML = 'AUTOREFRESH';
+	clearInterval(g_refreshIntervalId);
+	g_refreshIntervalId = null;
+}
+
+
+/**
+ * Start / stop auto refresh
+ */
+function btAutoRefresh() {
+	let btAutoRefresh = document.getElementById('btAutoRefresh');
+
+	if (g_refreshIntervalId == null) {
+		btAutoRefresh.innerHTML = 'STOP REFRESH';
+		let refreshTime = g_IntervalMs;
+		if (refreshTime < 1000) {
+			refreshTime = 1000;
+		}
+		g_refreshIntervalId = setInterval(btRefresh, refreshTime);
+	} else {
+		stopAutoRefresh();
+	}
 }
 
 </script>
@@ -319,6 +376,7 @@ function btRefresh() {
 		<div onclick="btStart()">START</div>
 		<div onclick="btStop()">STOP</div>
 		<div onclick="btRefresh()">REFRESH</div>
+		<div id="btAutoRefresh" onclick="btAutoRefresh()">AUTOREFRESH</div>
 	</div>
 	<div id="loading" style="display:none">
 	</div>

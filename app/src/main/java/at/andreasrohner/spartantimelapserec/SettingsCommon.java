@@ -42,6 +42,7 @@ import at.andreasrohner.spartantimelapserec.data.RecMode;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 import at.andreasrohner.spartantimelapserec.preference.DateTimePreference;
 import at.andreasrohner.spartantimelapserec.preference.IntervalPickerPreference;
+import at.andreasrohner.spartantimelapserec.preference.IpInformation;
 import at.andreasrohner.spartantimelapserec.preference.SeekBarPreference;
 import at.andreasrohner.spartantimelapserec.rest.RestService;
 import at.andreasrohner.spartantimelapserec.sensor.CameraSettings;
@@ -81,6 +82,8 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener, SeekBar
 	private EditTextPreference prefVideoEncodingBitRate;
 
 	private SwitchPreference prefFlash;
+
+	private IpInformation prefIpInformation;
 
 	private int calcGcd(int a, int b) {
 		if (b == 0)
@@ -389,6 +392,8 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener, SeekBar
 			prefVideoEncodingBitRate.setSummary(RecSettings.getInteger(prefs, "pref_video_encoding_br", 0) == 0 ? context.getString(R.string.encode_best) : context.getString(R.string.format_bps, prefs.getString("pref_video_encoding_br", "0")));
 		} else if (key.equals("pref_restapi_enabled")) {
 			startStopRestApiServer();
+		} else if (key.equals("pref_restapi_port")) {
+			prefIpInformation.updateData();
 		}
 
 		updatePrefStatus(prefs);
@@ -446,6 +451,8 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener, SeekBar
 		prefCameraInitDelay = (SeekBarPreference) screen.findPreference("pref_camera_init_delay");
 		prefCameraTriggerDelay = (SeekBarPreference) screen.findPreference("pref_camera_trigger_delay");
 		prefFlash = (SwitchPreference) screen.findPreference("pref_flash");
+		prefIpInformation = (IpInformation) screen.findPreference("pref_restapi_information");
+
 		setZoomRange(prefs);
 		setExposureCompRange(prefs);
 		setCameras(prefs);

@@ -44,13 +44,13 @@ public class IpInformation extends DialogPreference {
 	/**
 	 * Update Data
 	 */
-	private void updateData() {
+	public void updateData() {
 		Context ctx = getContext();
 		InetAddress addr = RestService.getLocalInetAddress(ctx);
 		if (addr == null) {
 			setSummary(ctx.getString(R.string.error_no_ip_refresh));
 		} else {
-			setSummary("http://" + addr + ":" + RestService.getPort(ctx));
+			setSummary("http:/" + addr + ":" + RestService.getPort(ctx));
 		}
 	}
 }
