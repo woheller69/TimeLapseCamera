@@ -1,0 +1,3 @@
+REST API
+Remote control via http interface
+(Thanks to andreasb242)

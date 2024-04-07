@@ -503,6 +503,7 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener, SeekBar
 
 	public void onResume(PreferenceScreen screen) {
 		screen.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+		prefIpInformation.updateData();
 	}
 
 	public void onPause(PreferenceScreen screen) {

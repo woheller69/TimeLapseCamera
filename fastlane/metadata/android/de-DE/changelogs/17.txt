@@ -1,0 +1,3 @@
+REST API
+Fernbedienung über http Schnittstelle
+(Danke an andreasb242)
