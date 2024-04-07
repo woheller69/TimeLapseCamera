@@ -76,4 +76,19 @@
     <string name="pref_video_enc_hint">Enter value in bit/s</string>
     <string name="pref_video_enc">Video Encoding Bit Rate</string>
     <string name="error_too_short">Video too short</string>
+    <string name="pref_restapi_settings_category">REST API</string>
+    <string name="pref_restapi_enabled">REST API enabled</string>
+    <string name="pref_restapi_enabled_summ">Enable HTTP REST API server for remote control</string>
+    <string name="pref_restapi_port_title">HTTP server port</string>
+    <string name="pref_restapi_pw_title">Password</string>
+    <string name="pref_restapi_port_hint">Port</string>
+    <string name="pref_restapi_port_summ">Port, 1024 - 65535, default 8085</string>
+    <string name="pref_restapi_pw_summ">Password to access the REST API</string>
+    <string name="pref_restapi_pw_hint">Password</string>
+    <string name="info_restapi_started">REST API started...</string>
+    <string name="info_restapi_stopped">REST API stopped...</string>
+    <string name="error_port_invalid">Port invalid, use 8085</string>
+    <string name="pref_restapi_connectioninfo_title">Connection Info</string>
+    <string name="error_no_ip_refresh">No IP! Tap to refresh.</string>
+    <string name="notification_restapi">REST API Running</string>
 </resources>

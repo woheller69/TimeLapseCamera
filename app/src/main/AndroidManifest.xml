@@ -5,6 +5,7 @@
         android:name="android.hardware.camera"
         android:required="true" />
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"
@@ -17,6 +18,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA"/>
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -45,6 +47,11 @@
             android:exported="false"
             android:foregroundServiceType="camera"
             android:name="at.andreasrohner.spartantimelapserec.ForegroundService" />
+
+        <service
+            android:exported="false"
+            android:foregroundServiceType="camera"
+            android:name="at.andreasrohner.spartantimelapserec.rest.RestService" />
 
         <receiver android:name="at.andreasrohner.spartantimelapserec.ScheduleReceiver" />
         <receiver android:name="at.andreasrohner.spartantimelapserec.PowerSavingReceiver" />

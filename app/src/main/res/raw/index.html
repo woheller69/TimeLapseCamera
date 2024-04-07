@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="x-ua-compatible" content="ie=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+
+:root {
+  --tlapse-color: #f7382c;
+}
+
+* {
+	font-family: sans-serif;
+	padding: 0;
+	margin: 0;
+}
+
+h1 {
+	color: #f7382c;
+	border-bottom: 1px solid var(--tlapse-color);
+	padding: 10px;
+	text-align: center;
+	font-size: 2em;
+}
+
+body {
+	background-color: #3b3b3b;
+	font-size: 15px;
+}
+
+div.button, #loading {
+	border-bottom: 1px solid var(--tlapse-color);
+	text-align: center;
+}
+
+#footer {
+	text-align: center;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+}
+
+a, a:HOVER {
+	color: white;
+}
+
+#loading {
+	background-color: white;
+	padding: 0.5em;
+}
+
+div.state {
+	border-bottom: 1px solid var(--tlapse-color);
+	color: white;
+	padding-left: 3em;
+}
+
+div.button div {
+	display: inline-block;
+	text-align: center;
+	background-color: #b0b0b0;
+	font-size: 1.5em;
+	padding: 0.2em;
+	margin: 0.2em;
+	cursor: pointer;
+}
+
+div.button div:HOVER {
+	outline: 1px solid var(--tlapse-color);
+}
+
+th {
+	font-weight: bold;
+	text-align: left;
+}
+
+td {
+	text-align: left;
+	padding-left: 1em;
+}
+
+#contents {
+	text-align: center;
+	padding: 1em;
+	color: white;
+}
+
+#infoImg {
+	max-width: 100%;
+}
+
+</style>
+
+<script>
+
+/**
+ * Refresh interval
+ */
+let g_refreshIntervalId = null;
+
+/**
+ * Loading animation interval
+ */
+let g_loadingIntervalId = null;
+
+/**
+ * Wait animation counter
+ */
+let g_loadingIntervalCounter = 0;
+
+/**
+ * Image intervall in ms if loaded, 0 if not yet available
+ */
+let g_IntervalMs = 0;
+
+/**
+ * Stop wait animation, is running
+ */
+function stopWaitInterval() {
+	if (g_loadingIntervalId === null) {
+		return;
+	}
+	
+	clearInterval(g_loadingIntervalId);
+	g_loadingIntervalId = null;
+
+	let loading = document.getElementById('loading');
+	loading.style.display = 'none'
+}
+
+/**
+ * Animation Timer
+ */
+function waitAnimationTimer() {
+	g_loadingIntervalCounter++;
+
+	// Show animation only after 1s (200ms * 5)
+	if (g_loadingIntervalCounter > 5) {
+		let loading = document.getElementById('loading');
+		loading.style.display = 'block'
+		loading.innerHTML = 'loading ';
+	}
+
+	let loading = document.getElementById('loading');
+	loading.innerHTML += '.';
+
+	if (g_loadingIntervalCounter % 20 == 0) {
+		loading.innerHTML = 'loading ';
+	}
+}
+
+/**
+ * Show wait animation
+ */
+function waitAnimate() {
+	console.log('loading');
+
+	stopWaitInterval();
+	g_loadingIntervalCounter = 0;
+	
+	g_loadingIntervalId = setInterval(waitAnimationTimer, 200);
+}
+
+/**
+ * Request one file
+ */
+function loadRest(url, callback) {
+	// compatible with IE7+, Firefox, Chrome, Opera, Safari
+	let xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function(){
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+			callback(xmlhttp.responseText.trim());
+			stopWaitInterval();
+		} else if (xmlhttp.readyState == 4 && xmlhttp.status == 0) {
+			console.log(" ++++ " + xmlhttp.readyState + " / " + xmlhttp.status);
+			// Show error and stop refreshing
+			stopWaitInterval();
+			stopAutoRefresh();
+			
+			let loading = document.getElementById('loading');
+			loading.style.display = 'block'
+			loading.innerHTML = 'Loading failed!';
+		}
+	}
+	xmlhttp.open('GET', url, true);
+	xmlhttp.send();
+}
+
+/**
+ * Start
+ */
+function btStart() {
+	waitAnimate();
+	loadRest('/1/ctrl/start', function(data) {
+		if (data != 'ok') {
+			alert('Start failed: «' + data + '»');
+		}
+
+		btRefresh();
+	});
+}
+
+/**
+ * Stop recording
+ */
+function btStop() {
+	if (window.confirm('Confirm to stop recording')) {
+		waitAnimate();
+
+		loadRest('/1/ctrl/stop', function(data) {
+			if (data != 'ok') {
+				alert('Stop failed: «' + data + '»');
+			}
+
+			btRefresh();
+		});
+	}
+}
+
+/**
+ * Refresh data
+ */
+function btRefresh() {
+	waitAnimate();
+	
+	loadRest('/1/ctrl/status', function(data) {
+		let txtState = document.getElementById('txtState');
+		txtState.innerHTML = data;
+
+		if (data == 'unsure') {
+			txtState.style.backgroundColor = '#a62100';
+		} else {
+			txtState.style.backgroundColor = '';
+		}
+
+	});
+
+	loadRest('/1/device/battery', function(data) {
+		document.getElementById('txtBatteryState').innerHTML = data;
+	});
+
+	loadRest('/1/current/imgcount', function(data) {
+		document.getElementById('txtImgCount').innerHTML = data;
+	});
+
+	loadRest('/1/current/lastimg', function(data) {
+		let parts = data.split('\r\n');
+		if (parts[0] == 'null') {
+			document.getElementById('txtLastImage').innerHTML = 'No image';
+
+			let infoRefesh = document.getElementById('infoRefesh');
+			let infoImg = document.getElementById('infoImg');
+			infoRefesh.style.display = '';
+			infoImg.style.display = 'none';
+		} else {
+			let html = parts[0] + '<br>';
+			let lastDateTimestamp = parseInt(parts[1]);
+			const timestamp = new Date(lastDateTimestamp);
+			html += timestamp.toLocaleString(); + '<br>';
+			
+			let infoRefesh = document.getElementById('infoRefesh');
+			let infoImg = document.getElementById('infoImg');
+			infoRefesh.style.display = 'none';
+			infoImg.style.display = 'block';
+			infoImg.src = '/1/img/' + parts[2];
+
+			document.getElementById('txtLastImage').innerHTML = html;
+
+			let txtNextImage = document.getElementById('txtNextImage');
+			if (g_IntervalMs != 0) {
+				const timestamp = new Date(lastDateTimestamp + g_IntervalMs);
+				txtNextImage.innerHTML = timestamp.toLocaleString();
+
+				let dateDiffSeconds = (new Date() - timestamp) / 1000;
+
+				if (dateDiffSeconds > 10 && "running" == document.getElementById('txtState').innerHTML) {
+					txtNextImage.style.backgroundColor = '#a62100';
+					txtNextImage.innerHTML += ' overdue ' + dateDiffSeconds + 's';
+				} else {
+					txtNextImage.style.backgroundColor = '';
+				}
+			} else {
+				txtNextImage.innerHTML = '---';
+			}
+		}
+	});
+
+
+	loadRest('/1/ctrl/param', function(data) {
+		let config = {};
+		let lines = data.split('\n');
+		for (let i in lines) {
+			let l = lines[i].trim();
+			let pos = l.indexOf('=');
+			if (pos == -1) {
+				continue;
+			}
+			
+			let key = l.substring(0, pos);
+			let value = l.substring(pos + 1);
+			config[key] = value;
+		}
+		
+		console.log(config);
+
+		g_IntervalMs = parseInt(config.pref_capture_rate);
+
+		document.getElementById('txtInterval').innerHTML = (config.pref_capture_rate / 1000) + 's';
+		document.getElementById('txtMode').innerHTML = config.pref_rec_mode;
+		
+		if (config.pref_rec_mode == 'IMAGE_TIME_LAPSE') {
+			let rowLastImage = document.getElementById('rowLastImage');
+			rowLastImage.style.display = '';
+			let rowImageCount = document.getElementById('rowImageCount');
+			rowImageCount.style.display = '';
+			let rowNextImage = document.getElementById('rowNextImage');
+			rowNextImage.style.display = '';
+
+			let contents = document.getElementById('contents');
+			contents.style.display = '';
+		} else {
+			let rowLastImage = document.getElementById('rowLastImage');
+			rowLastImage.style.display = 'none';
+			let rowImageCount = document.getElementById('rowImageCount');
+			rowImageCount.style.display = 'none';
+			let rowNextImage = document.getElementById('rowNextImage');
+			rowNextImage.style.display = 'none';
+
+			// Last image not displayed in video mode, as this is currently not available
+			let contents = document.getElementById('contents');
+			contents.style.display = 'none';
+		}
+	});
+
+	var d = new Date();
+	document.getElementById('txtLastRefresh').innerHTML = d.toLocaleString();
+}
+
+/**
+ * Stop auto refresh
+ */
+function stopAutoRefresh() {
+	let btAutoRefresh = document.getElementById('btAutoRefresh');
+	btAutoRefresh.innerHTML = 'AUTOREFRESH';
+	clearInterval(g_refreshIntervalId);
+	g_refreshIntervalId = null;
+}
+
+
+/**
+ * Start / stop auto refresh
+ */
+function btAutoRefresh() {
+	let btAutoRefresh = document.getElementById('btAutoRefresh');
+
+	if (g_refreshIntervalId == null) {
+		btAutoRefresh.innerHTML = 'STOP REFRESH';
+		let refreshTime = g_IntervalMs;
+		if (refreshTime < 1000) {
+			refreshTime = 1000;
+		}
+		g_refreshIntervalId = setInterval(btRefresh, refreshTime);
+	} else {
+		stopAutoRefresh();
+	}
+}
+
+</script>
+<title>TimeLapseCam</title>
+</head>
+
+<body>
+	<h1>TimeLapseCam</h1>
+	<div class="button">
+		<div onclick="btStart()">START</div>
+		<div onclick="btStop()">STOP</div>
+		<div onclick="btRefresh()">REFRESH</div>
+		<div id="btAutoRefresh" onclick="btAutoRefresh()">AUTOREFRESH</div>
+	</div>
+	<div id="loading" style="display:none">
+	</div>
+	<div class="state">
+		<table>
+			<tr>
+				<th>Last refresh</th>
+				<td id="txtLastRefresh">---</td>
+			</tr>
+			<tr>
+				<th>State</th>
+				<td id="txtState">---</td>
+			</tr>
+			<tr>
+				<th>Battery</th>
+				<td id="txtBatteryState">---</td>
+			</tr>
+			<tr>
+				<th>Mode</th>
+				<td id="txtMode">---</td>
+			</tr>
+			<tr id="rowLastImage">
+				<th>Last image</th>
+				<td id="txtLastImage">---</td>
+			</tr>
+			<tr id="rowImageCount">
+				<th>Image count</th>
+				<td id="txtImgCount">---</td>
+			</tr>
+			<tr id="rowNextImage">
+				<th>Next image</th>
+				<td id="txtNextImage">---</td>
+			</tr>
+			<tr>
+				<th>Interval</th>
+				<td id="txtInterval">---</td>
+			</tr>
+		</table>
+	</div>
+	<div id="contents">
+		<span id="infoRefesh">Refresh to get current image / No image to display</span>
+		<img id="infoImg" src="">
+	</div>
+	<div id="footer">
+		<a href="/rest">REST API</a>
+	</div>
+</body>
+</html>
