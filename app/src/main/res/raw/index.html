@@ -86,8 +86,22 @@ td {
 	color: white;
 }
 
+#resizeableImage {
+	margin: 5px auto;
+	resize: both;
+	overflow: auto;
+
+	width: 50%;
+	max-height: 600px;
+	border-bottom: 1px solid var(--tlapse-color);
+}
+
 #infoImg {
 	max-width: 100%;
+	max-height: 100%;
+
+	width: auto;
+	height: auto;
 }
 
 </style>
@@ -418,7 +432,7 @@ function btAutoRefresh() {
 	</div>
 	<div id="contents">
 		<span id="infoRefesh">Refresh to get current image / No image to display</span>
-		<img id="infoImg" src="">
+		<div id="resizeableImage"><img id="infoImg" src=""></div>
 	</div>
 	<div id="footer">
 		<a href="/rest">REST API</a>
