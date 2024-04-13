@@ -1,16 +1,17 @@
 package at.andreasrohner.spartantimelapserec.preference;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.DialogPreference;
-import android.preference.PreferenceManager;
 import android.util.AttributeSet;
-import android.widget.Toast;
 
 import java.net.InetAddress;
 
+import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
+import at.andreasrohner.spartantimelapserec.settings.RestSettingsActivity;
 import at.andreasrohner.spartantimelapserec.rest.RestService;
 
 /**
@@ -38,7 +39,9 @@ public class IpInformation extends DialogPreference {
 
 	@Override
 	protected void showDialog(Bundle state) {
-		updateData();
+		Context ctx = getContext();
+		Intent myIntent = new Intent(ctx, RestSettingsActivity.class);
+		ctx.startActivity(myIntent);
 	}
 
 	/**
@@ -51,6 +54,13 @@ public class IpInformation extends DialogPreference {
 			setSummary(ctx.getString(R.string.error_no_ip_refresh));
 		} else {
 			setSummary("http:/" + addr + ":" + RestService.getPort(ctx));
+		}
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+		if (prefs.getBoolean("pref_restapi_enabled", false)) {
+			setTitle(ctx.getString(R.string.pref_restapi_connectioninfo_title_on));
+		} else {
+			setTitle(ctx.getString(R.string.pref_restapi_connectioninfo_title_off));
 		}
 	}
 }

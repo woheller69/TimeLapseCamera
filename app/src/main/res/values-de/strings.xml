@@ -82,13 +82,16 @@
     <string name="pref_restapi_port_title">HTTP Server Port</string>
     <string name="pref_restapi_pw_title">Passwort</string>
     <string name="pref_restapi_port_hint">Port</string>
-    <string name="pref_restapi_port_summ">Port, 1024 - 65535, Standard 8085</string>
+    <string name="pref_restapi_port_summ">Port, 1024 - 65535, Standard 8085. Neustart der REST API nötig.</string>
     <string name="pref_restapi_pw_summ">Passwort für den REST API Zugriff</string>
     <string name="pref_restapi_pw_hint">Passwort</string>
     <string name="info_restapi_started">REST API gestartet...</string>
     <string name="info_restapi_stopped">REST API gestoppt...</string>
     <string name="error_port_invalid">Port ungültig, 8085 wird verwendet</string>
     <string name="pref_restapi_connectioninfo_title">Verbindungsinformationen</string>
+    <string name="pref_restapi_connectioninfo_title_on">REST API eingeschaltet</string>
+    <string name="pref_restapi_connectioninfo_title_off">REST API ausgeschaltet</string>
     <string name="error_no_ip_refresh">Keine IP! Berühren zum neu laden.</string>
     <string name="notification_restapi">REST API Läuft</string>
+    <string name="pref_restapi_settings_header">REST Einstellungen</string>
 </resources>

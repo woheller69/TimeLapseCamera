@@ -1,0 +1,18 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory
+        app:title="@string/pref_restapi_settings_header">
+
+        <CheckBoxPreference
+            app:defaultValue="false"
+            app:key="pref_restapi_enabled"
+            app:summary="@string/pref_restapi_enabled_summ"
+            app:title="@string/pref_restapi_enabled" />
+
+        <EditTextPreference app:title="@string/pref_restapi_port_title"
+            app:key="pref_restapi_port"
+            app:defaultValue="8085"
+            app:summary="@string/pref_restapi_port_hint"
+            app:dialogMessage="@string/pref_restapi_port_summ" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

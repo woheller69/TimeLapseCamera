@@ -158,19 +158,6 @@ public class RestService extends Service implements Runnable {
 		// if there are not any pending start commands to be delivered to the service, it will be called with a null intent object,
 		if (intent != null && intent.getAction() != null) {
 			Log.d(TAG, "onStartCommand called with action: " + intent.getAction());
-
-			//TODO Is this needed?
-			/*
-			switch (intent.getAction()) {
-				case ACTION_REQUEST_START:
-					if (isRunning()) {
-						return START_STICKY;
-					}
-					break;
-				case ACTION_REQUEST_STOP:
-					stopSelf();
-					return START_NOT_STICKY;
-			}*/
 		}
 
 		shouldExit = false;

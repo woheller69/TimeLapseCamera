@@ -142,30 +142,6 @@
             android:key="pref_restapi_information"
             android:summary="http://???"
             android:title="@string/pref_restapi_connectioninfo_title" />
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref_restapi_enabled"
-            android:summary="@string/pref_restapi_enabled_summ"
-            android:title="@string/pref_restapi_enabled" />
-
-        <at.andreasrohner.spartantimelapserec.preference.EditSummaryPreference
-            android:defaultValue="8085"
-            android:dialogMessage="@string/pref_restapi_port_summ"
-            android:hint="@string/pref_restapi_port_hint"
-            android:inputType="number"
-            android:key="pref_restapi_port"
-            android:title="@string/pref_restapi_port_title" />
-
-        <!-- Password not yet implemented
-        <at.andreasrohner.spartantimelapserec.preference.EditSummaryPreference
-            android:defaultValue="admin"
-            android:dialogMessage="@string/pref_restapi_pw_summ"
-            android:hint="@string/pref_restapi_pw_hint"
-            android:inputType="text"
-            android:key="pref_restapi_pw"
-            android:title="@string/pref_restapi_pw_title" />
-         -->
     </PreferenceCategory>
 
 </PreferenceScreen>
