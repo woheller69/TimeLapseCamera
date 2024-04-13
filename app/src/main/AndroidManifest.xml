@@ -35,6 +35,14 @@
             android:exported="false"
             android:label="@string/pref_restapi_settings_header" />
         <activity
+            android:name=".settings.Camera1SettingsActivity"
+            android:exported="false"
+            android:label="@string/pref_camera_settings_category" />
+        <activity
+            android:name=".settings.StopSettingsActivity"
+            android:exported="false"
+            android:label="@string/pref_stop_settings_category" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:windowSoftInputMode="stateUnchanged">

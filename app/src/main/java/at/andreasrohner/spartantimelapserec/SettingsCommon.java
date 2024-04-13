@@ -44,6 +44,7 @@ import at.andreasrohner.spartantimelapserec.preference.DateTimePreference;
 import at.andreasrohner.spartantimelapserec.preference.IntervalPickerPreference;
 import at.andreasrohner.spartantimelapserec.preference.IpInformation;
 import at.andreasrohner.spartantimelapserec.preference.SeekBarPreference;
+import at.andreasrohner.spartantimelapserec.preference.StopInformation;
 import at.andreasrohner.spartantimelapserec.rest.RestService;
 import at.andreasrohner.spartantimelapserec.sensor.CameraSettings;
 import at.andreasrohner.spartantimelapserec.settings.RestControlUtil;
@@ -85,6 +86,8 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener, SeekBar
 	private SwitchPreference prefFlash;
 
 	private IpInformation prefIpInformation;
+
+	private StopInformation prefStopInformation;
 
 	private int calcGcd(int a, int b) {
 		if (b == 0)
@@ -391,15 +394,14 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener, SeekBar
 				prefVideoEncodingBitRate.setText("");  //show hint again
 			}
 			prefVideoEncodingBitRate.setSummary(RecSettings.getInteger(prefs, "pref_video_encoding_br", 0) == 0 ? context.getString(R.string.encode_best) : context.getString(R.string.format_bps, prefs.getString("pref_video_encoding_br", "0")));
-		} else if (key.equals("pref_restapi_enabled")) {
-			// TODO !!!! startStopRestApiServer();
 		} else if (key.equals("pref_restapi_port")) {
 			prefIpInformation.updateData();
+		} else if (key.equals("pref_stop_low_battery") || key.equals("pref_stop_low_storage")) {
+			prefStopInformation.updateData();
 		}
 
 		updatePrefStatus(prefs);
 	}
-
 
 	public void onCreate(Context context, PreferenceScreen screen) {
 		this.context = context;
@@ -422,6 +424,7 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener, SeekBar
 		prefCameraTriggerDelay = (SeekBarPreference) screen.findPreference("pref_camera_trigger_delay");
 		prefFlash = (SwitchPreference) screen.findPreference("pref_flash");
 		prefIpInformation = (IpInformation) screen.findPreference("pref_restapi_information");
+		prefStopInformation = (StopInformation) screen.findPreference("pref_stop_settings_information");
 
 		setZoomRange(prefs);
 		setExposureCompRange(prefs);
@@ -474,6 +477,7 @@ public class SettingsCommon implements OnSharedPreferenceChangeListener, SeekBar
 	public void onResume(PreferenceScreen screen) {
 		screen.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 		prefIpInformation.updateData();
+		prefStopInformation.updateData();
 	}
 
 	public void onPause(PreferenceScreen screen) {

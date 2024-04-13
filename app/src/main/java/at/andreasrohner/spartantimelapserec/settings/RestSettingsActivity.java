@@ -1,86 +1,43 @@
 package at.andreasrohner.spartantimelapserec.settings;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 
-import androidx.preference.PreferenceManager;
-
-import android.util.Log;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.EditTextPreference;
-import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import at.andreasrohner.spartantimelapserec.R;
-import at.andreasrohner.spartantimelapserec.rest.RestService;
 
 /**
  * REST Settings
  */
-public class RestSettingsActivity extends AppCompatActivity {
+public class RestSettingsActivity extends AbstractSettingsActivity {
 
 	/**
 	 * Constructor
 	 */
 	public RestSettingsActivity() {
-	}
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.settings_activity_rest);
-		if (savedInstanceState == null) {
-			getSupportFragmentManager().beginTransaction().replace(R.id.settings, new SettingsFragment()).commit();
-		}
-		ActionBar actionBar = getSupportActionBar();
-		if (actionBar != null) {
-			actionBar.setDisplayHomeAsUpEnabled(true);
-		}
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		int id = item.getItemId();
-		if (id == android.R.id.home) {
-			finish();
-		}
-		return super.onOptionsItemSelected(item);
+		super(new SettingsFragment());
 	}
 
 	/**
 	 * Settings fragment
 	 */
-	public static class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
+	public static class SettingsFragment extends AbstractSettingsFragment {
 
 		/**
 		 * Constructor
 		 */
 		public SettingsFragment() {
+			super(R.xml.rest_preferences);
 		}
 
 		@Override
-		public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-			setPreferencesFromResource(R.xml.rest_preferences, rootKey);
-		}
-
-		@Override
-		public void onResume() {
-			super.onResume();
-			getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+		protected void updateValues() {
 			updatePort();
-		}
-
-		@Override
-		public void onPause() {
-			getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
-			super.onPause();
 		}
 
 		@Override

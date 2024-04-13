@@ -42,6 +42,7 @@
     <string name="pref_project_settings_category">Project settings</string>
     <string name="pref_camera_settings_category">Camera settings</string>
     <string name="pref_schedule_settings_category">Scheduling settings</string>
+    <string name="pref_stop_settings_category">Stop settings</string>
     <string name="pref_notification_icon">Notification Icon</string>
     <string name="pref_notification_icon_summ">Select the notification icon shown while recording</string>
     <string name="format_fps">fps</string>
@@ -94,4 +95,8 @@
     <string name="error_no_ip_refresh">No IP! Tap to refresh.</string>
     <string name="notification_restapi">REST API Running</string>
     <string name="pref_restapi_settings_header">REST Settings</string>
+    <string name="pref_stop_info_nostop">Never stop</string>
+    <string name="pref_stop_info_stop_start">Stop:</string>
+    <string name="pref_stop_info_stop_battery">low battery</string>
+    <string name="pref_stop_info_stop_storage">low storage</string>
 </resources>
