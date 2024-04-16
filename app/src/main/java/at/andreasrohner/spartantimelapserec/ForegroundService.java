@@ -30,6 +30,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationCompat.Builder;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 import at.andreasrohner.spartantimelapserec.recorder.Recorder;
@@ -42,7 +44,7 @@ public class ForegroundService extends Service implements Handler.Callback {
     private Recorder recorder;
     private HandlerThread handlerThread;
     private WakeLock mWakeLock;
-    private static statusListener listener;
+    private static List<statusListener> listener = new ArrayList<>();
     private NotificationManager mNotificationManager;
 
     public interface statusListener {
@@ -50,7 +52,7 @@ public class ForegroundService extends Service implements Handler.Callback {
     }
 
     public static void registerStatusListener(statusListener l){
-        listener = l;
+        listener.add(l);
     }
 
     @Override
@@ -97,7 +99,9 @@ public class ForegroundService extends Service implements Handler.Callback {
                 updateNotif();
             }
 
-            if (listener!=null) listener.onServiceStatusChange(true);
+			  for (statusListener l : listener) {
+				  l.onServiceStatusChange(true);
+			  }
             return START_STICKY;
         } else {
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -140,7 +144,9 @@ public class ForegroundService extends Service implements Handler.Callback {
                     Uri.fromFile(projectDir)));
 
         mIsRunning = false;
-        if (listener!=null) listener.onServiceStatusChange(false);
+        for (statusListener l : listener) {
+            l.onServiceStatusChange(false);
+        }
         stopForeground(true);
         stopSelf();
     }

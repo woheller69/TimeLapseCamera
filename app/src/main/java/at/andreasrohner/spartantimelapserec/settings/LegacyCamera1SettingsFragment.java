@@ -16,21 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package at.andreasrohner.spartantimelapserec;
+package at.andreasrohner.spartantimelapserec.settings;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.ListPreference;
 import android.preference.PreferenceFragment;
 
-import at.andreasrohner.spartantimelapserec.settings.LegacyCamera1SettingsCommon;
+import at.andreasrohner.spartantimelapserec.R;
 
-public class SettingsFragment extends PreferenceFragment {
+/**
+ * Legacy settings of Camera1 interface
+ */
+public class LegacyCamera1SettingsFragment extends PreferenceFragment {
 
-
-
-	SettingsCommon settCommon;
+	LegacyCamera1SettingsCommon settCommon;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -38,9 +37,9 @@ public class SettingsFragment extends PreferenceFragment {
 
 		super.onCreate(savedInstanceState);
 
-		addPreferencesFromResource(R.xml.preferences);
+		addPreferencesFromResource(R.xml.camera1_preferences);
 
-		settCommon = new SettingsCommon();
+		settCommon = new LegacyCamera1SettingsCommon();
 		settCommon.onCreate(context, getPreferenceScreen());
 	}
 

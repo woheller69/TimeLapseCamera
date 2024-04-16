@@ -35,7 +35,7 @@
             android:exported="false"
             android:label="@string/pref_restapi_settings_header" />
         <activity
-            android:name=".settings.Camera1SettingsActivity"
+            android:name=".settings.LegacyCamera1Settings"
             android:exported="false"
             android:label="@string/pref_camera_settings_category" />
         <activity

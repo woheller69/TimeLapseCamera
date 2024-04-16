@@ -2,18 +2,11 @@ package at.andreasrohner.spartantimelapserec.preference;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 
-import java.net.InetAddress;
-
-import androidx.preference.PreferenceManager;
-import at.andreasrohner.spartantimelapserec.R;
-import at.andreasrohner.spartantimelapserec.rest.RestService;
-import at.andreasrohner.spartantimelapserec.settings.Camera1SettingsActivity;
-import at.andreasrohner.spartantimelapserec.settings.RestSettingsActivity;
+import at.andreasrohner.spartantimelapserec.settings.LegacyCamera1Settings;
 
 /**
  * Show Camera / Recording settings
@@ -41,7 +34,7 @@ public class CameraInformation extends DialogPreference {
 	@Override
 	protected void showDialog(Bundle state) {
 		Context ctx = getContext();
-		Intent myIntent = new Intent(ctx, Camera1SettingsActivity.class);
+		Intent myIntent = new Intent(ctx, LegacyCamera1Settings.class);
 		ctx.startActivity(myIntent);
 	}
 

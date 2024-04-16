@@ -9,7 +9,6 @@ import android.util.AttributeSet;
 
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
-import at.andreasrohner.spartantimelapserec.settings.Camera1SettingsActivity;
 import at.andreasrohner.spartantimelapserec.settings.StopSettingsActivity;
 
 /**
