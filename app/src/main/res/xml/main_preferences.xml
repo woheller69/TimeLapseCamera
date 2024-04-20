@@ -1,0 +1,48 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <PreferenceCategory app:title="@string/pref_project_settings_category">
+    <!--
+        <ListPreference
+            android:defaultValue="VIDEO_TIME_LAPSE"
+            android:dialogTitle="@string/pref_rec_mode"
+            android:entries="@array/pref_rec_mode_entries"
+            android:entryValues="@array/pref_rec_mode_values"
+            android:key="pref_rec_mode"
+            android:title="@string/pref_rec_mode" />
+
+        <at.andreasrohner.spartantimelapserec.preference.NoKBEditTextPreference
+            android:defaultValue="@string/app_name"
+            android:inputType="textNoSuggestions"
+            android:key="pref_project_title"
+            android:summary="@string/pref_project_title_summ"
+            android:title="@string/pref_project_title" />
+-->
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/pref_preferences_title">
+        <at.andreasrohner.spartantimelapserec.settings.ShowActivityPreference
+            app:icon="@drawable/ic_gear"
+            app:key="pref_main_menu_camera"
+            app:summary="at.andreasrohner.spartantimelapserec.settings.LegacyCamera1Settings"
+            app:title="@string/pref_camera_settings_category" />
+
+        <at.andreasrohner.spartantimelapserec.settings.ShowActivityPreference
+            app:icon="@drawable/ic_clock"
+            app:key="pref_main_menu_scheduling"
+            app:summary="at.andreasrohner.spartantimelapserec.settings.LegacyScheduling1Settings"
+            app:title="@string/pref_scheduling_settings_title" />
+
+        <at.andreasrohner.spartantimelapserec.settings.ShowActivityPreference
+            app:icon="@drawable/ic_stop"
+            app:key="pref_main_menu_stop"
+            app:summary="at.andreasrohner.spartantimelapserec.settings.StopSettings"
+            app:title="@string/pref_stop_recording_after" />
+
+        <at.andreasrohner.spartantimelapserec.settings.ShowActivityPreference
+            app:icon="@drawable/ic_web"
+            app:key="pref_main_menu_restapi"
+            app:summary="at.andreasrohner.spartantimelapserec.settings.RestSettings"
+            app:title="@string/pref_restapi_connectioninfo_title" />
+    </PreferenceCategory>
+</PreferenceScreen>

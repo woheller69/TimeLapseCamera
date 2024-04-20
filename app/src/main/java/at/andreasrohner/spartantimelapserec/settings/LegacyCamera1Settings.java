@@ -1,52 +1,29 @@
-/*
- * Spartan Time Lapse Recorder - Minimalistic android time lapse recording app
- * Copyright (C) 2014  Andreas Rohner
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package at.andreasrohner.spartantimelapserec.settings;
 
-import android.app.AlarmManager;
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
-import android.os.Bundle;
-import android.provider.Settings;
+import android.content.SharedPreferences;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.Preference;
 
 /**
  * Legacy settings of Camera1 interface
  */
-public class LegacyCamera1Settings extends AppCompatActivity {
+public class LegacyCamera1Settings implements MainSettingsMenu {
 
-	private static LegacyCamera1SettingsFragment settingsFragment;
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	/**
+	 * Constructor
+	 */
+	public LegacyCamera1Settings() {
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-		// Display the fragment as the main content.
-		if (settingsFragment == null) {
-			settingsFragment = new LegacyCamera1SettingsFragment();
-			settingsFragment.setRetainInstance(true);  //do not recreate if orientation is changed
-		}
-		getFragmentManager().beginTransaction().replace(android.R.id.content, settingsFragment).commit();
+	public Class<? extends Activity> getActivityClass() {
+		return LegacyCamera1SettingsActivity.class;
+	}
+
+	@Override
+	public void updateSummary(Preference pref, Context ctx, SharedPreferences prefs) {
+		// TODO !!!!!!!!!!!
 	}
 }

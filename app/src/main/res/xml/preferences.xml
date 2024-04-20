@@ -42,11 +42,5 @@
             android:title="@string/pref_stop_settings_category" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_restapi_settings_category">
-        <at.andreasrohner.spartantimelapserec.preference.IpInformation
-            android:key="pref_restapi_information"
-            android:summary="http://???"
-            android:title="@string/pref_restapi_connectioninfo_title" />
-    </PreferenceCategory>
 
 </PreferenceScreen>

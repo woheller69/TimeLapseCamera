@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 
-import at.andreasrohner.spartantimelapserec.settings.LegacyCamera1Settings;
+import at.andreasrohner.spartantimelapserec.settings.LegacyCamera1SettingsActivity;
 
 /**
  * Show Camera / Recording settings
@@ -34,7 +34,7 @@ public class CameraInformation extends DialogPreference {
 	@Override
 	protected void showDialog(Bundle state) {
 		Context ctx = getContext();
-		Intent myIntent = new Intent(ctx, LegacyCamera1Settings.class);
+		Intent myIntent = new Intent(ctx, LegacyCamera1SettingsActivity.class);
 		ctx.startActivity(myIntent);
 	}
 

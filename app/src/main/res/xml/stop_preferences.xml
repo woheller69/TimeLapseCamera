@@ -2,13 +2,13 @@
     <PreferenceCategory app:title="@string/pref_stop_settings_category">
         <CheckBoxPreference
             app:defaultValue="true"
-            app:icon="@drawable/si_battery_empty"
+            app:icon="@drawable/ic_battery_empty"
             app:key="pref_stop_low_battery"
             app:summary="@string/pref_stop_low_battery_summ"
             app:title="@string/pref_stop_low_battery" />
         <CheckBoxPreference
             app:defaultValue="true"
-            app:icon="@drawable/si_memory"
+            app:icon="@drawable/ic_memory"
             app:key="pref_stop_low_storage"
             app:summary="@string/pref_stop_low_storage_summ"
             app:title="@string/pref_stop_low_storage" />

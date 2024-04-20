@@ -43,34 +43,49 @@ import at.andreasrohner.spartantimelapserec.data.RecSettings;
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
 import at.andreasrohner.spartantimelapserec.settings.LegacyCamera1SettingsCommon;
 
+/**
+ * Main activity of the
+ */
 public class MainActivity extends AppCompatActivity implements ForegroundService.statusListener {
 
-	private static SettingsFragment settingsFragment;
+	/**
+	 * Settings menu
+	 */
+	private static MainSettingsFragment settingsFragment;
+
+	/**
+	 * Receiver for broadcast messages
+	 */
 	private static BroadcastReceiver broadcastReceiver;
+
+	/**
+	 * Constructor
+	 */
+	public MainActivity() {
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		if (broadcastReceiver==null) broadcastReceiver = new DeviceStatusReceiver();
+		if (broadcastReceiver == null) {
+			broadcastReceiver = new DeviceStatusReceiver();
+		}
+
 		IntentFilter filter = new IntentFilter();
 		filter.addAction("android.intent.action.ACTION_BATTERY_LOW");
 		filter.addAction("android.intent.action.ACTION_DEVICE_STORAGE_LOW");
 		filter.addAction("android.intent.action.ACTION_SHUTDOWN");
 		//filter.addAction("android.intent.action.AIRPLANE_MODE"); //for testing
-		ContextCompat.registerReceiver(getApplicationContext(),broadcastReceiver, filter, ContextCompat.RECEIVER_EXPORTED);
+		ContextCompat.registerReceiver(getApplicationContext(), broadcastReceiver, filter, ContextCompat.RECEIVER_EXPORTED);
 
-		if (Build.VERSION.SDK_INT<Build.VERSION_CODES.TIRAMISU){  //WRITE_EXTERNAL_STORAGE is deprecated (and is not granted) when targeting Android 13+, in addition POST_NOTIFICATION is needed
-			if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) ||
-					(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)!= PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) ||
-					(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE))){
-				ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.CAMERA,Manifest.permission.RECORD_AUDIO,Manifest.permission.WRITE_EXTERNAL_STORAGE},123);
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {  //WRITE_EXTERNAL_STORAGE is deprecated (and is not granted) when targeting Android 13+, in addition POST_NOTIFICATION is needed
+			if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) || (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) || (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
+				ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 123);
 			}
 		} else {
-			if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) ||
-					(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) ||
-					(ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS))) {
-				ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.POST_NOTIFICATIONS}, 123);
+			if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) || (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) || (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS))) {
+				ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.POST_NOTIFICATIONS}, 123);
 			}
 		}
 
@@ -87,28 +102,25 @@ public class MainActivity extends AppCompatActivity implements ForegroundService
 		Context context = getApplicationContext();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		LegacyCamera1SettingsCommon.setDefaultValues(context, prefs);
-		if (GithubStar.shouldShowStarDialog(this)) GithubStar.starDialog(this,"https://github.com/woheller69/timelapsecamera");
+		if (GithubStar.shouldShowStarDialog(this)) {
+			GithubStar.starDialog(this, "https://github.com/woheller69/timelapsecamera");
+		}
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		ForegroundService.registerStatusListener(this);
-		if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
-		&& ((ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED))
-		&& ((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) || Build.VERSION.SDK_INT>=Build.VERSION_CODES.TIRAMISU)) {
+		if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) && ((ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) && ((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) || Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)) {
 			//PERMISSION POST_NOTIFICATION is required and not tested here
 
 			// Display the fragment as the main content.
-			if (settingsFragment==null) {
-				settingsFragment = new SettingsFragment();
-				settingsFragment.setRetainInstance(true);  //do not recreate if orientation is changed
+			if (settingsFragment == null) {
+				settingsFragment = new MainSettingsFragment();
 			}
-				getFragmentManager().beginTransaction()
-						.replace(android.R.id.content, settingsFragment)
-						.commit();
-
-		} else 	Toast.makeText(this, getString(R.string.error_missing_permission), Toast.LENGTH_SHORT).show();
+			getSupportFragmentManager().beginTransaction().replace(android.R.id.content, settingsFragment).commit();
+		} else
+			Toast.makeText(this, getString(R.string.error_missing_permission), Toast.LENGTH_SHORT).show();
 
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
@@ -170,22 +182,22 @@ public class MainActivity extends AppCompatActivity implements ForegroundService
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
-		if (ForegroundService.mIsRunning){
+		if (ForegroundService.mIsRunning) {
 			menu.findItem(R.id.action_start).setEnabled(false);
-			menu.findItem(R.id.action_start).setIcon(ContextCompat.getDrawable(this,R.drawable.ic_radio_button_checked_disabled_24px));
+			menu.findItem(R.id.action_start).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_radio_button_checked_disabled_24px));
 			menu.findItem(R.id.action_preview).setEnabled(false);
-			menu.findItem(R.id.action_preview).setIcon(ContextCompat.getDrawable(this,R.drawable.ic_visibility_disabled_24px));
+			menu.findItem(R.id.action_preview).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_visibility_disabled_24px));
 
 			RecSettings settings = new RecSettings();
 			settings.load(getApplicationContext(), PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
-			if (settings.isSchedRecEnabled() && settings.getSchedRecTime() > System.currentTimeMillis()){
+			if (settings.isSchedRecEnabled() && settings.getSchedRecTime() > System.currentTimeMillis()) {
 				menu.findItem(R.id.action_stop).setEnabled(false);
-				menu.findItem(R.id.action_stop).setIcon(ContextCompat.getDrawable(this,R.drawable.ic_stop_circle_disabled_24px));
+				menu.findItem(R.id.action_stop).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_stop_circle_disabled_24px));
 			}
 
 		} else {
 			menu.findItem(R.id.action_stop).setEnabled(false);
-			menu.findItem(R.id.action_stop).setIcon(ContextCompat.getDrawable(this,R.drawable.ic_stop_circle_disabled_24px));
+			menu.findItem(R.id.action_stop).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_stop_circle_disabled_24px));
 		}
 		return true;
 	}

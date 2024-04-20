@@ -35,11 +35,11 @@
             android:exported="false"
             android:label="@string/pref_restapi_settings_header" />
         <activity
-            android:name=".settings.LegacyCamera1Settings"
+            android:name=".settings.LegacyCamera1SettingsActivity"
             android:exported="false"
             android:label="@string/pref_camera_settings_category" />
         <activity
-            android:name=".settings.LegacyScheduling1Settings"
+            android:name=".settings.LegacyScheduling1SettingsActivity"
             android:exported="false"
             android:label="@string/pref_scheduling_settings_title" />
         <activity

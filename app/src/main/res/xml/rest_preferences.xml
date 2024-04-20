@@ -3,7 +3,7 @@
 
         <CheckBoxPreference
             app:defaultValue="false"
-            app:icon="@drawable/si_web"
+            app:icon="@drawable/ic_web"
             app:key="pref_restapi_enabled"
             app:summary="@string/pref_restapi_enabled_summ"
             app:title="@string/pref_restapi_enabled" />
@@ -11,7 +11,7 @@
         <EditTextPreference
             app:defaultValue="8085"
             app:dialogMessage="@string/pref_restapi_port_summ"
-            app:icon="@drawable/si_rj45"
+            app:icon="@drawable/ic_rj45"
             app:key="pref_restapi_port"
             app:summary="@string/pref_restapi_port_hint"
             app:title="@string/pref_restapi_port_title" />
