@@ -28,6 +28,13 @@
             android:title="@string/pref_camera_settings_category" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/pref_scheduling_settings_category">
+        <at.andreasrohner.spartantimelapserec.preference.SchedulingInformation
+            android:key="pref_camera_settings_information"
+            android:summary="Loading..."
+            android:title="@string/pref_scheduling_settings_title" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref_stop_settings_category">
         <at.andreasrohner.spartantimelapserec.preference.StopInformation
             android:key="pref_stop_settings_information"

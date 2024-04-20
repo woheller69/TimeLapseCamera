@@ -28,11 +28,11 @@ import android.provider.Settings;
 import androidx.appcompat.app.AppCompatActivity;
 
 /**
- * Legacy settings of Camera1 interface
+ * Legacy scheduling settings of Camera1 interface
  */
-public class LegacyCamera1Settings extends AppCompatActivity {
+public class LegacyScheduling1Settings extends AppCompatActivity {
 
-	private static LegacyCamera1SettingsFragment settingsFragment;
+	private static LegacyScheduling1SettingsFragment settingsFragment;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +44,18 @@ public class LegacyCamera1Settings extends AppCompatActivity {
 		super.onResume();
 		// Display the fragment as the main content.
 		if (settingsFragment == null) {
-			settingsFragment = new LegacyCamera1SettingsFragment();
+			settingsFragment = new LegacyScheduling1SettingsFragment();
 			settingsFragment.setRetainInstance(true);  //do not recreate if orientation is changed
 		}
 		getFragmentManager().beginTransaction().replace(android.R.id.content, settingsFragment).commit();
+
+		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+			if (!alarmManager.canScheduleExactAlarms()) {
+				Intent intent = new Intent();
+				intent.setAction(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+				startActivity(intent);
+			}
+		}
 	}
 }

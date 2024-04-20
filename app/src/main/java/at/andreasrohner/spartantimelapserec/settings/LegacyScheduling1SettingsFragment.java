@@ -18,35 +18,40 @@
 
 package at.andreasrohner.spartantimelapserec.settings;
 
-import android.app.AlarmManager;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.preference.PreferenceFragment;
 
-import androidx.appcompat.app.AppCompatActivity;
+import at.andreasrohner.spartantimelapserec.R;
 
 /**
- * Legacy settings of Camera1 interface
+ * Legacy settings of Camera1 scheduling
  */
-public class LegacyCamera1Settings extends AppCompatActivity {
+public class LegacyScheduling1SettingsFragment extends PreferenceFragment {
 
-	private static LegacyCamera1SettingsFragment settingsFragment;
+	LegacyScheduling1SettingsCommon settCommon;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
+		Context context = getActivity().getApplicationContext();
+
 		super.onCreate(savedInstanceState);
+
+		addPreferencesFromResource(R.xml.scheduling1_preferences);
+
+		settCommon = new LegacyScheduling1SettingsCommon();
+		settCommon.onCreate(context, getPreferenceScreen());
 	}
 
 	@Override
-	protected void onResume() {
+	public void onResume() {
 		super.onResume();
-		// Display the fragment as the main content.
-		if (settingsFragment == null) {
-			settingsFragment = new LegacyCamera1SettingsFragment();
-			settingsFragment.setRetainInstance(true);  //do not recreate if orientation is changed
-		}
-		getFragmentManager().beginTransaction().replace(android.R.id.content, settingsFragment).commit();
+		settCommon.onResume(getPreferenceScreen());
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		settCommon.onPause(getPreferenceScreen());
 	}
 }

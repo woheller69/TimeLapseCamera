@@ -99,4 +99,6 @@
     <string name="pref_stop_info_stop_start">Stop:</string>
     <string name="pref_stop_info_stop_battery">Akku leer</string>
     <string name="pref_stop_info_stop_storage">wenig Speicherplatz </string>
+    <string name="pref_scheduling_settings_category">Planung</string>
+    <string name="pref_scheduling_settings_title">Planung konfigurieren</string>
 </resources>

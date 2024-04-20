@@ -48,9 +48,7 @@ import at.andreasrohner.spartantimelapserec.preference.SeekBarPreference;
 import at.andreasrohner.spartantimelapserec.preference.StopInformation;
 import at.andreasrohner.spartantimelapserec.sensor.CameraSettings;
 
-public class LegacyCamera1SettingsCommon implements OnSharedPreferenceChangeListener, SeekBarPreference.OnFormatOutputValueListener {
-
-	private Context context;
+public class LegacyCamera1SettingsCommon extends BaseLegacySettingsCommon implements OnSharedPreferenceChangeListener {
 
 	private CameraSettings cameraSettings;
 
@@ -60,15 +58,9 @@ public class LegacyCamera1SettingsCommon implements OnSharedPreferenceChangeList
 
 	private ListPreference prefCamera;
 
-	private SeekBarPreference prefInitialDelay;
-
 	private IntervalPickerPreference prefCaptureRate;
 
 	private SeekBarPreference prefJpegQuality;
-
-	private DateTimePreference prefScheduleRec;
-
-	private SeekBarPreference prefStopRecAfter;
 
 	private SeekBarPreference prefExposureComp;
 
@@ -261,56 +253,6 @@ public class LegacyCamera1SettingsCommon implements OnSharedPreferenceChangeList
 		}
 	}
 
-	private String formatTime(int millis) {
-		if (millis < 1000)
-			return millis + " " + context.getString(R.string.time_format_msec);
-
-		double secs = ((double) (millis % 60000)) / 1000;
-		String formatSec = " " + context.getString(R.string.time_format_sec);
-		String formatSecs = " " + context.getString(R.string.time_format_secs);
-		DecimalFormat df = new DecimalFormat("#.##");
-
-		if (millis >= 1000 && millis < 60000)
-			return df.format(secs) + ((secs == 1) ? formatSec : formatSecs);
-
-		int intSecs = millis % 60000 / 1000;
-		int mins = (millis % 3600000) / 1000 / 60;
-		int hours = (millis / 1000 / 60 / 60);
-
-		String formatMin = " " + context.getString(R.string.time_format_min);
-		String formatMins = " " + context.getString(R.string.time_format_mins);
-		String formatHour = " " + context.getString(R.string.time_format_hour);
-		String formatHours = " " + context.getString(R.string.time_format_hours);
-		String res = "";
-		if (hours == 1)
-			res += hours + formatHour;
-		else if (hours > 0)
-			res += hours + formatHours;
-
-		if (mins == 1)
-			res += " " + mins + formatMin;
-		else if (mins > 0)
-			res += " " + mins + formatMins;
-
-		if (intSecs == 1)
-			res += " " + intSecs + formatSec;
-		else if (intSecs > 0)
-			res += " " + intSecs + formatSecs;
-
-		return res;
-	}
-
-	@Override
-	public String onFormatOutputValue(int value, String suffix) {
-		if ("ms".equals(suffix))
-			return formatTime(value);
-		else if ("min".equals(suffix)) {
-			if (value >= 47 * 60)
-				return context.getString(R.string.pref_infinite);
-			return formatTime(value * 1000 * 60);
-		}
-		return null;
-	}
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
@@ -337,32 +279,12 @@ public class LegacyCamera1SettingsCommon implements OnSharedPreferenceChangeList
 			setFrameSizes(prefs);
 		} else if (key.equals("pref_capture_rate")) {
 			prefCaptureRate.setSummary(formatTime(prefCaptureRate.getmValue()));
-		} else if (key.equals("pref_initial_delay")) {
-			prefInitialDelay.setSummary(formatTime(prefInitialDelay.getmValue()));
 		} else if (key.equals("pref_jpeg_quality")) {
 			prefJpegQuality.setSummary(prefJpegQuality.getmValue() + " %");
 		} else if (key.equals("pref_frame_size")) {
 			prefFrameSize.setSummary(prefFrameSize.getEntry());
 		} else if (key.equals("pref_frame_rate")) {
 			prefFrameRate.setSummary(prefFrameRate.getEntry());
-		} else if (key.equals("pref_schedule_recording")) {
-			prefScheduleRec.setSummary(prefScheduleRec.formatDateTime());
-			RecSettings settings = new RecSettings();
-			settings.load(context, PreferenceManager.getDefaultSharedPreferences(context));
-			if (settings.isSchedRecEnabled() && settings.getSchedRecTime() > System.currentTimeMillis()) {
-				Intent intent = new Intent(context, ForegroundService.class);
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-					context.startForegroundService(intent);
-				} else {
-					context.startService(intent);
-				}
-			} else {
-				Intent intent = new Intent(context, ForegroundService.class);
-				intent.setAction(ForegroundService.ACTION_STOP_SERVICE);
-				context.startService(intent);
-			}
-		} else if (key.equals("pref_stop_recording_after")) {
-			prefStopRecAfter.setSummary(onFormatOutputValue(prefStopRecAfter.getmValue(), "min"));
 		} else if (key.equals("pref_exposurecomp")) {
 			prefExposureComp.setSummary(Integer.toString(prefExposureComp.getmValue()));
 		} else if (key.equals("pref_zoom")) {
@@ -395,9 +317,6 @@ public class LegacyCamera1SettingsCommon implements OnSharedPreferenceChangeList
 		prefCamera = (ListPreference) screen.findPreference("pref_camera");
 		prefCaptureRate = (IntervalPickerPreference) screen.findPreference("pref_capture_rate");
 		prefJpegQuality = (SeekBarPreference) screen.findPreference("pref_jpeg_quality");
-		prefInitialDelay = (SeekBarPreference) screen.findPreference("pref_initial_delay");
-		prefScheduleRec = (DateTimePreference) screen.findPreference("pref_schedule_recording");
-		prefStopRecAfter = (SeekBarPreference) screen.findPreference("pref_stop_recording_after");
 		prefExposureComp = (SeekBarPreference) screen.findPreference("pref_exposurecomp");
 		prefZoom = (SeekBarPreference) screen.findPreference("pref_zoom");
 		prefCameraInitDelay = (SeekBarPreference) screen.findPreference("pref_camera_init_delay");
@@ -415,21 +334,11 @@ public class LegacyCamera1SettingsCommon implements OnSharedPreferenceChangeList
 		if (value != -1)
 			prefCaptureRate.setSummary(formatTime(value));
 
-		prefInitialDelay.setOnFormatOutputValueListener(this);
-		value = prefs.getInt("pref_initial_delay", -1);
-		if (value != -1)
-			prefInitialDelay.setSummary(formatTime(value));
 
 		value = prefs.getInt("pref_jpeg_quality", -1);
 		if (value != -1)
 			prefJpegQuality.setSummary(value + " %");
 
-		prefScheduleRec.setSummary(prefScheduleRec.formatDateTime());
-
-		prefStopRecAfter.setOnFormatOutputValueListener(this);
-		value = prefs.getInt("pref_stop_recording_after", -1);
-		if (value != -1)
-			prefStopRecAfter.setSummary(onFormatOutputValue(value, "min"));
 		prefVideoEncodingBitRate.setSummary(RecSettings.getInteger(prefs, "pref_video_encoding_br", 0) == 0 ? context.getString(R.string.encode_best) : context.getString(R.string.format_bps, prefs.getString("pref_video_encoding_br", "0")));
 		prefExposureComp.setSummary(Integer.toString(prefExposureComp.getmValue()));
 		prefZoom.setSummary(Integer.toString(prefZoom.getmValue()));
@@ -461,6 +370,5 @@ public class LegacyCamera1SettingsCommon implements OnSharedPreferenceChangeList
 
 	static public void setDefaultValues(Context context, SharedPreferences prefs) {
 		PreferenceManager.setDefaultValues(context, R.xml.preferences, false);
-
 	}
 }

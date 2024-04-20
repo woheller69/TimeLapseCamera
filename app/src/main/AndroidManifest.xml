@@ -39,6 +39,10 @@
             android:exported="false"
             android:label="@string/pref_camera_settings_category" />
         <activity
+            android:name=".settings.LegacyScheduling1Settings"
+            android:exported="false"
+            android:label="@string/pref_scheduling_settings_title" />
+        <activity
             android:name=".settings.StopSettingsActivity"
             android:exported="false"
             android:label="@string/pref_stop_settings_category" />
