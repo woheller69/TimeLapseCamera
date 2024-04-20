@@ -38,10 +38,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
-import at.andreasrohner.spartantimelapserec.settings.LegacyCamera1SettingsCommon;
 
 /**
  * Main activity of the
@@ -101,7 +99,6 @@ public class MainActivity extends AppCompatActivity implements ForegroundService
 		}
 		Context context = getApplicationContext();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		LegacyCamera1SettingsCommon.setDefaultValues(context, prefs);
 		if (GithubStar.shouldShowStarDialog(this)) {
 			GithubStar.starDialog(this, "https://github.com/woheller69/timelapsecamera");
 		}

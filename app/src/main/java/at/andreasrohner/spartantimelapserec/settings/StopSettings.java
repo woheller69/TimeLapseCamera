@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import androidx.preference.Preference;
-import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
 
 /**

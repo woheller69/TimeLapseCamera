@@ -18,11 +18,6 @@
 
 package at.andreasrohner.spartantimelapserec;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
@@ -41,6 +36,12 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 
 public class PreviewActivity extends Activity implements ErrorCallback,

@@ -1,9 +1,9 @@
 package at.andreasrohner.spartantimelapserec.rest;
 
+import android.util.Log;
+
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import android.util.Log;
 
 
 /**

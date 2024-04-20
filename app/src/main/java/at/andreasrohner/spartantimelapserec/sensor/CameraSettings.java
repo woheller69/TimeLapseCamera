@@ -18,16 +18,17 @@
 
 package at.andreasrohner.spartantimelapserec.sensor;
 
+import android.content.SharedPreferences;
+import android.hardware.Camera;
+import android.hardware.Camera.Size;
+import android.media.CamcorderProfile;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import android.content.SharedPreferences;
-import android.hardware.Camera;
-import android.hardware.Camera.Size;
-import android.media.CamcorderProfile;
 
 public class CameraSettings {
 

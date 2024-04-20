@@ -18,19 +18,20 @@
 
 package at.andreasrohner.spartantimelapserec.recorder;
 
-import java.io.File;
-import java.io.IOException;
-
 import android.content.Context;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
 import android.os.PowerManager.WakeLock;
+import android.os.SystemClock;
 import android.text.format.DateFormat;
 import android.util.Log;
+
+import java.io.File;
+import java.io.IOException;
+
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
 import at.andreasrohner.spartantimelapserec.sensor.OrientationSensor;

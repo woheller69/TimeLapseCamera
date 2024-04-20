@@ -1,23 +1,22 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-
     <PreferenceCategory app:title="@string/pref_project_settings_category">
-    <!--
         <ListPreference
-            android:defaultValue="VIDEO_TIME_LAPSE"
-            android:dialogTitle="@string/pref_rec_mode"
-            android:entries="@array/pref_rec_mode_entries"
-            android:entryValues="@array/pref_rec_mode_values"
-            android:key="pref_rec_mode"
-            android:title="@string/pref_rec_mode" />
+            app:defaultValue="VIDEO_TIME_LAPSE"
+            app:dialogTitle="@string/pref_rec_mode"
+            app:entries="@array/pref_rec_mode_entries"
+            app:entryValues="@array/pref_rec_mode_values"
+            app:icon="@drawable/ic_mode"
+            app:key="pref_rec_mode"
+            app:title="@string/pref_rec_mode" />
 
-        <at.andreasrohner.spartantimelapserec.preference.NoKBEditTextPreference
-            android:defaultValue="@string/app_name"
-            android:inputType="textNoSuggestions"
-            android:key="pref_project_title"
-            android:summary="@string/pref_project_title_summ"
-            android:title="@string/pref_project_title" />
--->
+        <EditTextPreference
+            app:defaultValue="@string/app_name"
+            app:icon="@drawable/ic_folder"
+            app:key="pref_project_title"
+            app:summary="@string/pref_project_title_summ"
+            app:title="@string/pref_project_title" />
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/pref_preferences_title">

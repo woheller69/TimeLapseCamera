@@ -1,7 +1,5 @@
 package at.andreasrohner.spartantimelapserec.rest;
 
-import android.util.Log;
-
 import java.io.File;
 import java.io.IOException;
 

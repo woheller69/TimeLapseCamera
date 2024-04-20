@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import java.net.InetAddress;
 
 import androidx.preference.Preference;
-import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.rest.RestService;
 

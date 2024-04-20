@@ -5,7 +5,6 @@ import android.view.MenuItem;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceFragmentCompat;
 import at.andreasrohner.spartantimelapserec.R;
 
 /**

@@ -18,14 +18,14 @@
 
 package at.andreasrohner.spartantimelapserec.data;
 
-import static android.os.Environment.DIRECTORY_PICTURES;
-
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.CamcorderProfile;
 import android.os.Environment;
+
 import at.andreasrohner.spartantimelapserec.preference.DateTimePreference;
+
+import static android.os.Environment.DIRECTORY_PICTURES;
 
 public class RecSettings {
 	private int cameraId;

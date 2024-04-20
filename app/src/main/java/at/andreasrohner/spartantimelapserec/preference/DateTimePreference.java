@@ -18,10 +18,6 @@
 
 package at.andreasrohner.spartantimelapserec.preference;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
@@ -32,6 +28,11 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import at.andreasrohner.spartantimelapserec.R;
 
 public class DateTimePreference extends DialogPreference implements

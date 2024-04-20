@@ -18,34 +18,27 @@
 
 package at.andreasrohner.spartantimelapserec.settings;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.hardware.Camera;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
-import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 
-import at.andreasrohner.spartantimelapserec.ForegroundService;
+import java.util.ArrayList;
+import java.util.List;
+
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.data.RecMode;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
-import at.andreasrohner.spartantimelapserec.preference.DateTimePreference;
 import at.andreasrohner.spartantimelapserec.preference.IntervalPickerPreference;
-import at.andreasrohner.spartantimelapserec.preference.IpInformation;
 import at.andreasrohner.spartantimelapserec.preference.SeekBarPreference;
-import at.andreasrohner.spartantimelapserec.preference.StopInformation;
 import at.andreasrohner.spartantimelapserec.sensor.CameraSettings;
 
 public class LegacyCamera1SettingsCommon extends BaseLegacySettingsCommon implements OnSharedPreferenceChangeListener {
@@ -366,9 +359,5 @@ public class LegacyCamera1SettingsCommon extends BaseLegacySettingsCommon implem
 
 	public void onPause(PreferenceScreen screen) {
 		screen.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
-	}
-
-	static public void setDefaultValues(Context context, SharedPreferences prefs) {
-		PreferenceManager.setDefaultValues(context, R.xml.preferences, false);
 	}
 }

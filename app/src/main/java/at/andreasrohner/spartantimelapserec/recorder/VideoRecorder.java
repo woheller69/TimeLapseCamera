@@ -18,11 +18,6 @@
 
 package at.andreasrohner.spartantimelapserec.recorder;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -32,6 +27,12 @@ import android.media.MediaRecorder.OnErrorListener;
 import android.media.MediaRecorder.OnInfoListener;
 import android.os.Handler;
 import android.util.Log;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 
 public class VideoRecorder extends Recorder implements OnInfoListener,

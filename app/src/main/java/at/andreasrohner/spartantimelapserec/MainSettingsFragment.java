@@ -3,26 +3,25 @@ package at.andreasrohner.spartantimelapserec;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
 
-import java.util.Map;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
-import at.andreasrohner.spartantimelapserec.settings.RestSettingsActivity;
 import at.andreasrohner.spartantimelapserec.settings.ShowActivityPreference;
 
 /**
  * Main Settings menu
  */
-public class MainSettingsFragment extends PreferenceFragmentCompat {
+public class MainSettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+	/**
+	 * Recording mode preference
+	 */
+	private ListPreference prefRecMode;
 
 	/**
 	 * Constructor
@@ -34,14 +33,24 @@ public class MainSettingsFragment extends PreferenceFragmentCompat {
 	public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 		setPreferencesFromResource(R.xml.main_preferences, rootKey);
 
+		prefRecMode = (ListPreference) findPreference("pref_rec_mode");
+		setRecMode(getPreferenceManager().getSharedPreferences());
+
 		updateSummary();
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
+		getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 
 		updateSummary();
+	}
+
+	@Override
+	public void onPause() {
+		getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+		super.onPause();
 	}
 
 	/**
@@ -90,6 +99,20 @@ public class MainSettingsFragment extends PreferenceFragmentCompat {
 			ctx.startActivity(myIntent);
 		} else {
 			super.onDisplayPreferenceDialog(preference);
+		}
+	}
+
+	private void setRecMode(SharedPreferences prefs) {
+		CharSequence entry = prefRecMode.getEntry();
+		if (entry != null) {
+			prefRecMode.setSummary(entry);
+		}
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+		if (key.equals("pref_rec_mode")) {
+			setRecMode(prefs);
 		}
 	}
 }

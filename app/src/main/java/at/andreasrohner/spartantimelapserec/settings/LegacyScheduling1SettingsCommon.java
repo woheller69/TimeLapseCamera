@@ -18,33 +18,18 @@
 
 package at.andreasrohner.spartantimelapserec.settings;
 
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.hardware.Camera;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
-import android.preference.EditTextPreference;
-import android.preference.ListPreference;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.preference.SwitchPreference;
-
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 import at.andreasrohner.spartantimelapserec.ForegroundService;
-import at.andreasrohner.spartantimelapserec.R;
-import at.andreasrohner.spartantimelapserec.data.RecMode;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 import at.andreasrohner.spartantimelapserec.preference.DateTimePreference;
-import at.andreasrohner.spartantimelapserec.preference.IntervalPickerPreference;
 import at.andreasrohner.spartantimelapserec.preference.SeekBarPreference;
-import at.andreasrohner.spartantimelapserec.sensor.CameraSettings;
 
 public class LegacyScheduling1SettingsCommon extends BaseLegacySettingsCommon implements OnSharedPreferenceChangeListener {
 

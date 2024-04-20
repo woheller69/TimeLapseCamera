@@ -18,14 +18,15 @@
 
 package at.andreasrohner.spartantimelapserec.recorder;
 
-import java.io.IOException;
-
 import android.content.Context;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
+
+import java.io.IOException;
+
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 

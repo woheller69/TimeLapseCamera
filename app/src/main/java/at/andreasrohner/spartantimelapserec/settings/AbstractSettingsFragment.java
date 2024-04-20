@@ -5,7 +5,6 @@ import android.os.Bundle;
 
 import androidx.annotation.XmlRes;
 import androidx.preference.PreferenceFragmentCompat;
-import at.andreasrohner.spartantimelapserec.R;
 
 /**
  * Base class for the settings fragments

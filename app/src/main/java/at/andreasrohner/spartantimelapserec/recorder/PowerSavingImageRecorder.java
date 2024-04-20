@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.PowerManager.WakeLock;
 import android.os.SystemClock;
+
 import at.andreasrohner.spartantimelapserec.MainActivity;
 import at.andreasrohner.spartantimelapserec.PowerSavingReceiver;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
