@@ -31,14 +31,12 @@ public class StopSettingsActivity extends AbstractSettingsActivity {
 
 		@Override
 		protected void updateValues() {
-			// TODO !!!!!!!!!!!!!!!
+			// Nothing to do
 		}
 
 		@Override
 		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
-			if ("pref_restapi_port".equals(key)) {
-				// TODO !!!!!!!!!!!!!!!
-			}
+			// Nothing to do here
 		}
 	}
 }

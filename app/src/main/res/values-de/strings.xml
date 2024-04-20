@@ -102,4 +102,7 @@
     <string name="pref_scheduling_settings_category">Planung</string>
     <string name="pref_scheduling_settings_title">Planung konfigurieren</string>
     <string name="pref_preferences_title">Einstellungen</string>
+    <string name="pref_scheduling_summ_start">Startverzögerung:</string>
+    <string name="pref_scheduling_summ_duration">Dauer:</string>
+    <string name="pref_scheduling_summ_scheduling">Geplant:</string>
 </resources>
