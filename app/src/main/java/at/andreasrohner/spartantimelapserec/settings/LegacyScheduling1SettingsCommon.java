@@ -26,6 +26,8 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 
+import java.text.Normalizer;
+
 import at.andreasrohner.spartantimelapserec.ForegroundService;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 import at.andreasrohner.spartantimelapserec.preference.DateTimePreference;
@@ -51,7 +53,7 @@ public class LegacyScheduling1SettingsCommon extends BaseLegacySettingsCommon im
 		prefInitialDelay.setOnFormatOutputValueListener(this);
 		int value = prefs.getInt("pref_initial_delay", -1);
 		if (value != -1) {
-			prefInitialDelay.setSummary(formatTime(value));
+			prefInitialDelay.setSummary(FormatUtil.formatTime(value, context));
 		}
 
 		prefScheduleRec.setSummary(prefScheduleRec.formatDateTime());
@@ -65,7 +67,7 @@ public class LegacyScheduling1SettingsCommon extends BaseLegacySettingsCommon im
 
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 		if (key.equals("pref_initial_delay")) {
-			prefInitialDelay.setSummary(formatTime(prefInitialDelay.getmValue()));
+			prefInitialDelay.setSummary(FormatUtil.formatTime(prefInitialDelay.getmValue(), context));
 		} else if (key.equals("pref_schedule_recording")) {
 			prefScheduleRec.setSummary(prefScheduleRec.formatDateTime());
 			RecSettings settings = new RecSettings();

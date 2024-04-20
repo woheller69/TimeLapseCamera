@@ -40,6 +40,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
+import at.andreasrohner.spartantimelapserec.settings.RestControlUtil;
 
 /**
  * Main activity of the
@@ -102,6 +103,8 @@ public class MainActivity extends AppCompatActivity implements ForegroundService
 		if (GithubStar.shouldShowStarDialog(this)) {
 			GithubStar.starDialog(this, "https://github.com/woheller69/timelapsecamera");
 		}
+
+		RestControlUtil.startStopRestApiServer(context);
 	}
 
 	@Override

@@ -158,12 +158,9 @@ public class LegacyCamera1SettingsCommon extends BaseLegacySettingsCommon implem
 		});
 	}
 
-	// TODO this needs to be moved to Main!
 	private void delayedInit(final SharedPreferences prefs) {
 		prefFrameRate.setEnabled(false);
 		prefFrameSize.setEnabled(false);
-
-		RestControlUtil.startStopRestApiServer(context);
 
 		new Thread(new Runnable() {
 			@Override
@@ -246,7 +243,6 @@ public class LegacyCamera1SettingsCommon extends BaseLegacySettingsCommon implem
 		}
 	}
 
-
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 		if (key.equals("pref_camera")) {
@@ -271,7 +267,7 @@ public class LegacyCamera1SettingsCommon extends BaseLegacySettingsCommon implem
 		} else if (key.equals("pref_rec_mode")) {
 			setFrameSizes(prefs);
 		} else if (key.equals("pref_capture_rate")) {
-			prefCaptureRate.setSummary(formatTime(prefCaptureRate.getmValue()));
+			prefCaptureRate.setSummary(FormatUtil.formatTime(prefCaptureRate.getmValue(),context));
 		} else if (key.equals("pref_jpeg_quality")) {
 			prefJpegQuality.setSummary(prefJpegQuality.getmValue() + " %");
 		} else if (key.equals("pref_frame_size")) {
@@ -283,9 +279,9 @@ public class LegacyCamera1SettingsCommon extends BaseLegacySettingsCommon implem
 		} else if (key.equals("pref_zoom")) {
 			prefZoom.setSummary(Integer.toString(prefZoom.getmValue()));
 		} else if (key.equals("pref_camera_init_delay")) {
-			prefCameraInitDelay.setSummary(formatTime(prefCameraInitDelay.getmValue()));
+			prefCameraInitDelay.setSummary(FormatUtil.formatTime(prefCameraInitDelay.getmValue(),context));
 		} else if (key.equals("pref_camera_trigger_delay")) {
-			prefCameraTriggerDelay.setSummary(formatTime(prefCameraTriggerDelay.getmValue()));
+			prefCameraTriggerDelay.setSummary(FormatUtil.formatTime(prefCameraTriggerDelay.getmValue(),context));
 		} else if (key.equals("pref_video_encoding_br")) {
 			if (RecSettings.getInteger(prefs, "pref_video_encoding_br", 0) == 0) {  //reset to undefined, so hint is shown again
 				SharedPreferences.Editor editor = prefs.edit();
@@ -325,8 +321,7 @@ public class LegacyCamera1SettingsCommon extends BaseLegacySettingsCommon implem
 
 		int value = prefs.getInt("pref_capture_rate", -1);
 		if (value != -1)
-			prefCaptureRate.setSummary(formatTime(value));
-
+			prefCaptureRate.setSummary(FormatUtil.formatTime(value, context));
 
 		value = prefs.getInt("pref_jpeg_quality", -1);
 		if (value != -1)
@@ -335,8 +330,8 @@ public class LegacyCamera1SettingsCommon extends BaseLegacySettingsCommon implem
 		prefVideoEncodingBitRate.setSummary(RecSettings.getInteger(prefs, "pref_video_encoding_br", 0) == 0 ? context.getString(R.string.encode_best) : context.getString(R.string.format_bps, prefs.getString("pref_video_encoding_br", "0")));
 		prefExposureComp.setSummary(Integer.toString(prefExposureComp.getmValue()));
 		prefZoom.setSummary(Integer.toString(prefZoom.getmValue()));
-		prefCameraInitDelay.setSummary(formatTime(prefCameraInitDelay.getmValue()));
-		prefCameraTriggerDelay.setSummary(formatTime(prefCameraTriggerDelay.getmValue()));
+		prefCameraInitDelay.setSummary(FormatUtil.formatTime(prefCameraInitDelay.getmValue(), context));
+		prefCameraTriggerDelay.setSummary(FormatUtil.formatTime(prefCameraTriggerDelay.getmValue(), context));
 
 		updatePrefStatus(prefs);
 	}

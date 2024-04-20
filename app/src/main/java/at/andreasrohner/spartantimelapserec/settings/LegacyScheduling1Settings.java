@@ -39,15 +39,13 @@ public class LegacyScheduling1Settings implements MainSettingsMenu {
 		StringBuffer b = new StringBuffer();
 		b.append(ctx.getString(R.string.pref_scheduling_summ_start));
 		b.append(' ');
-		b.append(initialDelay / 1000);
-		b.append('s');
+		b.append(FormatUtil.formatTime(initialDelay, ctx));
 
 		if (stopRecordingAfter < 2880) {
 			b.append(", ");
 			b.append(ctx.getString(R.string.pref_scheduling_summ_duration));
 			b.append(' ');
-			b.append(stopRecordingAfter);
-			b.append("min");
+			b.append(FormatUtil.formatTimeMin(initialDelay, ctx));
 		}
 
 		if (scheduleRecording != null && scheduleRecording.startsWith("1|")) {
