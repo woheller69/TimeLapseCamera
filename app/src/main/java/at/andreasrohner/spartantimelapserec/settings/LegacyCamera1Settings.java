@@ -43,7 +43,6 @@ public class LegacyCamera1Settings implements MainSettingsMenu {
 		b.append(ctx.getString(R.string.pref_frame_size));
 		b.append(": ");
 		b.append(prefs.getString("pref_frame_size", "1920x1080"));
-		b.append(", ");
 
 		b.append(", ");
 		b.append(ctx.getString(R.string.pref_capture_rate));
