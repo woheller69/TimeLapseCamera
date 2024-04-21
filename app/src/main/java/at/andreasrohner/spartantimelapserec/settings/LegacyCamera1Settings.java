@@ -11,6 +11,8 @@ import java.text.SimpleDateFormat;
 
 import androidx.preference.Preference;
 import at.andreasrohner.spartantimelapserec.R;
+import at.andreasrohner.spartantimelapserec.data.RecMode;
+import at.andreasrohner.spartantimelapserec.data.RecSettings;
 
 /**
  * Legacy settings of Camera1 interface
@@ -44,11 +46,23 @@ public class LegacyCamera1Settings implements MainSettingsMenu {
 		b.append(": ");
 		b.append(prefs.getString("pref_frame_size", "1920x1080"));
 
-		b.append(", ");
-		b.append(ctx.getString(R.string.pref_capture_rate));
-		b.append(": ");
-		b.append(FormatUtil.formatTime(prefs.getInt("pref_capture_rate", 1000), ctx));
+		RecMode recMode = RecSettings.getRecMode(prefs, "pref_rec_mode", RecMode.VIDEO_TIME_LAPSE);
+		if (recMode == RecMode.IMAGE_TIME_LAPSE || recMode == RecMode.VIDEO_TIME_LAPSE) {
+			b.append(", ");
+			b.append(ctx.getString(R.string.pref_capture_rate));
+			b.append(": ");
+			b.append(FormatUtil.formatTime(prefs.getInt("pref_capture_rate", 1000), ctx));
+		}
 
+		if (recMode == RecMode.VIDEO || recMode == RecMode.VIDEO_TIME_LAPSE) {
+			String frameRate = prefs.getString("pref_frame_rate", null);
+			if (frameRate != null) {
+				b.append(", ");
+				b.append(ctx.getString(R.string.pref_frame_rate));
+				b.append(": ");
+				b.append(frameRate);
+			}
+		}
 		pref.setSummary(b.toString());
 	}
 }

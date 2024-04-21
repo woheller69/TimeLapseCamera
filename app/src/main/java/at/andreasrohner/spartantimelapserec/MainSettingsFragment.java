@@ -113,6 +113,7 @@ public class MainSettingsFragment extends PreferenceFragmentCompat implements Sh
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 		if (key.equals("pref_rec_mode")) {
 			setRecMode(prefs);
+			updateSummary();
 		}
 	}
 }
