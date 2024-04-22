@@ -3,7 +3,8 @@
         <ListPreference
             app:defaultValue="0"
             app:dialogTitle="@string/pref_camera"
-            app:key="pref_camera2"
+            app:icon="@drawable/ic_switch_camera"
+            app:key="pref_camera"
             app:title="@string/pref_camera" />
     </PreferenceCategory>
 </PreferenceScreen>

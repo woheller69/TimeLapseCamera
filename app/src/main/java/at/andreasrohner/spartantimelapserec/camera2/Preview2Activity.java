@@ -2,6 +2,7 @@ package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.hardware.camera2.CameraManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
 
 import android.content.pm.PackageManager;
@@ -228,10 +230,13 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 	}
 
 	private void openCamera() {
+		closeCamera();
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
 		Log.e(TAG, "is camera open");
 		try {
-			cameraId = manager.getCameraIdList()[0];
+			cameraId = prefs.getString("pref_camera",manager.getCameraIdList()[0] );
 			this.characteristics = manager.getCameraCharacteristics(cameraId);
 			StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 			assert map != null;

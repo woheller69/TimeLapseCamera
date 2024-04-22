@@ -2,6 +2,7 @@ package at.andreasrohner.spartantimelapserec.settings;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
@@ -18,6 +19,7 @@ import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.camera2.Preview2Activity;
+import at.andreasrohner.spartantimelapserec.data.RecSettings;
 
 /**
  * Camera 2 Settings
@@ -48,7 +50,7 @@ public class Camera2SettingsActivity extends AbstractSettingsActivity {
 			super.onCreate(savedInstanceState);
 
 			CameraManager manager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
-			final ListPreference listPreference = (ListPreference) findPreference("pref_camera2");
+			final ListPreference listPreference = (ListPreference) findPreference("pref_camera");
 
 			try {
 				Map<String, String> cameras = new LinkedHashMap<>();
@@ -62,9 +64,9 @@ public class Camera2SettingsActivity extends AbstractSettingsActivity {
 
 					String cam;
 					if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
-						cam = cameraId + ": Front";
+						cam = cameraId + ": " + getString(R.string.pref_camera_front);
 					} else {
-						cam = cameraId + ": Back";
+						cam = cameraId + ": " + getString(R.string.pref_camera_back);
 					}
 
 					cameras.put(cameraId, cam);
@@ -85,13 +87,15 @@ public class Camera2SettingsActivity extends AbstractSettingsActivity {
 		@Override
 		protected void updateValues() {
 			// Nothing to do
-			ListPreference pref = (ListPreference) findPreference("pref_camera2");
+			ListPreference pref = (ListPreference) findPreference("pref_camera");
 			pref.setSummary(pref.getValue());
 		}
 
 		@Override
 		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
-			// Nothing to do here
+			if ("pref_camera".equals(key)) {
+				updateValues();
+			}
 		}
 	}
 }
