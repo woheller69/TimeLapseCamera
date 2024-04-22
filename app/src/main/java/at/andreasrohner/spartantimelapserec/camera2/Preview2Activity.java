@@ -1,25 +1,19 @@
-package at.andreasrohner.spartantimelapserec;
-
-import android.content.Context;
-import android.hardware.Camera;
-import android.hardware.camera2.CameraManager;
-import android.os.Bundle;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.Manifest;
 import android.content.Context;
+import android.hardware.camera2.CameraManager;
+import android.os.Build;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import at.andreasrohner.spartantimelapserec.R;
+
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
@@ -27,23 +21,19 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.TextureView;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -60,7 +50,7 @@ import java.util.List;
 /**
  * Preview with Camera 2 Activity
  */
-public class Preview2Activity extends AppCompatActivity {
+public class Preview2Activity extends AppCompatActivity implements CameraPreview {
 
 	private CameraCharacteristics characteristics;
 
@@ -76,7 +66,7 @@ public class Preview2Activity extends AppCompatActivity {
 
 	private TextureView textureView;
 
-	private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
+	public static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
 	static {
 		ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -201,92 +191,12 @@ public class Preview2Activity extends AppCompatActivity {
 			Log.e(TAG, "cameraDevice is null");
 			return;
 		}
-		CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-		try {
-			CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraDevice.getId());
-			Size[] jpegSizes = null;
-			if (characteristics != null) {
-				jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
-			}
-			int width = 640;
-			int height = 480;
-			if (jpegSizes != null && 0 < jpegSizes.length) {
-				width = jpegSizes[0].getWidth();
-				height = jpegSizes[0].getHeight();
-			}
-			ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
-			List<Surface> outputSurfaces = new ArrayList<Surface>(2);
-			outputSurfaces.add(reader.getSurface());
-			outputSurfaces.add(new Surface(textureView.getSurfaceTexture()));
-			final CaptureRequest.Builder captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-			captureBuilder.addTarget(reader.getSurface());
-			captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-			// Orientation
-			int rotation = getWindowManager().getDefaultDisplay().getRotation();
-			captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
-			final File file = new File(Environment.getExternalStorageDirectory() + "/pic.jpg");
-			ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
-				@Override
-				public void onImageAvailable(ImageReader reader) {
-					Image image = null;
-					try {
-						image = reader.acquireLatestImage();
-						ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-						byte[] bytes = new byte[buffer.capacity()];
-						buffer.get(bytes);
-						save(bytes);
-					} catch (FileNotFoundException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					} finally {
-						if (image != null) {
-							image.close();
-						}
-					}
-				}
 
-				private void save(byte[] bytes) throws IOException {
-					OutputStream output = null;
-					try {
-						output = new FileOutputStream(file);
-						output.write(bytes);
-					} finally {
-						if (null != output) {
-							output.close();
-						}
-					}
-				}
-			};
-			reader.setOnImageAvailableListener(readerListener, mBackgroundHandler);
-			final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
-				@Override
-				public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
-					super.onCaptureCompleted(session, request, result);
-					Toast.makeText(Preview2Activity.this, "Saved:" + file, Toast.LENGTH_SHORT).show();
-					createCameraPreview();
-				}
-			};
-			cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
-				@Override
-				public void onConfigured(CameraCaptureSession session) {
-					try {
-						session.capture(captureBuilder.build(), captureListener, mBackgroundHandler);
-					} catch (CameraAccessException e) {
-						e.printStackTrace();
-					}
-				}
-
-				@Override
-				public void onConfigureFailed(CameraCaptureSession session) {
-				}
-			}, mBackgroundHandler);
-		} catch (CameraAccessException e) {
-			e.printStackTrace();
-		}
+		TakePicture picture = new TakePicture((CameraManager) getSystemService(Context.CAMERA_SERVICE), cameraDevice, textureView, getWindowManager(), mBackgroundHandler, this.getApplicationContext(), this);
+		picture.create();
 	}
 
-	protected void createCameraPreview() {
+	public void createCameraPreview() {
 		try {
 			SurfaceTexture texture = textureView.getSurfaceTexture();
 			assert texture != null;
@@ -322,18 +232,22 @@ public class Preview2Activity extends AppCompatActivity {
 		Log.e(TAG, "is camera open");
 		try {
 			cameraId = manager.getCameraIdList()[0];
-			this. characteristics = manager.getCameraCharacteristics(cameraId);
+			this.characteristics = manager.getCameraCharacteristics(cameraId);
 			StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 			assert map != null;
 			imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
 			// Add permission for camera and let user grant the permission
 
 			// TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-/*
-			if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-				ActivityCompat.requestPermissions(Preview2Activity.this, new String[] {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
-				return;
-			}*/
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {  //WRITE_EXTERNAL_STORAGE is deprecated (and is not granted) when targeting Android 13+, in addition POST_NOTIFICATION is needed
+				if ((ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(android.Manifest.permission.CAMERA)) || (ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(android.Manifest.permission.RECORD_AUDIO)) || (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(android.Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
+					ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.CAMERA, android.Manifest.permission.RECORD_AUDIO, android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 123);
+				}
+			} else {
+				if ((ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(android.Manifest.permission.CAMERA)) || (ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(android.Manifest.permission.RECORD_AUDIO)) || (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS))) {
+					ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.CAMERA, android.Manifest.permission.RECORD_AUDIO, Manifest.permission.POST_NOTIFICATIONS}, 123);
+				}
+			}
 			manager.openCamera(cameraId, stateCallback, null);
 
 		} catch (CameraAccessException e) {

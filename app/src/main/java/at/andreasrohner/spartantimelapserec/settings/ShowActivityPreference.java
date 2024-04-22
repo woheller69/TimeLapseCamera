@@ -85,13 +85,16 @@ public class ShowActivityPreference extends DialogPreference {
 	}
 
 	/**
+	 * Get the activity to open
+	 *
+	 * @param prefs Preferences
 	 * @return The activity class of this settings
 	 */
-	public Class<? extends Activity> getActivityClass() {
+	public Class<? extends Activity> getActivityClass(SharedPreferences prefs) {
 		if (settings == null) {
 			return null;
 		}
-		return settings.getActivityClass();
+		return settings.getActivityClass(prefs);
 	}
 
 	/**
@@ -99,7 +102,7 @@ public class ShowActivityPreference extends DialogPreference {
 	 */
 	public void updateSummary() {
 		if (settings == null) {
-			return ;
+			return;
 		}
 
 		SharedPreferences prefs = getPreferenceManager().getSharedPreferences();

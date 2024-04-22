@@ -19,7 +19,7 @@ public class StopSettings implements MainSettingsMenu {
 	}
 
 	@Override
-	public Class<? extends Activity> getActivityClass() {
+	public Class<? extends Activity> getActivityClass(SharedPreferences prefs) {
 		return StopSettingsActivity.class;
 	}
 

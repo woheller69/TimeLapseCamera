@@ -100,7 +100,7 @@ public class MainSettingsFragment extends PreferenceFragmentCompat implements Sh
 		if (preference instanceof ShowActivityPreference) {
 			ShowActivityPreference p = (ShowActivityPreference) preference;
 			Context ctx = getContext();
-			Class<? extends Activity> activityClass = p.getActivityClass();
+			Class<? extends Activity> activityClass = p.getActivityClass(getPreferenceManager().getSharedPreferences());
 			if (activityClass == null) {
 				return;
 			}
@@ -135,6 +135,6 @@ public class MainSettingsFragment extends PreferenceFragmentCompat implements Sh
 	 */
 	private void updatePresMode(SharedPreferences prefs) {
 		// Disable Scheduling Menu in Camera 2 Mode, not yet implemented!
-		prefMainMenuScheduling.setVisible(RecSettings.getRecMode(prefs) != RecMode.CAMERA2_TIEM_LAPSE);
+		prefMainMenuScheduling.setVisible(RecSettings.getRecMode(prefs) != RecMode.CAMERA2_TIME_LAPSE);
 	}
 }

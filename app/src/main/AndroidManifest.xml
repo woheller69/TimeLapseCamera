@@ -31,7 +31,7 @@
         android:requestLegacyExternalStorage="true"
         android:theme="@style/Theme.TimeLapse">
         <activity
-            android:name=".Preview2Activity"
+            android:name=".camera2.Preview2Activity"
             android:exported="false" />
         <activity
             android:name=".settings.RestSettingsActivity"
@@ -43,6 +43,10 @@
             android:label="@string/pref_camera_settings_category" />
         <activity
             android:name=".settings.LegacyScheduling1SettingsActivity"
+            android:exported="false"
+            android:label="@string/pref_scheduling_settings_title" />
+        <activity
+            android:name=".settings.Camera2SettingsActivity"
             android:exported="false"
             android:label="@string/pref_scheduling_settings_title" />
         <activity

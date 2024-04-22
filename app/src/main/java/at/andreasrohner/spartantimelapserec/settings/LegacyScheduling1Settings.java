@@ -22,7 +22,7 @@ public class LegacyScheduling1Settings implements MainSettingsMenu {
 	}
 
 	@Override
-	public Class<? extends Activity> getActivityClass() {
+	public Class<? extends Activity> getActivityClass(SharedPreferences prefs) {
 		return LegacyScheduling1SettingsActivity.class;
 	}
 

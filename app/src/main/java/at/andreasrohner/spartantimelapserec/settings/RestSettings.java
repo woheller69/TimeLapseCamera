@@ -22,7 +22,7 @@ public class RestSettings implements MainSettingsMenu {
 	}
 
 	@Override
-	public Class<? extends Activity> getActivityClass() {
+	public Class<? extends Activity> getActivityClass(SharedPreferences prefs) {
 		return RestSettingsActivity.class;
 	}
 

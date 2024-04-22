@@ -41,5 +41,5 @@ public enum RecMode {
 	/**
 	 * Record timelapse with camera 2
 	 */
-	CAMERA2_TIEM_LAPSE
+	CAMERA2_TIME_LAPSE
 }

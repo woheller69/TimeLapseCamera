@@ -10,7 +10,7 @@
         <item>VIDEO</item>
         <item>VIDEO_TIME_LAPSE</item>
         <item>IMAGE_TIME_LAPSE</item>
-        <item>CAMERA2_TIEM_LAPSE</item>
+        <item>CAMERA2_TIME_LAPSE</item>
     </string-array>
 
     <!-- Reply Preference -->

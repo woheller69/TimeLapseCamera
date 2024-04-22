@@ -12,9 +12,12 @@ import androidx.preference.Preference;
 public interface MainSettingsMenu {
 
 	/**
+	 * Get the activity
+	 *
+	 * @param prefs Preferences
 	 * @return The activity class of this settings
 	 */
-	public Class<? extends Activity> getActivityClass();
+	public Class<? extends Activity> getActivityClass(SharedPreferences prefs);
 
 	/**
 	 * Create summary from current values

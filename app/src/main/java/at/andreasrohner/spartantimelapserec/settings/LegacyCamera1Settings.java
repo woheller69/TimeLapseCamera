@@ -4,10 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
-import android.preference.ListPreference;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 
 import androidx.preference.Preference;
 import at.andreasrohner.spartantimelapserec.R;
@@ -26,13 +22,25 @@ public class LegacyCamera1Settings implements MainSettingsMenu {
 	}
 
 	@Override
-	public Class<? extends Activity> getActivityClass() {
-		return LegacyCamera1SettingsActivity.class;
+	public Class<? extends Activity> getActivityClass(SharedPreferences prefs) {
+		RecMode recMode = RecSettings.getRecMode(prefs);
+		if (recMode == RecMode.CAMERA2_TIME_LAPSE) {
+			return Camera2SettingsActivity.class;
+		} else {
+			return LegacyCamera1SettingsActivity.class;
+		}
 	}
 
 	@Override
 	public void updateSummary(Preference pref, Context ctx, SharedPreferences prefs) {
+		RecMode recMode = RecSettings.getRecMode(prefs);
 		StringBuffer b = new StringBuffer();
+
+		if (recMode == RecMode.CAMERA2_TIME_LAPSE) {
+			pref.setSummary("CAMERA 2 TODO");
+			return;
+		}
+
 		b.append(ctx.getString(R.string.pref_camera_camera));
 		b.append(": ");
 		if (Integer.parseInt(prefs.getString("pref_camera", "0")) == Camera.CameraInfo.CAMERA_FACING_FRONT) {
@@ -46,7 +54,6 @@ public class LegacyCamera1Settings implements MainSettingsMenu {
 		b.append(": ");
 		b.append(prefs.getString("pref_frame_size", "1920x1080"));
 
-		RecMode recMode = RecSettings.getRecMode(prefs);
 		if (recMode == RecMode.IMAGE_TIME_LAPSE || recMode == RecMode.VIDEO_TIME_LAPSE) {
 			b.append(", ");
 			b.append(ctx.getString(R.string.pref_capture_rate));
