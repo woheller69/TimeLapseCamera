@@ -62,6 +62,8 @@ import java.util.List;
  */
 public class Preview2Activity extends AppCompatActivity {
 
+	private CameraCharacteristics characteristics;
+
 	/**
 	 * Constructor
 	 */
@@ -114,6 +116,7 @@ public class Preview2Activity extends AppCompatActivity {
 		textureView = (TextureView) findViewById(R.id.texture);
 		assert textureView != null;
 		textureView.setSurfaceTextureListener(textureListener);
+
 		takePictureButton = (Button) findViewById(R.id.btn_takepicture);
 		assert takePictureButton != null;
 		takePictureButton.setOnClickListener(new View.OnClickListener() {
@@ -301,6 +304,7 @@ public class Preview2Activity extends AppCompatActivity {
 					// When the session is ready, we start displaying the preview.
 					cameraCaptureSessions = cameraCaptureSession;
 					updatePreview();
+					textureView.setOnTouchListener(new CameraFocusOnTouchHandler(characteristics, captureRequestBuilder, cameraCaptureSessions, mBackgroundHandler));
 				}
 
 				@Override
@@ -318,7 +322,7 @@ public class Preview2Activity extends AppCompatActivity {
 		Log.e(TAG, "is camera open");
 		try {
 			cameraId = manager.getCameraIdList()[0];
-			CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+			this. characteristics = manager.getCameraCharacteristics(cameraId);
 			StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 			assert map != null;
 			imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
@@ -331,6 +335,7 @@ public class Preview2Activity extends AppCompatActivity {
 				return;
 			}*/
 			manager.openCamera(cameraId, stateCallback, null);
+
 		} catch (CameraAccessException e) {
 			e.printStackTrace();
 		}
