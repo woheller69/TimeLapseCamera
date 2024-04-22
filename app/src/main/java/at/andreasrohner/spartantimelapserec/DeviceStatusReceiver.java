@@ -22,7 +22,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+
+import androidx.preference.PreferenceManager;
 
 public class DeviceStatusReceiver extends BroadcastReceiver {
 
@@ -36,7 +37,7 @@ public class DeviceStatusReceiver extends BroadcastReceiver {
 		 * battery or storage is low if we don't stop the recording the mp4
 		 * files get corrupted and are not playable any more
 		 */
-		if ((stopOnLowBattery && intent.getAction().equals(Intent.ACTION_BATTERY_LOW)) || (stopOnLowStorage && intent.getAction().equals(Intent.ACTION_DEVICE_STORAGE_LOW)) || intent.getAction().equals(Intent.ACTION_SHUTDOWN)){
+		if ((stopOnLowBattery && intent.getAction().equals(Intent.ACTION_BATTERY_LOW)) || (stopOnLowStorage && intent.getAction().equals(Intent.ACTION_DEVICE_STORAGE_LOW)) || intent.getAction().equals(Intent.ACTION_SHUTDOWN)) {
 			Intent stopintent = new Intent(context, ForegroundService.class);
 			stopintent.setAction(ForegroundService.ACTION_STOP_SERVICE);
 			context.startService(stopintent);

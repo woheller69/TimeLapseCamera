@@ -46,7 +46,7 @@ public class LegacyCamera1Settings implements MainSettingsMenu {
 		b.append(": ");
 		b.append(prefs.getString("pref_frame_size", "1920x1080"));
 
-		RecMode recMode = RecSettings.getRecMode(prefs, "pref_rec_mode", RecMode.VIDEO_TIME_LAPSE);
+		RecMode recMode = RecSettings.getRecMode(prefs);
 		if (recMode == RecMode.IMAGE_TIME_LAPSE || recMode == RecMode.VIDEO_TIME_LAPSE) {
 			b.append(", ");
 			b.append(ctx.getString(R.string.pref_capture_rate));

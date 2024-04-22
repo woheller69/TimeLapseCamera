@@ -18,7 +18,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.File;
@@ -27,197 +26,186 @@ import java.util.List;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationCompat.Builder;
+import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 import at.andreasrohner.spartantimelapserec.recorder.Recorder;
 
 public class ForegroundService extends Service implements Handler.Callback {
 
-    public static final String ACTION_STOP_SERVICE = "TimeLapse.action.STOP_SERVICE";
-    public static boolean mIsRunning = false;
-    private RecSettings settings;
-    private Recorder recorder;
-    private HandlerThread handlerThread;
-    private WakeLock mWakeLock;
-    private static List<statusListener> listener = new ArrayList<>();
-    private NotificationManager mNotificationManager;
+	public static final String ACTION_STOP_SERVICE = "TimeLapse.action.STOP_SERVICE";
 
-    public interface statusListener {
-        void onServiceStatusChange(boolean status);
-    }
+	public static boolean mIsRunning = false;
 
-    public static void registerStatusListener(statusListener l){
-        listener.add(l);
-    }
+	private RecSettings settings;
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
+	private Recorder recorder;
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent == null || !ACTION_STOP_SERVICE.equals(intent.getAction())) {
-            initNotif();
-            mIsRunning = true;
+	private HandlerThread handlerThread;
 
-            settings = new RecSettings();
-            settings.load(getApplicationContext(), PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
+	private WakeLock mWakeLock;
 
-            if (settings.isSchedRecEnabled() && settings.getSchedRecTime() > System.currentTimeMillis() + 10000) {
-                AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                Intent newintent = new Intent(getApplicationContext(), ScheduleReceiver.class);
-                PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, newintent, PendingIntent.FLAG_IMMUTABLE);
-                alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, settings.getSchedRecTime(), alarmIntent);
+	private static List<statusListener> listener = new ArrayList<>();
 
-            } else {
+	private NotificationManager mNotificationManager;
 
-                PowerManager mPowerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-                mWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
-                mWakeLock.acquire();
+	public interface statusListener {
 
-                handlerThread = new HandlerThread("recordingVideo");
-                handlerThread.start();
+		void onServiceStatusChange(boolean status);
+	}
 
-                Context context = getApplicationContext();
-                Handler handler = new Handler(handlerThread.getLooper(), this);
+	public static void registerStatusListener(statusListener l) {
+		listener.add(l);
+	}
 
-                recorder = Recorder.getInstance(settings, context,
-                        handler, mWakeLock);
+	@Override
+	public IBinder onBind(Intent intent) {
+		return null;
+	}
 
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        recorder.start();
-                    }
-                });
-                updateNotif();
-            }
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		if (intent == null || !ACTION_STOP_SERVICE.equals(intent.getAction())) {
+			initNotif();
+			mIsRunning = true;
 
-			  for (statusListener l : listener) {
-				  l.onServiceStatusChange(true);
-			  }
-            return START_STICKY;
-        } else {
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            intent = new Intent(this, ScheduleReceiver.class);
-            PendingIntent alarmIntent;
-            alarmIntent = PendingIntent.getBroadcast(getApplicationContext(),0,intent,PendingIntent.FLAG_IMMUTABLE);
-            alarmManager.cancel(alarmIntent);
+			settings = new RecSettings();
+			settings.load(getApplicationContext(), PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
 
-            stop();
-            return START_NOT_STICKY;
-        }
-    }
+			if (settings.isSchedRecEnabled() && settings.getSchedRecTime() > System.currentTimeMillis() + 10000) {
+				AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+				Intent newintent = new Intent(getApplicationContext(), ScheduleReceiver.class);
+				PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, newintent, PendingIntent.FLAG_IMMUTABLE);
+				alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, settings.getSchedRecTime(), alarmIntent);
 
-    @Override
-    public void onCreate() {
+			} else {
 
-    }
+				PowerManager mPowerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+				mWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
+				mWakeLock.acquire();
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
+				handlerThread = new HandlerThread("recordingVideo");
+				handlerThread.start();
 
+				Context context = getApplicationContext();
+				Handler handler = new Handler(handlerThread.getLooper(), this);
 
-    private void stop() {
+				recorder = Recorder.getInstance(settings, context, handler, mWakeLock);
 
-        File projectDir = null;
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						recorder.start();
+					}
+				});
+				updateNotif();
+			}
 
-        if (recorder != null) {
-            recorder.stop();
-            projectDir = recorder.getOutputDir();
-            recorder = null;
-        }
+			for (statusListener l : listener) {
+				l.onServiceStatusChange(true);
+			}
+			return START_STICKY;
+		} else {
+			AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+			intent = new Intent(this, ScheduleReceiver.class);
+			PendingIntent alarmIntent;
+			alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
+			alarmManager.cancel(alarmIntent);
 
-        if (mWakeLock != null && mWakeLock.isHeld())
-            mWakeLock.release();
+			stop();
+			return START_NOT_STICKY;
+		}
+	}
 
-        if (projectDir != null && projectDir.exists())
-            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                    Uri.fromFile(projectDir)));
+	@Override
+	public void onCreate() {
 
-        mIsRunning = false;
-        for (statusListener l : listener) {
-            l.onServiceStatusChange(false);
-        }
-        stopForeground(true);
-        stopSelf();
-    }
+	}
 
-    private static final int NOTIF_ID = 123;
-    private static final String CHANNEL_ID = "TimeLapseID";
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+	}
 
-    private void updateNotif(){
+	private void stop() {
 
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setAction(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-        PendingIntent pi = PendingIntent.getActivity(this, NOTIF_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+		File projectDir = null;
 
-        Notification notification = new Builder(this, CHANNEL_ID)
-                .setSilent(true)
-                .setOnlyAlertOnce(true)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT) // For N and below
-                .setContentIntent(pi)
-                .setSmallIcon(R.drawable.ic_camera)
-                .setAutoCancel(false)
-                .setOngoing(true)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setContentText(getString(R.string.info_recording_running))
-                .setContentTitle(getString(R.string.app_name)).build();
+		if (recorder != null) {
+			recorder.stop();
+			projectDir = recorder.getOutputDir();
+			recorder = null;
+		}
 
-                mNotificationManager.notify(NOTIF_ID,notification);
-    }
+		if (mWakeLock != null && mWakeLock.isHeld())
+			mWakeLock.release();
 
-    private void initNotif() {
+		if (projectDir != null && projectDir.exists())
+			sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(projectDir)));
 
-        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (VERSION.SDK_INT >= VERSION_CODES.O) {
-            mNotificationManager.createNotificationChannel(new NotificationChannel(CHANNEL_ID, "TimeLapse", NotificationManager.IMPORTANCE_DEFAULT));
-        }
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setAction(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-        PendingIntent pi = PendingIntent.getActivity(this, NOTIF_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+		mIsRunning = false;
+		for (statusListener l : listener) {
+			l.onServiceStatusChange(false);
+		}
+		stopForeground(true);
+		stopSelf();
+	}
 
-        // For N and below
-        Notification notification = new Builder(this, CHANNEL_ID)
-                .setSilent(true)
-                .setOnlyAlertOnce(true)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT) // For N and below
-                .setContentIntent(pi)
-                .setSmallIcon(R.drawable.ic_camera)
-                .setAutoCancel(false)
-                .setOngoing(true)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setContentText(getString(R.string.notification_preparing))
-                .setContentTitle(getString(R.string.app_name)).build();
+	private static final int NOTIF_ID = 123;
 
-        if (VERSION.SDK_INT >= VERSION_CODES.Q) {
-            startForeground(NOTIF_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA);
-        } else {
-            startForeground(NOTIF_ID, notification);
-        }
+	private static final String CHANNEL_ID = "TimeLapseID";
 
-    }
+	private void updateNotif() {
 
-    @Override
-    public boolean handleMessage(Message m) {
-        String status = m.getData().getString("status");
-        String tag = m.getData().getString("tag");
-        String msg = m.getData().getString("msg");
+		Intent intent = new Intent(this, MainActivity.class);
+		intent.setAction(Intent.ACTION_MAIN);
+		intent.addCategory(Intent.CATEGORY_LAUNCHER);
+		PendingIntent pi = PendingIntent.getActivity(this, NOTIF_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-        if ("error".equals(status)) {
-            Log.e(tag, "Error: " + msg);
-            stop();
-        } else if ("success".equals(status)){
-            Log.e(tag, "Success");
-            stop();
-        }
+		Notification notification = new Builder(this, CHANNEL_ID).setSilent(true).setOnlyAlertOnce(true).setPriority(NotificationCompat.PRIORITY_DEFAULT) // For N and below
+				.setContentIntent(pi).setSmallIcon(R.drawable.ic_camera).setAutoCancel(false).setOngoing(true).setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setContentText(getString(R.string.info_recording_running)).setContentTitle(getString(R.string.app_name)).build();
 
-        return true;
-    }
+		mNotificationManager.notify(NOTIF_ID, notification);
+	}
+
+	private void initNotif() {
+
+		mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		if (VERSION.SDK_INT >= VERSION_CODES.O) {
+			mNotificationManager.createNotificationChannel(new NotificationChannel(CHANNEL_ID, "TimeLapse", NotificationManager.IMPORTANCE_DEFAULT));
+		}
+		Intent intent = new Intent(this, MainActivity.class);
+		intent.setAction(Intent.ACTION_MAIN);
+		intent.addCategory(Intent.CATEGORY_LAUNCHER);
+		PendingIntent pi = PendingIntent.getActivity(this, NOTIF_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+		// For N and below
+		Notification notification = new Builder(this, CHANNEL_ID).setSilent(true).setOnlyAlertOnce(true).setPriority(NotificationCompat.PRIORITY_DEFAULT) // For N and below
+				.setContentIntent(pi).setSmallIcon(R.drawable.ic_camera).setAutoCancel(false).setOngoing(true).setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setContentText(getString(R.string.notification_preparing)).setContentTitle(getString(R.string.app_name)).build();
+
+		if (VERSION.SDK_INT >= VERSION_CODES.Q) {
+			startForeground(NOTIF_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA);
+		} else {
+			startForeground(NOTIF_ID, notification);
+		}
+
+	}
+
+	@Override
+	public boolean handleMessage(Message m) {
+		String status = m.getData().getString("status");
+		String tag = m.getData().getString("tag");
+		String msg = m.getData().getString("msg");
+
+		if ("error".equals(status)) {
+			Log.e(tag, "Error: " + msg);
+			stop();
+		} else if ("success".equals(status)) {
+			Log.e(tag, "Success");
+			stop();
+		}
+
+		return true;
+	}
 
 }
 

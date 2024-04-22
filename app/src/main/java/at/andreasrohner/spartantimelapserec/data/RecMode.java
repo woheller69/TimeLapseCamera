@@ -18,6 +18,28 @@
 
 package at.andreasrohner.spartantimelapserec.data;
 
+/**
+ * Recording Mode
+ */
 public enum RecMode {
-	VIDEO, VIDEO_TIME_LAPSE, IMAGE_TIME_LAPSE
+	
+	/**
+	 * Recording a video
+	 */
+	VIDEO,
+
+	/**
+	 * Recording a timelapse and store it as video
+	 */
+	VIDEO_TIME_LAPSE,
+
+	/**
+	 * Recording timelapse as images
+	 */
+	IMAGE_TIME_LAPSE,
+
+	/**
+	 * Record timelapse with camera 2
+	 */
+	CAMERA2_TIEM_LAPSE
 }

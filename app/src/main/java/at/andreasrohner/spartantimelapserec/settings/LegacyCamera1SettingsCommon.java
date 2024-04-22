@@ -78,7 +78,7 @@ public class LegacyCamera1SettingsCommon extends BaseLegacySettingsCommon implem
 		String defSize = prefs.getString("pref_frame_size", "1920x1080");
 
 		final List<int[]> sizes;
-		switch (RecSettings.getRecMode(prefs, "pref_rec_mode", RecMode.VIDEO_TIME_LAPSE)) {
+		switch (RecSettings.getRecMode(prefs)) {
 			case IMAGE_TIME_LAPSE:
 				sizes = cameraSettings.getPictureSizes(prefs, camId);
 				break;
@@ -200,7 +200,7 @@ public class LegacyCamera1SettingsCommon extends BaseLegacySettingsCommon implem
 	}
 
 	private void updatePrefStatus(SharedPreferences prefs) {
-		switch (RecSettings.getRecMode(prefs, "pref_rec_mode", RecMode.VIDEO_TIME_LAPSE)) {
+		switch (RecSettings.getRecMode(prefs)) {
 			case IMAGE_TIME_LAPSE:
 				prefFrameRate.setEnabled(false);
 				prefVideoEncodingBitRate.setEnabled(false);

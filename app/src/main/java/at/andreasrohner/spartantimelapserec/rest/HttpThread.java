@@ -6,7 +6,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.BatteryManager;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.BufferedOutputStream;
@@ -26,6 +25,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.BuildConfig;
 import at.andreasrohner.spartantimelapserec.ForegroundService;
 import at.andreasrohner.spartantimelapserec.R;

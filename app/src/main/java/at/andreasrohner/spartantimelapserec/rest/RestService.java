@@ -21,7 +21,6 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -39,6 +38,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import androidx.core.app.NotificationCompat;
+import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.MainActivity;
 import at.andreasrohner.spartantimelapserec.R;
 

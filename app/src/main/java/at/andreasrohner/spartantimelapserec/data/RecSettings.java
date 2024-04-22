@@ -59,6 +59,10 @@ public class RecSettings {
 		return def;
 	}
 
+	public static RecMode getRecMode(SharedPreferences prefs) {
+		return RecSettings.getRecMode(prefs, "pref_rec_mode", RecMode.VIDEO_TIME_LAPSE);
+	}
+
 	public static RecMode getRecMode(SharedPreferences prefs, String key,
 			RecMode def) {
 		try {
@@ -141,7 +145,7 @@ public class RecSettings {
 		projectName = prefs.getString("pref_project_title", "");
 		projectPath = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).getPath();
 
-		recMode = getRecMode(prefs, "pref_rec_mode", RecMode.VIDEO_TIME_LAPSE);
+		recMode = getRecMode(prefs);
 
 		frameRate = getInteger(prefs, "pref_frame_rate", 30);
 		captureRate = prefs.getInt("pref_capture_rate", 1000);

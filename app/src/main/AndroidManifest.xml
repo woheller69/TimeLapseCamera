@@ -31,6 +31,9 @@
         android:requestLegacyExternalStorage="true"
         android:theme="@style/Theme.TimeLapse">
         <activity
+            android:name=".Preview2Activity"
+            android:exported="false" />
+        <activity
             android:name=".settings.RestSettingsActivity"
             android:exported="false"
             android:label="@string/pref_restapi_settings_header" />
@@ -59,7 +62,7 @@
         <activity
             android:name=".PreviewActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:windowSoftInputMode="stateAlwaysHidden"></activity>
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
         <service
             android:name=".ForegroundService"

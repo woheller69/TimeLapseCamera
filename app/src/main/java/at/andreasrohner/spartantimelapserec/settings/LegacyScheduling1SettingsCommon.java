@@ -23,11 +23,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 
-import java.text.Normalizer;
-
+import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.ForegroundService;
 import at.andreasrohner.spartantimelapserec.data.RecSettings;
 import at.andreasrohner.spartantimelapserec.preference.DateTimePreference;
