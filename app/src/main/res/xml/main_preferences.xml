@@ -19,6 +19,20 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/pref_state_title">
+        <at.andreasrohner.spartantimelapserec.settings.ShowActivityPreference
+            app:icon="@drawable/ic_state"
+            app:key="pref_main_menu_status_overview"
+            app:summary="at.andreasrohner.spartantimelapserec.settings.StatusScreen"
+            app:title="@string/pref_overview_category" />
+
+        <at.andreasrohner.spartantimelapserec.settings.ShowActivityPreference
+            app:icon="@drawable/ic_mobile"
+            app:key="pref_main_menu_status_oled"
+            app:summary="at.andreasrohner.spartantimelapserec.settings.OledScreensaverSettings"
+            app:title="@string/pref_oled_screensaver_category" />
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="@string/pref_preferences_title">
         <at.andreasrohner.spartantimelapserec.settings.ShowActivityPreference
             app:icon="@drawable/ic_gear"

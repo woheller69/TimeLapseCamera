@@ -105,4 +105,8 @@
     <string name="pref_scheduling_summ_start">Startverzögerung:</string>
     <string name="pref_scheduling_summ_duration">Dauer:</string>
     <string name="pref_scheduling_summ_scheduling">Geplant:</string>
+    <string name="pref_state_title">Status</string>
+    <string name="pref_overview_category">Übersicht</string>
+    <string name="pref_oled_screensaver_category">OLED Status anzeigen</string>
+    <string name="show_oled_screensaver_summary">Zeigt die Informationen an zufälliger Stelle an, um einbrennen zu verhindern</string>
 </resources>

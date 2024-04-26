@@ -10,24 +10,17 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
-import android.media.Image;
 import android.media.ImageReader;
-import android.os.Environment;
 import android.os.Handler;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.WindowManager;
-import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+
+import at.andreasrohner.spartantimelapserec.camera2.util.ImageSaver;
 
 public class TakePicture {
 
@@ -71,6 +64,8 @@ public class TakePicture {
 			ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
 			List<Surface> outputSurfaces = new ArrayList<Surface>(2);
 			outputSurfaces.add(reader.getSurface());
+
+			// TODO is this needed or is this just for preview?
 			outputSurfaces.add(new Surface(textureView.getSurfaceTexture()));
 			final CaptureRequest.Builder captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
 			captureBuilder.addTarget(reader.getSurface());
@@ -78,46 +73,11 @@ public class TakePicture {
 			// Orientation
 			int rotation = windowManager.getDefaultDisplay().getRotation();
 			captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, Preview2Activity.ORIENTATIONS.get(rotation));
-			final File file = new File(Environment.getExternalStorageDirectory() + "/pic.jpg");
-			ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
-				@Override
-				public void onImageAvailable(ImageReader reader) {
-					Image image = null;
-					try {
-						image = reader.acquireLatestImage();
-						ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-						byte[] bytes = new byte[buffer.capacity()];
-						buffer.get(bytes);
-						save(bytes);
-					} catch (FileNotFoundException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					} finally {
-						if (image != null) {
-							image.close();
-						}
-					}
-				}
-
-				private void save(byte[] bytes) throws IOException {
-					OutputStream output = null;
-					try {
-						output = new FileOutputStream(file);
-						output.write(bytes);
-					} finally {
-						if (null != output) {
-							output.close();
-						}
-					}
-				}
-			};
-			reader.setOnImageAvailableListener(readerListener, mBackgroundHandler);
+			reader.setOnImageAvailableListener(new ImageSaver(), mBackgroundHandler);
 			final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
 				@Override
 				public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
 					super.onCaptureCompleted(session, request, result);
-					Toast.makeText(context, "Saved:" + file, Toast.LENGTH_SHORT).show();
 					cameraPreview.createCameraPreview();
 				}
 			};
@@ -125,6 +85,7 @@ public class TakePicture {
 				@Override
 				public void onConfigured(CameraCaptureSession session) {
 					try {
+						// TODO Configure Camera, here te picture is started
 						session.capture(captureBuilder.build(), captureListener, mBackgroundHandler);
 					} catch (CameraAccessException e) {
 						e.printStackTrace();

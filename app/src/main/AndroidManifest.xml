@@ -31,6 +31,12 @@
         android:requestLegacyExternalStorage="true"
         android:theme="@style/Theme.TimeLapse">
         <activity
+            android:name=".OledScreensaverActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:label="@string/title_activity_oled_screensaver"
+            android:theme="@style/Theme.TimeLapse.Fullscreen" />
+        <activity
             android:name=".camera2.Preview2Activity"
             android:exported="false" />
         <activity
@@ -69,7 +75,7 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <service
-            android:name=".ForegroundService"
+            android:name=".Camera1ForegroundService"
             android:exported="false"
             android:foregroundServiceType="camera" />
         <service

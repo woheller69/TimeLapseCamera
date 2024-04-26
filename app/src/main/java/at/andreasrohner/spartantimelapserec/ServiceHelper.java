@@ -30,8 +30,8 @@ public class ServiceHelper {
 	 * @param calledFromUi true if called from Activity, false if not
 	 */
 	public void start(boolean calledFromUi) {
-		Intent intent = new Intent(context, ForegroundService.class);
-		if (ForegroundService.mIsRunning) {
+		Intent intent = new Intent(context, Camera1ForegroundService.class);
+		if (BaseForegroundService.isRunning()) {
 			if (calledFromUi) {
 				Toast.makeText(context, context.getString(R.string.error_already_running), Toast.LENGTH_SHORT).show();
 			}
@@ -48,8 +48,8 @@ public class ServiceHelper {
 	 * Stop
 	 */
 	public void stop() {
-		Intent intent = new Intent(context, ForegroundService.class);
-		intent.setAction(ForegroundService.ACTION_STOP_SERVICE);
+		Intent intent = new Intent(context, Camera1ForegroundService.class);
+		intent.setAction(Camera1ForegroundService.ACTION_STOP_SERVICE);
 		context.startService(intent);
 	}
 }

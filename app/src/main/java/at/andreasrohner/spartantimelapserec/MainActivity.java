@@ -49,7 +49,7 @@ import at.andreasrohner.spartantimelapserec.settings.RestControlUtil;
 /**
  * Main activity of the
  */
-public class MainActivity extends AppCompatActivity implements ForegroundService.statusListener {
+public class MainActivity extends AppCompatActivity implements ServiceStatusListener {
 
 	/**
 	 * Settings menu
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements ForegroundService
 	@Override
 	protected void onResume() {
 		super.onResume();
-		ForegroundService.registerStatusListener(this);
+		Camera1ForegroundService.registerStatusListener(this);
 		if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) && ((ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) && ((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) || Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)) {
 			//PERMISSION POST_NOTIFICATION is required and not tested here
 
@@ -123,8 +123,9 @@ public class MainActivity extends AppCompatActivity implements ForegroundService
 				settingsFragment = new MainSettingsFragment();
 			}
 			getSupportFragmentManager().beginTransaction().replace(android.R.id.content, settingsFragment).commit();
-		} else
+		} else {
 			Toast.makeText(this, getString(R.string.error_missing_permission), Toast.LENGTH_SHORT).show();
+		}
 
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
@@ -134,7 +135,6 @@ public class MainActivity extends AppCompatActivity implements ForegroundService
 				startActivity(intent);
 			}
 		}
-
 	}
 
 	public void actionStart(MenuItem item) {
@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements ForegroundService
 	 * @param item Menu Item
 	 */
 	public void actionPreview(MenuItem item) {
-		if (ForegroundService.mIsRunning) {
+		if (BaseForegroundService.isRunning()) {
 			Toast.makeText(this, getString(R.string.info_recording_running), Toast.LENGTH_SHORT).show();
 			return;
 		}
@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements ForegroundService
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
-		if (ForegroundService.mIsRunning) {
+		if (BaseForegroundService.isRunning()) {
 			menu.findItem(R.id.action_start).setEnabled(false);
 			menu.findItem(R.id.action_start).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_radio_button_checked_disabled_24px));
 			menu.findItem(R.id.action_preview).setEnabled(false);

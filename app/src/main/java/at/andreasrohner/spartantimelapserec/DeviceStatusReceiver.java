@@ -38,8 +38,8 @@ public class DeviceStatusReceiver extends BroadcastReceiver {
 		 * files get corrupted and are not playable any more
 		 */
 		if ((stopOnLowBattery && intent.getAction().equals(Intent.ACTION_BATTERY_LOW)) || (stopOnLowStorage && intent.getAction().equals(Intent.ACTION_DEVICE_STORAGE_LOW)) || intent.getAction().equals(Intent.ACTION_SHUTDOWN)) {
-			Intent stopintent = new Intent(context, ForegroundService.class);
-			stopintent.setAction(ForegroundService.ACTION_STOP_SERVICE);
+			Intent stopintent = new Intent(context, Camera1ForegroundService.class);
+			stopintent.setAction(Camera1ForegroundService.ACTION_STOP_SERVICE);
 			context.startService(stopintent);
 		}
 

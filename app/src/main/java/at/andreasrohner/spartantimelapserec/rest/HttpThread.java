@@ -26,8 +26,9 @@ import java.util.Locale;
 import java.util.Map;
 
 import androidx.preference.PreferenceManager;
+import at.andreasrohner.spartantimelapserec.BaseForegroundService;
 import at.andreasrohner.spartantimelapserec.BuildConfig;
-import at.andreasrohner.spartantimelapserec.ForegroundService;
+import at.andreasrohner.spartantimelapserec.Camera1ForegroundService;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.ServiceHelper;
 import at.andreasrohner.spartantimelapserec.recorder.ImageRecorder;
@@ -371,7 +372,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	private boolean processControlRequest(String command) throws IOException {
 		String result = null;
 		if ("status".equals(command)) {
-			result = ForegroundService.mIsRunning ? "running" : "stopped";
+			result = BaseForegroundService.isRunning() ? "running" : "stopped";
 		} else if ("start".equals(command)) {
 			ServiceHelper helper = new ServiceHelper(restService.getApplicationContext());
 			helper.start(false);

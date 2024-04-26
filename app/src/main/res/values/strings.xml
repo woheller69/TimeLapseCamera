@@ -106,4 +106,11 @@
     <string name="pref_scheduling_summ_start">Start-delay:</string>
     <string name="pref_scheduling_summ_duration">Duration:</string>
     <string name="pref_scheduling_summ_scheduling">Scheduled:</string>
+    <string name="pref_state_title">State</string>
+    <string name="pref_overview_category">Overview</string>
+    <string name="pref_oled_screensaver_category">Show OLED Status Screen</string>
+    <string name="title_activity_oled_screensaver">OledScreensaverActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="show_oled_screensaver_summary">Show information at random location to prevent OLED burn in</string>
 </resources>

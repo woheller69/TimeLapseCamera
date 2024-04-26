@@ -265,6 +265,8 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 		if (null == cameraDevice) {
 			Log.e(TAG, "updatePreview error, return");
 		}
+
+		// TODO Configure camera here
 		captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 		try {
 			cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, mBackgroundHandler);
