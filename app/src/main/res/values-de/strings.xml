@@ -61,6 +61,7 @@
 
     <!-- StarDialog -->
     <string name="dialog_OK_button">OK</string>
+    <string name="dialog_CANCEL_button">Abbrechen</string>
     <string name="dialog_NO_button">Nein</string>
     <string name="dialog_Later_button">Vielleicht später</string>
     <string name="dialog_StarOnGitHub">Mögen Sie diese App? Bitte vergeben Sie einen Stern auf GitHub oder spendieren Sie dem Entwickler einen Kaffee über PayPal.</string>

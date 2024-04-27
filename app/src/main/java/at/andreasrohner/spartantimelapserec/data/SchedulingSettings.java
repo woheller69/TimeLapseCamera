@@ -30,6 +30,11 @@ import at.andreasrohner.spartantimelapserec.preference.DateTimePreference;
 public class SchedulingSettings {
 
 	/**
+	 * Initial delay
+	 */
+	private int initDelay;
+
+	/**
 	 * Recoding start timestamp
 	 */
 	private long schedRecTime;
@@ -70,7 +75,8 @@ public class SchedulingSettings {
 		} else {
 			schedRecEnabled = false;
 		}
-
+		
+		initDelay = prefs.getInt("pref_initial_delay", 1000);
 	}
 
 	/**
@@ -92,5 +98,19 @@ public class SchedulingSettings {
 	 */
 	public int getStopRecAfter() {
 		return stopRecAfter;
+	}
+
+	/**
+	 * @return Initial delay
+	 */
+	public int getInitDelay() {
+		return initDelay;
+	}
+
+	/**
+	 * @param initDelay Initial delay
+	 */
+	public void setInitDelay(int initDelay) {
+		this.initDelay = initDelay;
 	}
 }

@@ -10,8 +10,10 @@ import android.os.Bundle;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.ListPreference;
+import androidx.preference.Preference;
 import at.andreasrohner.spartantimelapserec.R;
 
 /**
@@ -75,6 +77,15 @@ public class Camera2SettingsActivity extends AbstractSettingsActivity {
 				listPreference.setDefaultValue(array[0]);
 				return;
 			}
+		}
+
+		@Override
+		public void onDisplayPreferenceDialog(@NonNull Preference preference) {
+			if (preference instanceof TimeSpanPreference) {
+				((TimeSpanPreference) preference).showDialog();
+				return;
+			}
+			super.onDisplayPreferenceDialog(preference);
 		}
 
 		@Override

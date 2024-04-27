@@ -42,8 +42,6 @@ public class RecSettingsLegacy extends SchedulingSettings {
 
 	private boolean stopOnLowStorage;
 
-	private int initDelay;
-
 	private int jpegQuality;
 
 	private int frameWidth;
@@ -161,7 +159,6 @@ public class RecSettingsLegacy extends SchedulingSettings {
 		muteShutter = prefs.getBoolean("pref_mute_shutter", true);
 		stopOnLowBattery = prefs.getBoolean("pref_stop_low_battery", true);
 		stopOnLowStorage = prefs.getBoolean("pref_stop_low_storage", true);
-		initDelay = prefs.getInt("pref_initial_delay", 1000);
 		jpegQuality = prefs.getInt("pref_jpeg_quality", 90);
 		exposureCompensation = prefs.getInt("pref_exposurecomp", 0);
 		zoom = prefs.getInt("pref_zoom", 0);
@@ -190,14 +187,6 @@ public class RecSettingsLegacy extends SchedulingSettings {
 		if (captureRate > 10 * 1000)
 			return true;
 		return false;
-	}
-
-	public int getInitDelay() {
-		return initDelay;
-	}
-
-	public void setInitDelay(int initDelay) {
-		this.initDelay = initDelay;
 	}
 
 	public int getCameraId() {

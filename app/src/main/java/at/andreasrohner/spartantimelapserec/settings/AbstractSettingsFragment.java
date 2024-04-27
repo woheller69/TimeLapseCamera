@@ -5,11 +5,12 @@ import android.os.Bundle;
 
 import androidx.annotation.XmlRes;
 import androidx.preference.PreferenceFragmentCompat;
+import at.andreasrohner.spartantimelapserec.updateableprefs.UpdateablePreferenceFragmentCompat;
 
 /**
  * Base class for the settings fragments
  */
-public abstract class AbstractSettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
+public abstract class AbstractSettingsFragment extends UpdateablePreferenceFragmentCompat {
 
 	/**
 	 * Preferences Resource ID

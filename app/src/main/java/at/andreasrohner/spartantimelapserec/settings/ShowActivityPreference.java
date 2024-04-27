@@ -12,11 +12,12 @@ import androidx.annotation.Nullable;
 import androidx.preference.DialogPreference;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.rest.HttpThread;
+import at.andreasrohner.spartantimelapserec.updateableprefs.SummaryPreference;
 
 /**
  * Show an activity, more like a 'submenu' than a real setting
  */
-public class ShowActivityPreference extends DialogPreference {
+public class ShowActivityPreference extends DialogPreference implements SummaryPreference {
 
 	/**
 	 * Log Tag

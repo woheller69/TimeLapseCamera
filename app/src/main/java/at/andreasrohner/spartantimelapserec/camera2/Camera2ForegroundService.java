@@ -26,7 +26,7 @@ public class Camera2ForegroundService extends BaseForegroundService {
 		initHandler();
 
 		Context context = getApplicationContext();
-		recorder = new Camera2Recorder(handler);
+		recorder = new Camera2Recorder(context, handler);
 		handler.post(new Runnable() {
 			@Override
 			public void run() {
