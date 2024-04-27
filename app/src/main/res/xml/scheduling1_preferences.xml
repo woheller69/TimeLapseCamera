@@ -4,23 +4,6 @@
     android:layout_height="fill_parent">
 
     <PreferenceCategory android:title="@string/pref_schedule_settings_category">
-        <at.andreasrohner.spartantimelapserec.legacypreference.SeekBarPreference
-            android:defaultValue="1000"
-            android:dialogMessage="@string/pref_initial_delay_summ"
-            android:key="pref_initial_delay"
-            android:title="@string/pref_initial_delay"
-            app:log="1.2"
-            app:max="300000"
-            app:stickyValue="250"
-            app:suffix="@string/time_format_msec" />
-        <at.andreasrohner.spartantimelapserec.legacypreference.SeekBarPreference
-            android:defaultValue="2880"
-            android:key="pref_stop_recording_after"
-            android:title="@string/pref_stop_recording_after"
-            app:log="1.2"
-            app:max="2880"
-            app:stickyValue="60"
-            app:suffix="@string/time_format_min" />
 
         <at.andreasrohner.spartantimelapserec.legacypreference.DateTimePreference
             android:dialogMessage="@string/pref_schedule_recording"

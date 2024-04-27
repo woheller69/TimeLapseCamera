@@ -7,6 +7,7 @@
         <attr name="min" format="integer" />
         <attr name="max" format="integer" />
         <attr name="settingsClass" format="string" />
+        <attr name="timeSpanType" format="string" />
     </declare-styleable>
     <declare-styleable name="FullscreenAttrs">
         <attr name="fullscreenBackgroundColor" format="color" />

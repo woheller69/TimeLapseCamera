@@ -25,13 +25,13 @@
             android:icon="@drawable/ic_state"
             android:key="pref_main_menu_status_overview"
             android:title="@string/pref_overview_category"
-            app:settingsClass="at.andreasrohner.spartantimelapserec.preference.StatusScreen" />
+            app:settingsClass="at.andreasrohner.spartantimelapserec.preference.mainmenu.StatusScreen" />
 
         <at.andreasrohner.spartantimelapserec.preference.mainmenu.ShowActivityPreference
             android:icon="@drawable/ic_mobile"
             android:key="pref_main_menu_status_oled"
             android:title="@string/pref_oled_screensaver_category"
-            app:settingsClass="at.andreasrohner.spartantimelapserec.preference.OledScreensaverSettings" />
+            app:settingsClass="at.andreasrohner.spartantimelapserec.preference.mainmenu.OledScreensaverSettings" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_preferences_title">

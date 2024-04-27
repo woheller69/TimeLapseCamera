@@ -2,9 +2,12 @@ package at.andreasrohner.spartantimelapserec.preference.activity;
 
 import android.content.SharedPreferences;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.preference.Preference;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.preference.AbstractSettingsFragment;
+import at.andreasrohner.spartantimelapserec.preference.preftype.TimeSpanPreference;
 
 /**
  * Scheduling Settings
@@ -31,18 +34,22 @@ public class SchedulingSettingsActivity extends AbstractSettingsActivity {
 		}
 
 		@Override
+		public void onDisplayPreferenceDialog(@NonNull Preference preference) {
+			if (preference instanceof TimeSpanPreference) {
+				((TimeSpanPreference) preference).showDialog();
+				return;
+			}
+			super.onDisplayPreferenceDialog(preference);
+		}
+
+		@Override
 		protected void updateValues() {
-			//updatePort();
+			updateSummary();
 		}
 
 		@Override
 		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
-			/*
-			TODO !!!!!!!!!!
-			if ("pref_restapi_port".equals(key)) {
-				EditTextPreference pref = (EditTextPreference) findPreference("pref_restapi_port");
-			}
-			*/
+			updateSummary();
 		}
 	}
 }

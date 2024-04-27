@@ -23,7 +23,7 @@ public final class FormatUtil {
 	 * @return Formatted Time
 	 */
 	public static String formatTimeMin(int min, Context context) {
-		return formatTime(min * 1000 * 60, context);
+		return formatTime(1000L * min * 60, context);
 	}
 
 	/**
@@ -33,7 +33,7 @@ public final class FormatUtil {
 	 * @param context Context
 	 * @return Formatted Time
 	 */
-	public static String formatTime(int millis, Context context) {
+	public static String formatTime(long millis, Context context) {
 		if (millis < 1000) {
 			return millis + " " + context.getString(R.string.time_format_msec);
 		}
@@ -47,9 +47,9 @@ public final class FormatUtil {
 			return df.format(secs) + ((secs == 1) ? formatSec : formatSecs);
 		}
 
-		int intSecs = millis % 60000 / 1000;
-		int mins = (millis % 3600000) / 1000 / 60;
-		int hours = (millis / 1000 / 60 / 60);
+		long intSecs = millis % 60000 / 1000;
+		long mins = (millis % 3600000) / 1000 / 60;
+		long hours = (millis / 1000 / 60 / 60);
 
 		String formatMin = " " + context.getString(R.string.time_format_min);
 		String formatMins = " " + context.getString(R.string.time_format_mins);

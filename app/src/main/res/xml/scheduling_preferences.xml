@@ -6,18 +6,18 @@
         <at.andreasrohner.spartantimelapserec.preference.preftype.TimeSpanPreference
             android:defaultValue="1000"
             android:dialogMessage="@string/pref_initial_delay_summ"
+            android:icon="@drawable/ic_start"
             android:key="pref_initial_delay"
             android:title="@string/pref_initial_delay"
-            app:icon="@drawable/ic_start"
-            app:suffix="@string/time_format_msec" />
+            app:timeSpanType="formatMs" />
 
         <at.andreasrohner.spartantimelapserec.preference.preftype.TimeSpanPreference
             android:defaultValue="2880"
-            android:dialogMessage="@string/pref_initial_delay_summ"
+            android:icon="@drawable/ic_end"
             android:key="pref_stop_recording_after"
             android:title="@string/pref_stop_recording_after"
-            app:icon="@drawable/ic_end"
-            app:suffix="@string/time_format_min" />
+            app:timeSpanType="formatHour" />
+
 
         <!--
 

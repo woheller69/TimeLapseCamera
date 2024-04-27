@@ -28,6 +28,7 @@ public class SchedulingSettings implements MainSettingsMenu {
 	@Override
 	public Class<? extends Activity> getActivityClass(SharedPreferences prefs) {
 		return SchedulingSettingsActivity.class;
+		//		return LegacyScheduling1SettingsActivity.class;
 	}
 
 	@Override
@@ -49,7 +50,7 @@ public class SchedulingSettings implements MainSettingsMenu {
 			b.append(", ");
 			b.append(ctx.getString(R.string.pref_scheduling_summ_duration));
 			b.append(' ');
-			b.append(FormatUtil.formatTimeMin(initialDelay, ctx));
+			b.append(FormatUtil.formatTimeMin(stopRecordingAfter, ctx));
 		}
 
 		if (scheduleRecording != null && scheduleRecording.startsWith("1|")) {
