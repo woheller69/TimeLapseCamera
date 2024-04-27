@@ -1,61 +1,63 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="@string/pref_project_settings_category">
+    <PreferenceCategory android:title="@string/pref_project_settings_category">
         <ListPreference
-            app:defaultValue="VIDEO_TIME_LAPSE"
-            app:dialogTitle="@string/pref_rec_mode"
-            app:entries="@array/pref_rec_mode_entries"
-            app:entryValues="@array/pref_rec_mode_values"
-            app:icon="@drawable/ic_mode"
-            app:key="pref_rec_mode"
-            app:title="@string/pref_rec_mode" />
+            android:defaultValue="VIDEO_TIME_LAPSE"
+            android:dialogTitle="@string/pref_rec_mode"
+            android:entries="@array/pref_rec_mode_entries"
+            android:entryValues="@array/pref_rec_mode_values"
+            android:icon="@drawable/ic_mode"
+            android:key="pref_rec_mode"
+            android:title="@string/pref_rec_mode" />
 
         <EditTextPreference
-            app:defaultValue="@string/app_name"
-            app:icon="@drawable/ic_folder"
-            app:key="pref_project_title"
-            app:summary="@string/pref_project_title_summ"
-            app:title="@string/pref_project_title" />
+            android:defaultValue="@string/app_name"
+            android:icon="@drawable/ic_folder"
+            android:key="pref_project_title"
+            android:summary="@string/pref_project_title_summ"
+            android:title="@string/pref_project_title" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/pref_state_title">
+    <PreferenceCategory android:title="@string/pref_state_title">
         <at.andreasrohner.spartantimelapserec.settings.ShowActivityPreference
-            app:icon="@drawable/ic_state"
-            app:key="pref_main_menu_status_overview"
-            app:summary="at.andreasrohner.spartantimelapserec.settings.StatusScreen"
-            app:title="@string/pref_overview_category" />
+            android:icon="@drawable/ic_state"
+            android:key="pref_main_menu_status_overview"
+            android:title="@string/pref_overview_category"
+            app:settingsClass="at.andreasrohner.spartantimelapserec.settings.StatusScreen" />
 
         <at.andreasrohner.spartantimelapserec.settings.ShowActivityPreference
-            app:icon="@drawable/ic_mobile"
-            app:key="pref_main_menu_status_oled"
-            app:summary="at.andreasrohner.spartantimelapserec.settings.OledScreensaverSettings"
-            app:title="@string/pref_oled_screensaver_category" />
+            android:icon="@drawable/ic_mobile"
+            android:key="pref_main_menu_status_oled"
+            android:title="@string/pref_oled_screensaver_category"
+            app:settingsClass="at.andreasrohner.spartantimelapserec.settings.OledScreensaverSettings" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/pref_preferences_title">
+    <PreferenceCategory android:title="@string/pref_preferences_title">
         <at.andreasrohner.spartantimelapserec.settings.ShowActivityPreference
-            app:icon="@drawable/ic_gear"
-            app:key="pref_main_menu_camera"
-            app:summary="at.andreasrohner.spartantimelapserec.settings.LegacyCamera1Settings"
-            app:title="@string/pref_camera_settings_category" />
+            android:icon="@drawable/ic_gear"
+            android:key="pref_main_menu_camera"
+            android:title="@string/pref_camera_settings_category"
+            app:settingsClass="at.andreasrohner.spartantimelapserec.settings.LegacyCamera1Settings" />
 
         <at.andreasrohner.spartantimelapserec.settings.ShowActivityPreference
-            app:icon="@drawable/ic_clock"
-            app:key="pref_main_menu_scheduling"
-            app:summary="at.andreasrohner.spartantimelapserec.settings.SchedulingSettings"
-            app:title="@string/pref_scheduling_settings_title" />
+            android:icon="@drawable/ic_clock"
+            android:key="pref_main_menu_scheduling"
+            android:title="@string/pref_scheduling_settings_title"
+            app:settingsClass="at.andreasrohner.spartantimelapserec.settings.SchedulingSettings" />
 
         <at.andreasrohner.spartantimelapserec.settings.ShowActivityPreference
-            app:icon="@drawable/ic_stop"
-            app:key="pref_main_menu_stop"
-            app:summary="at.andreasrohner.spartantimelapserec.settings.StopSettings"
-            app:title="@string/pref_stop_recording_after" />
+            android:icon="@drawable/ic_stop"
+            android:key="pref_main_menu_stop"
+            android:title="@string/pref_stop_recording_after"
+            app:settingsClass="at.andreasrohner.spartantimelapserec.settings.StopSettings" />
 
         <at.andreasrohner.spartantimelapserec.settings.ShowActivityPreference
-            app:icon="@drawable/ic_web"
-            app:key="pref_main_menu_restapi"
-            app:summary="at.andreasrohner.spartantimelapserec.settings.RestSettings"
-            app:title="@string/pref_restapi_connectioninfo_title" />
+            android:icon="@drawable/ic_web"
+            android:key="pref_main_menu_restapi"
+            android:title="@string/pref_restapi_connectioninfo_title"
+            app:settingsClass="at.andreasrohner.spartantimelapserec.settings.RestSettings" />
+        />
     </PreferenceCategory>
 </PreferenceScreen>

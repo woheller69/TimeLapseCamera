@@ -1,0 +1,75 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="50dp"
+    android:height="50dp"
+    android:viewportWidth="5000"
+    android:viewportHeight="5000">
+  <group>
+    <clip-path
+        android:pathData="M0,0h5000v5000h-5000z"/>
+    <path
+        android:pathData="M4801,2501C4801,2904 4695,3301 4493,3651 4291,4000 4000,4291 3651,4493 3301,4695 2904,4801 2501,4801 2097,4801 1700,4695 1350,4493 1001,4291 710,4000 508,3651 306,3301 200,2904 200,2501 200,2097 306,1700 508,1350 710,1001 1001,710 1350,508 1700,306 2097,200 2500,200 2904,200 3301,306 3651,508 4000,710 4291,1001 4493,1350 4695,1700 4801,2097 4801,2500L4801,2501Z"
+        android:strokeLineJoin="round"
+        android:strokeWidth="28.222"
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#00000000"
+        android:fillType="evenOdd"/>
+    <path
+        android:pathData="M4801,2501C4801,2904 4695,3301 4493,3651 4291,4000 4000,4291 3651,4493 3301,4695 2904,4801 2501,4801 2097,4801 1700,4695 1350,4493 1001,4291 710,4000 508,3651 306,3301 200,2904 200,2501 200,2097 306,1700 508,1350 710,1001 1001,710 1350,508 1700,306 2097,200 2500,200 2904,200 3301,306 3651,508 4000,710 4291,1001 4493,1350 4695,1700 4801,2097 4801,2500L4801,2501Z"
+        android:strokeLineJoin="round"
+        android:strokeWidth="100"
+        android:fillColor="#00000000"
+        android:strokeColor="#666666"
+        android:fillType="evenOdd"/>
+    <path
+        android:pathData="M2500,2500L4500,2500"
+        android:strokeLineJoin="round"
+        android:strokeWidth="200"
+        android:fillColor="#00000000"
+        android:strokeColor="#666666"
+        android:fillType="evenOdd"
+        android:strokeLineCap="round"/>
+    <path
+        android:pathData="M2500,2500L2800,1100"
+        android:strokeLineJoin="round"
+        android:strokeWidth="200"
+        android:fillColor="#00000000"
+        android:strokeColor="#666666"
+        android:fillType="evenOdd"
+        android:strokeLineCap="round"/>
+    <path
+        android:pathData="M2751,2500C2751,2544 2739,2588 2717,2626 2695,2664 2664,2695 2626,2717 2588,2739 2544,2751 2500,2751 2457,2751 2413,2739 2375,2717 2337,2695 2306,2664 2284,2626 2262,2588 2250,2544 2250,2500 2250,2457 2262,2413 2284,2375 2306,2337 2337,2306 2375,2284 2413,2262 2457,2250 2500,2250 2544,2250 2588,2262 2626,2284 2664,2306 2695,2337 2717,2375 2739,2413 2751,2457 2751,2500L2751,2500Z"
+        android:strokeLineJoin="round"
+        android:strokeWidth="28.222"
+        android:fillColor="#000000"
+        android:strokeColor="#00000000"
+        android:fillType="evenOdd"/>
+    <path
+        android:pathData="M270,1375C223,1207 222,1032 264,867 307,702 393,553 514,435 634,317 785,233 951,194 1117,154 1292,159 1458,208L270,1375Z"
+        android:strokeLineJoin="round"
+        android:strokeWidth="28.222"
+        android:fillColor="#B3B3B3"
+        android:strokeColor="#00000000"
+        android:fillType="evenOdd"/>
+    <path
+        android:pathData="M270,1375C223,1207 222,1032 264,867 307,702 393,553 514,435 634,317 785,233 951,194 1117,154 1292,159 1458,208L270,1375Z"
+        android:strokeLineJoin="round"
+        android:strokeWidth="100"
+        android:fillColor="#00000000"
+        android:strokeColor="#4C4C4C"
+        android:fillType="evenOdd"/>
+    <path
+        android:pathData="M4788,1400C4835,1232 4836,1057 4794,892 4751,727 4665,578 4544,460 4424,342 4273,258 4107,219 3941,179 3766,184 3600,233L4788,1400Z"
+        android:strokeLineJoin="round"
+        android:strokeWidth="28.222"
+        android:fillColor="#B3B3B3"
+        android:strokeColor="#00000000"
+        android:fillType="evenOdd"/>
+    <path
+        android:pathData="M4788,1400C4835,1232 4836,1057 4794,892 4751,727 4665,578 4544,460 4424,342 4273,258 4107,219 3941,179 3766,184 3600,233L4788,1400Z"
+        android:strokeLineJoin="round"
+        android:strokeWidth="100"
+        android:fillColor="#00000000"
+        android:strokeColor="#4C4C4C"
+        android:fillType="evenOdd"/>
+  </group>
+</vector>

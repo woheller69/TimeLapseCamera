@@ -3,12 +3,14 @@ package at.andreasrohner.spartantimelapserec.settings;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.DialogPreference;
+import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
@@ -29,15 +31,6 @@ public class ShowActivityPreference extends DialogPreference {
 	/**
 	 * Constructor
 	 *
-	 * @param context Context
-	 */
-	public ShowActivityPreference(@NonNull Context context) {
-		super(context);
-	}
-
-	/**
-	 * Constructor
-	 *
 	 * @param context      Context
 	 * @param attrs        AttributeSet
 	 * @param defStyleAttr Style Attributes
@@ -45,7 +38,7 @@ public class ShowActivityPreference extends DialogPreference {
 	 */
 	public ShowActivityPreference(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
 		super(context, attrs, defStyleAttr, defStyleRes);
-		init();
+		init(context, attrs);
 	}
 
 	/**
@@ -57,7 +50,7 @@ public class ShowActivityPreference extends DialogPreference {
 	 */
 	public ShowActivityPreference(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
-		init();
+		init(context, attrs);
 	}
 
 	/**
@@ -68,20 +61,24 @@ public class ShowActivityPreference extends DialogPreference {
 	 */
 	public ShowActivityPreference(@NonNull Context context, @Nullable AttributeSet attrs) {
 		super(context, attrs);
-		init();
+		init(context, attrs);
 	}
 
 	/**
 	 * Initialize
+	 *
+	 * @param context Context
+	 * @param attrs   AttributeSet
 	 */
-	private void init() {
+	private void init(@NonNull Context context, @Nullable AttributeSet attrs) {
+		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TimeLapse);
+		String settingsClass = a.getString(R.styleable.TimeLapse_settingsClass);
 		try {
-			settings = (MainSettingsMenu) Class.forName(getSummary().toString()).newInstance();
+			settings = (MainSettingsMenu) Class.forName(settingsClass).newInstance();
 		} catch (Exception e) {
-			Log.e(TAG, "Could not instance Settings implementation «" + getSummary().toString() + "»", e);
+			Log.e(TAG, "Could not instance Settings implementation «" + settingsClass + "» for «" + getKey() + "»", e);
 			return;
 		}
-		setSummary("");
 	}
 
 	/**
