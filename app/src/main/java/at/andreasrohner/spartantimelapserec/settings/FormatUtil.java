@@ -20,13 +20,14 @@ public final class FormatUtil {
 	/**
 	 * Format time
 	 *
-	 * @param min Minutes
+	 * @param min     Minutes
 	 * @param context Context
 	 * @return Formatted Time
 	 */
 	public static String formatTimeMin(int min, Context context) {
-return formatTime(min *1000 * 60, context);
+		return formatTime(min * 1000 * 60, context);
 	}
+
 	/**
 	 * Format time
 	 *
@@ -44,7 +45,7 @@ return formatTime(min *1000 * 60, context);
 		String formatSecs = " " + context.getString(R.string.time_format_secs);
 		DecimalFormat df = new DecimalFormat("#.##");
 
-		if (millis >= 1000 && millis < 60000) {
+		if (millis < 60000) {
 			return df.format(secs) + ((secs == 1) ? formatSec : formatSecs);
 		}
 

@@ -31,7 +31,7 @@ public class ServiceHelper {
 	 */
 	public void start(boolean calledFromUi) {
 		Intent intent = new Intent(context, Camera1ForegroundService.class);
-		if (BaseForegroundService.isRunning()) {
+		if (BaseForegroundService.getStatus().getState() == ServiceState.State.RUNNING) {
 			if (calledFromUi) {
 				Toast.makeText(context, context.getString(R.string.error_already_running), Toast.LENGTH_SHORT).show();
 			}

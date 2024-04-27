@@ -42,7 +42,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import at.andreasrohner.spartantimelapserec.camera2.Preview2Activity;
 import at.andreasrohner.spartantimelapserec.data.RecMode;
-import at.andreasrohner.spartantimelapserec.data.RecSettings;
+import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
+import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
 import at.andreasrohner.spartantimelapserec.settings.RestControlUtil;
 
@@ -103,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 			}
 		}
 		Context context = getApplicationContext();
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		if (GithubStar.shouldShowStarDialog(this)) {
 			GithubStar.starDialog(this, "https://github.com/woheller69/timelapsecamera");
 		}
@@ -171,14 +171,14 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 	 * @param item Menu Item
 	 */
 	public void actionPreview(MenuItem item) {
-		if (BaseForegroundService.isRunning()) {
+		if (BaseForegroundService.getStatus().getState() == ServiceState.State.RUNNING) {
 			Toast.makeText(this, getString(R.string.info_recording_running), Toast.LENGTH_SHORT).show();
 			return;
 		}
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		Intent intent;
-		if (RecSettings.getRecMode(prefs) == RecMode.CAMERA2_TIME_LAPSE) {
+		if (RecSettingsLegacy.getRecMode(prefs) == RecMode.CAMERA2_TIME_LAPSE) {
 			intent = new Intent(MainActivity.this, Preview2Activity.class);
 		} else {
 			intent = new Intent(MainActivity.this, PreviewActivity.class);
@@ -198,14 +198,14 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
-		if (BaseForegroundService.isRunning()) {
+		if (BaseForegroundService.getStatus().getState() == ServiceState.State.RUNNING) {
 			menu.findItem(R.id.action_start).setEnabled(false);
 			menu.findItem(R.id.action_start).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_radio_button_checked_disabled_24px));
 			menu.findItem(R.id.action_preview).setEnabled(false);
 			menu.findItem(R.id.action_preview).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_visibility_disabled_24px));
 
-			RecSettings settings = new RecSettings();
-			settings.load(getApplicationContext(), PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
+			SchedulingSettings settings = new SchedulingSettings();
+			settings.load(getApplicationContext());
 			if (settings.isSchedRecEnabled() && settings.getSchedRecTime() > System.currentTimeMillis()) {
 				menu.findItem(R.id.action_stop).setEnabled(false);
 				menu.findItem(R.id.action_stop).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_stop_circle_disabled_24px));
@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 	}
 
 	@Override
-	public void onServiceStatusChange(boolean status) {
+	public void onServiceStatusChange(ServiceState status) {
 		invalidateOptionsMenu();
 	}
 }

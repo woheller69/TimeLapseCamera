@@ -28,9 +28,9 @@ import java.util.Map;
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.BaseForegroundService;
 import at.andreasrohner.spartantimelapserec.BuildConfig;
-import at.andreasrohner.spartantimelapserec.Camera1ForegroundService;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.ServiceHelper;
+import at.andreasrohner.spartantimelapserec.ServiceState;
 import at.andreasrohner.spartantimelapserec.recorder.ImageRecorder;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
@@ -268,7 +268,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	 *
 	 * @param fileId      File ID
 	 * @param contentType Content Type
-	 * @throws IOException
+	 * @throws IOException on read error
 	 */
 	private void replyFile(int fileId, String contentType) throws IOException {
 		sendReplyHeader(ReplyCode.FOUND, contentType);
@@ -297,7 +297,6 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 			return true;
 		}
 
-		Context ctx = restService.getApplicationContext();
 		File rootDir = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).getPath());
 
 		if (!rootDir.isDirectory()) {
@@ -353,7 +352,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	 *
 	 * @param source Source
 	 * @param target Target
-	 * @throws IOException
+	 * @throws IOException on error
 	 */
 	private void copy(InputStream source, OutputStream target) throws IOException {
 		byte[] buf = new byte[8192];
@@ -372,7 +371,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	private boolean processControlRequest(String command) throws IOException {
 		String result = null;
 		if ("status".equals(command)) {
-			result = BaseForegroundService.isRunning() ? "running" : "stopped";
+			result = BaseForegroundService.getStatus().getState() == ServiceState.State.RUNNING ? "running" : "stopped";
 		} else if ("start".equals(command)) {
 			ServiceHelper helper = new ServiceHelper(restService.getApplicationContext());
 			helper.start(false);
@@ -418,7 +417,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	 * @param code             Code
 	 * @param contentType      Content Type
 	 * @param additionalFields Additional header fields
-	 * @throws IOException
+	 * @throws IOException on error
 	 */
 	public void sendReplyHeader(ReplyCode code, String contentType, Map<String, String> additionalFields) throws IOException {
 		sendLine("HTTP/1.1 " + code.code + " " + code.text);

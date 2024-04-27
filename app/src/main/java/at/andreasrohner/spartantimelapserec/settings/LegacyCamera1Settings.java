@@ -8,7 +8,7 @@ import android.hardware.Camera;
 import androidx.preference.Preference;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.data.RecMode;
-import at.andreasrohner.spartantimelapserec.data.RecSettings;
+import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
 
 /**
  * Legacy settings of Camera1 interface
@@ -23,7 +23,7 @@ public class LegacyCamera1Settings implements MainSettingsMenu {
 
 	@Override
 	public Class<? extends Activity> getActivityClass(SharedPreferences prefs) {
-		RecMode recMode = RecSettings.getRecMode(prefs);
+		RecMode recMode = RecSettingsLegacy.getRecMode(prefs);
 		if (recMode == RecMode.CAMERA2_TIME_LAPSE) {
 			return Camera2SettingsActivity.class;
 		} else {
@@ -33,8 +33,8 @@ public class LegacyCamera1Settings implements MainSettingsMenu {
 
 	@Override
 	public void updateSummary(Preference pref, Context ctx, SharedPreferences prefs) {
-		RecMode recMode = RecSettings.getRecMode(prefs);
-		StringBuffer b = new StringBuffer();
+		RecMode recMode = RecSettingsLegacy.getRecMode(prefs);
+		StringBuilder b = new StringBuilder();
 
 		if (recMode == RecMode.CAMERA2_TIME_LAPSE) {
 			pref.setSummary("CAMERA 2 TODO");

@@ -3,13 +3,10 @@ package at.andreasrohner.spartantimelapserec.settings;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.hardware.Camera;
 
 import androidx.preference.Preference;
 import at.andreasrohner.spartantimelapserec.OledScreensaverActivity;
 import at.andreasrohner.spartantimelapserec.R;
-import at.andreasrohner.spartantimelapserec.data.RecMode;
-import at.andreasrohner.spartantimelapserec.data.RecSettings;
 
 /**
  * OLED Screensaver

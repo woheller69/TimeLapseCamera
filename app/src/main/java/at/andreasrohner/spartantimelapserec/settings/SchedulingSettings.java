@@ -11,14 +11,14 @@ import androidx.preference.Preference;
 import at.andreasrohner.spartantimelapserec.R;
 
 /**
- * Legacy scheduling settings of Camera1 interface
+ * Scheduling settings
  */
-public class LegacyScheduling1Settings implements MainSettingsMenu {
+public class SchedulingSettings implements MainSettingsMenu {
 
 	/**
 	 * Constructor
 	 */
-	public LegacyScheduling1Settings() {
+	public SchedulingSettings() {
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class LegacyScheduling1Settings implements MainSettingsMenu {
 		// null = disabled
 		String scheduleRecording = prefs.getString("pref_schedule_recording", null);
 
-		StringBuffer b = new StringBuffer();
+		StringBuilder b = new StringBuilder();
 		b.append(ctx.getString(R.string.pref_scheduling_summ_start));
 		b.append(' ');
 		b.append(FormatUtil.formatTime(initialDelay, ctx));

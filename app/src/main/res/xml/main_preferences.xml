@@ -43,7 +43,7 @@
         <at.andreasrohner.spartantimelapserec.settings.ShowActivityPreference
             app:icon="@drawable/ic_clock"
             app:key="pref_main_menu_scheduling"
-            app:summary="at.andreasrohner.spartantimelapserec.settings.LegacyScheduling1Settings"
+            app:summary="at.andreasrohner.spartantimelapserec.settings.SchedulingSettings"
             app:title="@string/pref_scheduling_settings_title" />
 
         <at.andreasrohner.spartantimelapserec.settings.ShowActivityPreference

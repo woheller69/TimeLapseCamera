@@ -2,24 +2,17 @@ package at.andreasrohner.spartantimelapserec.settings;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import androidx.annotation.Nullable;
-import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import at.andreasrohner.spartantimelapserec.R;
-import at.andreasrohner.spartantimelapserec.camera2.Preview2Activity;
-import at.andreasrohner.spartantimelapserec.data.RecSettings;
 
 /**
  * Camera 2 Settings

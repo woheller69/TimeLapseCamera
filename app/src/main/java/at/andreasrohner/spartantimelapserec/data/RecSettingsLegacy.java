@@ -21,53 +21,66 @@ package at.andreasrohner.spartantimelapserec.data;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.CamcorderProfile;
-import android.os.Environment;
 
-import at.andreasrohner.spartantimelapserec.preference.DateTimePreference;
+import androidx.preference.PreferenceManager;
 
-import static android.os.Environment.DIRECTORY_PICTURES;
+public class RecSettingsLegacy extends SchedulingSettings {
 
-public class RecSettings {
 	private int cameraId;
+
 	private String projectName;
-	private String projectPath;
+
 	private RecMode recMode;
+
 	private int frameRate;
+
 	private int captureRate;
+
 	private boolean muteShutter;
+
 	private boolean stopOnLowBattery;
+
 	private boolean stopOnLowStorage;
+
 	private int initDelay;
+
 	private int jpegQuality;
+
 	private int frameWidth;
+
 	private int frameHeight;
+
 	private int recProfile;
-	private long schedRecTime;
-	private boolean schedRecEnabled;
-	private int stopRecAfter;
+
 	private int exposureCompensation;
+
 	private int zoom;
+
 	private int cameraInitDelay;
+
 	private int cameraTriggerDelay;
+
 	private boolean cameraFlash;
+
 	private int videoEncodingBitRate;
 
 	public static int getInteger(SharedPreferences prefs, String key, int def) {
 		try {
 			return Integer.parseInt(prefs.getString(key, ""));
-		} catch (NumberFormatException e) {}
+		} catch (NumberFormatException e) {
+		}
 		return def;
 	}
 
 	public static RecMode getRecMode(SharedPreferences prefs) {
-		return RecSettings.getRecMode(prefs, "pref_rec_mode", RecMode.VIDEO_TIME_LAPSE);
+		return RecSettingsLegacy.getRecMode(prefs, "pref_rec_mode", RecMode.VIDEO_TIME_LAPSE);
 	}
 
-	public static RecMode getRecMode(SharedPreferences prefs, String key,
-			RecMode def) {
+	public static RecMode getRecMode(SharedPreferences prefs, String key, RecMode def) {
 		try {
 			return RecMode.valueOf(prefs.getString(key, ""));
-		} catch (Exception e) {}
+		} catch (Exception e) {
+		}
 		return def;
 	}
 
@@ -76,32 +89,27 @@ public class RecSettings {
 			if (CamcorderProfile.hasProfile(cameraId, profile)) {
 				return true;
 			}
-		} catch (Exception e) {}
+		} catch (Exception e) {
+		}
 
 		return false;
 	}
 
 	private int selectRecVideoProfile() {
-		if (checkRecProfile(CamcorderProfile.QUALITY_1080P)
-				&& frameHeight == 1080)
+		if (checkRecProfile(CamcorderProfile.QUALITY_1080P) && frameHeight == 1080)
 			return CamcorderProfile.QUALITY_1080P;
-		if (checkRecProfile(CamcorderProfile.QUALITY_720P)
-				&& frameHeight == 720)
+		if (checkRecProfile(CamcorderProfile.QUALITY_720P) && frameHeight == 720)
 			return CamcorderProfile.QUALITY_720P;
-		if (checkRecProfile(CamcorderProfile.QUALITY_480P)
-				&& frameHeight == 480)
+		if (checkRecProfile(CamcorderProfile.QUALITY_480P) && frameHeight == 480)
 			return CamcorderProfile.QUALITY_480P;
 
-		if (checkRecProfile(CamcorderProfile.QUALITY_HIGH)
-				&& frameHeight >= 480)
+		if (checkRecProfile(CamcorderProfile.QUALITY_HIGH) && frameHeight >= 480)
 			return CamcorderProfile.QUALITY_HIGH;
 
-		if (checkRecProfile(CamcorderProfile.QUALITY_QVGA)
-				&& frameHeight == 240)
+		if (checkRecProfile(CamcorderProfile.QUALITY_QVGA) && frameHeight == 240)
 			return CamcorderProfile.QUALITY_QVGA;
 
-		if (checkRecProfile(CamcorderProfile.QUALITY_QCIF)
-				&& frameHeight == 144)
+		if (checkRecProfile(CamcorderProfile.QUALITY_QCIF) && frameHeight == 144)
 			return CamcorderProfile.QUALITY_QCIF;
 
 		if (checkRecProfile(CamcorderProfile.QUALITY_LOW))
@@ -111,26 +119,20 @@ public class RecSettings {
 	}
 
 	private int selectRecVideoTimeLapseProfile() {
-		if (checkRecProfile(CamcorderProfile.QUALITY_TIME_LAPSE_1080P)
-				&& frameHeight == 1080)
+		if (checkRecProfile(CamcorderProfile.QUALITY_TIME_LAPSE_1080P) && frameHeight == 1080)
 			return CamcorderProfile.QUALITY_TIME_LAPSE_1080P;
-		if (checkRecProfile(CamcorderProfile.QUALITY_TIME_LAPSE_720P)
-				&& frameHeight == 720)
+		if (checkRecProfile(CamcorderProfile.QUALITY_TIME_LAPSE_720P) && frameHeight == 720)
 			return CamcorderProfile.QUALITY_TIME_LAPSE_720P;
-		if (checkRecProfile(CamcorderProfile.QUALITY_TIME_LAPSE_480P)
-				&& frameHeight == 480)
+		if (checkRecProfile(CamcorderProfile.QUALITY_TIME_LAPSE_480P) && frameHeight == 480)
 			return CamcorderProfile.QUALITY_TIME_LAPSE_480P;
 
-		if (checkRecProfile(CamcorderProfile.QUALITY_TIME_LAPSE_HIGH)
-				&& frameHeight >= 480)
+		if (checkRecProfile(CamcorderProfile.QUALITY_TIME_LAPSE_HIGH) && frameHeight >= 480)
 			return CamcorderProfile.QUALITY_TIME_LAPSE_HIGH;
 
-		if (checkRecProfile(CamcorderProfile.QUALITY_TIME_LAPSE_QVGA)
-				&& frameHeight == 240)
+		if (checkRecProfile(CamcorderProfile.QUALITY_TIME_LAPSE_QVGA) && frameHeight == 240)
 			return CamcorderProfile.QUALITY_TIME_LAPSE_QVGA;
 
-		if (checkRecProfile(CamcorderProfile.QUALITY_TIME_LAPSE_QCIF)
-				&& frameHeight == 144)
+		if (checkRecProfile(CamcorderProfile.QUALITY_TIME_LAPSE_QCIF) && frameHeight == 144)
 			return CamcorderProfile.QUALITY_TIME_LAPSE_QCIF;
 
 		if (checkRecProfile(CamcorderProfile.QUALITY_TIME_LAPSE_LOW))
@@ -139,11 +141,18 @@ public class RecSettings {
 		return CamcorderProfile.QUALITY_TIME_LAPSE_HIGH;
 	}
 
-	public void load(Context context, SharedPreferences prefs) {
-		videoEncodingBitRate = getInteger(prefs,"pref_video_encoding_br", 0);
+	/**
+	 * Load settings from Context
+	 *
+	 * @param context Context
+	 */
+	public void load(Context context) {
+		super.load(context);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+		videoEncodingBitRate = getInteger(prefs, "pref_video_encoding_br", 0);
 		cameraId = getInteger(prefs, "pref_camera", 0);
 		projectName = prefs.getString("pref_project_title", "");
-		projectPath = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).getPath();
 
 		recMode = getRecMode(prefs);
 
@@ -154,17 +163,11 @@ public class RecSettings {
 		stopOnLowStorage = prefs.getBoolean("pref_stop_low_storage", true);
 		initDelay = prefs.getInt("pref_initial_delay", 1000);
 		jpegQuality = prefs.getInt("pref_jpeg_quality", 90);
-		stopRecAfter = prefs.getInt("pref_stop_recording_after", 60 * 48);  //two days
-		exposureCompensation = prefs.getInt("pref_exposurecomp",0);
-		zoom = prefs.getInt("pref_zoom",0);
+		exposureCompensation = prefs.getInt("pref_exposurecomp", 0);
+		zoom = prefs.getInt("pref_zoom", 0);
 		cameraInitDelay = prefs.getInt("pref_camera_init_delay", 500);
 		cameraTriggerDelay = prefs.getInt("pref_camera_trigger_delay", 1000);
-		cameraFlash = prefs.getBoolean("pref_flash",false);
-		// negative value disables the limit
-		if (stopRecAfter >= 47 * 60)
-			stopRecAfter = -1;
-		else
-			stopRecAfter *= 60 * 1000;  //convert to milli seconds
+		cameraFlash = prefs.getBoolean("pref_flash", false);
 
 		String[] size = prefs.getString("pref_frame_size", "1920x1080").split("x");
 		try {
@@ -181,17 +184,6 @@ public class RecSettings {
 			else
 				recProfile = selectRecVideoProfile();
 		}
-
-		String schedRecValue = prefs.getString("pref_schedule_recording", null);
-		if (schedRecValue != null) {
-			schedRecEnabled = DateTimePreference.parseEnabled(schedRecValue);
-			if (schedRecEnabled) {
-				schedRecTime = DateTimePreference.parseTime(schedRecValue);
-			}
-		} else {
-			schedRecEnabled = false;
-		}
-
 	}
 
 	public boolean shouldUsePowerSaveMode() {
@@ -230,14 +222,6 @@ public class RecSettings {
 
 	public void setProjectName(String projectName) {
 		this.projectName = projectName;
-	}
-
-	public String getProjectPath() {
-		return projectPath;
-	}
-
-	public void setProjectPath(String projectPath) {
-		this.projectPath = projectPath;
 	}
 
 	public int getFrameRate() {
@@ -312,39 +296,27 @@ public class RecSettings {
 		this.stopOnLowStorage = stopOnLowStorage;
 	}
 
-	public long getSchedRecTime() {
-		return schedRecTime;
+	public int getExposureCompensation() {
+		return exposureCompensation;
 	}
 
-	public void setSchedRecTime(long schedRecTime) {
-		this.schedRecTime = schedRecTime;
+	public int getZoom() {
+		return zoom;
 	}
 
-	public boolean isSchedRecEnabled() {
-		return schedRecEnabled;
+	public int getCameraInitDelay() {
+		return cameraInitDelay;
 	}
 
-	public void setSchedRecEnabled(boolean schedRecEnabled) {
-		this.schedRecEnabled = schedRecEnabled;
+	public int getCameraTriggerDelay() {
+		return cameraTriggerDelay;
 	}
 
-	public int getStopRecAfter() {
-		return stopRecAfter;
+	public boolean getCameraFlash() {
+		return cameraFlash;
 	}
 
-	public int getExposureCompensation() { return exposureCompensation; }
-
-	public int getZoom() { return zoom;}
-
-	public void setStopRecAfter(int stopRecAfter) {
-		this.stopRecAfter = stopRecAfter;
+	public int getVideoEncodingBitRate() {
+		return videoEncodingBitRate;
 	}
-
-	public int getCameraInitDelay() {return cameraInitDelay;}
-
-	public int getCameraTriggerDelay() {return cameraTriggerDelay;}
-
-	public boolean getCameraFlash() {return cameraFlash;}
-
-	public int getVideoEncodingBitRate() {return  videoEncodingBitRate;}
 }

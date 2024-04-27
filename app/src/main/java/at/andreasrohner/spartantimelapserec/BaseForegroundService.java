@@ -1,5 +1,6 @@
 package at.andreasrohner.spartantimelapserec;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -7,23 +8,40 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ServiceInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.PowerManager;
+import android.text.format.DateFormat;
+import android.util.Log;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.core.app.NotificationCompat;
+import androidx.preference.PreferenceManager;
+import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
+import at.andreasrohner.spartantimelapserec.rest.HttpThread;
+
+import static android.os.Environment.DIRECTORY_PICTURES;
 
 /**
  * Base class for Service implementation
  */
 public abstract class BaseForegroundService extends Service implements Handler.Callback {
+
+	/**
+	 * Log Tag
+	 */
+	private static final String TAG = HttpThread.class.getSimpleName();
 
 	/**
 	 * Action to stop the service
@@ -46,9 +64,9 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 	private static final List<ServiceStatusListener> listener = new ArrayList<>();
 
 	/**
-	 * Running flag
+	 * Current state of the service
 	 */
-	private static boolean running = false;
+	private static ServiceState status = new ServiceState(ServiceState.State.INIT, "Initialized");
 
 	/**
 	 * Wake lock, make sure the application don't get killed while recording...
@@ -71,16 +89,21 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 	private NotificationManager notificationManager;
 
 	/**
+	 * Output dir for images / videos
+	 */
+	private File outputDir;
+
+	/**
 	 * Constructor
 	 */
 	public BaseForegroundService() {
 	}
 
 	/**
-	 * @return true if the service is currently running
+	 * @return Current status of the service
 	 */
-	public static boolean isRunning() {
-		return running;
+	public static ServiceState getStatus() {
+		return status;
 	}
 
 	@Override
@@ -106,9 +129,9 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 	 *
 	 * @param status New state
 	 */
-	protected void fireStateChanged(boolean status) {
+	protected void fireStateChanged(ServiceState status) {
 		synchronized (listener) {
-			running = status;
+			BaseForegroundService.status = status;
 			for (ServiceStatusListener l : listener) {
 				l.onServiceStatusChange(status);
 			}
@@ -117,14 +140,65 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if (intent == null || !ACTION_STOP_SERVICE.equals(intent.getAction())) {
+			if (startupScheduled()) {
+				return START_STICKY;
+			}
+
 			initNotification();
+			initWakeLock();
+			initHandler();
+
+			String projectPath = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).getPath();
+
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+			String projectName = prefs.getString("pref_project_title", "NO_NAME");
+			this.outputDir = new File(projectPath, projectName + "/" + DateFormat.format("yyyy-MM-dd", System.currentTimeMillis()) + "/");
+			Log.i(TAG, "Project Folder: «" + this.outputDir + "»");
+
 			startupService();
-			fireStateChanged(true);
+			updateNotification();
+			fireStateChanged(new ServiceState(ServiceState.State.RUNNING, "onStartCommand"));
 			return START_STICKY;
 		} else {
 			shutdownService();
 			return START_NOT_STICKY;
 		}
+	}
+
+	/**
+	 * Scheduled startup. Do not start now, just plan startup
+	 *
+	 * @return true if scheduled start is enabled
+	 */
+	private boolean startupScheduled() {
+		SchedulingSettings settings = new SchedulingSettings();
+		settings.load(getApplicationContext());
+
+		if (!settings.isSchedRecEnabled()) {
+			return false;
+		}
+
+		if (settings.getSchedRecTime() > System.currentTimeMillis() + 10000) {
+			AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+			Intent newintent = new Intent(getApplicationContext(), ScheduleReceiver.class);
+			PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, newintent, PendingIntent.FLAG_IMMUTABLE);
+			alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, settings.getSchedRecTime(), alarmIntent);
+			java.text.DateFormat f = SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.MEDIUM, SimpleDateFormat.SHORT);
+
+			String startDate = f.format(settings.getSchedRecTime());
+			Log.i(TAG, "Start scheduled for " + startDate);
+			fireStateChanged(new ServiceState(ServiceState.State.SCHEDULED, startDate));
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * @return Output dir for images / videos
+	 */
+	public File getOutputDir() {
+		return outputDir;
 	}
 
 	/**
@@ -135,7 +209,14 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 	/**
 	 * Service shutdown
 	 */
-	protected abstract void shutdownService();
+	protected void shutdownService() {
+		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		Intent intent = new Intent(this, ScheduleReceiver.class);
+		PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
+		alarmManager.cancel(alarmIntent);
+
+		stop("shutdownService");
+	}
 
 	/**
 	 * Aquire / init wake lock
@@ -195,15 +276,44 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 
 	/**
 	 * Stop recording
+	 *
+	 * @param reason Reason to stop
 	 */
-	protected void stop() {
+	protected void stop(String reason) {
+		stopRecording();
+
 		if (wakeLock != null && wakeLock.isHeld()) {
 			wakeLock.release();
 		}
-/*
-		if (projectDir != null && projectDir.exists()) {
-			sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(projectDir)));
+
+		if (outputDir != null && outputDir.exists()) {
+			sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(outputDir)));
 		}
-*/
+
+		fireStateChanged(new ServiceState(ServiceState.State.STOPPED, reason));
+		stopForeground(true);
+		stopSelf();
+	}
+
+	/**
+	 * Stop recording
+	 */
+	protected abstract void stopRecording();
+
+	@Override
+	public boolean handleMessage(Message m) {
+		String status = m.getData().getString("status");
+		String tag = m.getData().getString("tag");
+		String msg = m.getData().getString("msg");
+
+		if ("error".equals(status)) {
+			Log.e(tag, "Error: " + msg);
+			stop("Error: " + msg);
+		} else if ("success".equals(status)) {
+			Log.e(tag, "Success");
+			stop("Ended with success");
+		}
+
+		return true;
 	}
 }

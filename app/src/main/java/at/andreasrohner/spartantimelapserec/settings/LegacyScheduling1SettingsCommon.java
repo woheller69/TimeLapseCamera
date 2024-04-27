@@ -25,9 +25,8 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Build;
 import android.preference.PreferenceScreen;
 
-import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.Camera1ForegroundService;
-import at.andreasrohner.spartantimelapserec.data.RecSettings;
+import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
 import at.andreasrohner.spartantimelapserec.preference.DateTimePreference;
 import at.andreasrohner.spartantimelapserec.preference.SeekBarPreference;
 
@@ -68,8 +67,8 @@ public class LegacyScheduling1SettingsCommon extends BaseLegacySettingsCommon im
 			prefInitialDelay.setSummary(FormatUtil.formatTime(prefInitialDelay.getmValue(), context));
 		} else if (key.equals("pref_schedule_recording")) {
 			prefScheduleRec.setSummary(prefScheduleRec.formatDateTime());
-			RecSettings settings = new RecSettings();
-			settings.load(context, PreferenceManager.getDefaultSharedPreferences(context));
+			SchedulingSettings settings = new SchedulingSettings();
+			settings.load(context);
 			if (settings.isSchedRecEnabled() && settings.getSchedRecTime() > System.currentTimeMillis()) {
 				Intent intent = new Intent(context, Camera1ForegroundService.class);
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

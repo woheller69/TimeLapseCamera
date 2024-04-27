@@ -35,11 +35,14 @@ import java.util.Calendar;
 
 import at.andreasrohner.spartantimelapserec.R;
 
-public class DateTimePreference extends DialogPreference implements
-		OnCheckedChangeListener {
+public class DateTimePreference extends DialogPreference implements OnCheckedChangeListener {
+
 	Calendar mCal;
+
 	boolean mEnabled;
+
 	DatePicker mDatePicker;
+
 	TimePicker mTimePicker;
 
 	public DateTimePreference(Context context, AttributeSet attrs) {
@@ -53,9 +56,7 @@ public class DateTimePreference extends DialogPreference implements
 
 	public long getTimeInMillis() {
 		if (mDatePicker != null && mTimePicker != null)
-			mCal.set(mDatePicker.getYear(), mDatePicker.getMonth(),
-					mDatePicker.getDayOfMonth(), mTimePicker.getCurrentHour(),
-					mTimePicker.getCurrentMinute());
+			mCal.set(mDatePicker.getYear(), mDatePicker.getMonth(), mDatePicker.getDayOfMonth(), mTimePicker.getCurrentHour(), mTimePicker.getCurrentMinute());
 
 		if (mCal.getTimeInMillis() < System.currentTimeMillis())
 			mCal.setTimeInMillis(System.currentTimeMillis());
@@ -91,8 +92,7 @@ public class DateTimePreference extends DialogPreference implements
 	}
 
 	public String formatDateTime() {
-		DateFormat f = SimpleDateFormat.getDateTimeInstance(
-				SimpleDateFormat.MEDIUM, SimpleDateFormat.SHORT);
+		DateFormat f = SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.MEDIUM, SimpleDateFormat.SHORT);
 
 		return f.format(mCal.getTime());
 	}
@@ -113,14 +113,14 @@ public class DateTimePreference extends DialogPreference implements
 	protected void onBindView(View view) {
 		super.onBindView(view);
 
-		CheckBox checkBox = (CheckBox) view
-				.findViewById(R.id.dialog_date_preference_enabled);
+		CheckBox checkBox = (CheckBox) view.findViewById(R.id.dialog_date_preference_enabled);
 
-        String persisted = getPersistedString(null);
-        mEnabled = parseEnabled(persisted);
+		String persisted = getPersistedString(null);
+		mEnabled = parseEnabled(persisted);
 
 		if (mEnabled) {
-			if (!(mCal.getTimeInMillis() >= System.currentTimeMillis() + 10000)) mEnabled = false;
+			if (!(mCal.getTimeInMillis() >= System.currentTimeMillis() + 10000))
+				mEnabled = false;
 		}
 		checkBox.setChecked(mEnabled);
 		checkBox.setOnCheckedChangeListener(this);
@@ -138,8 +138,7 @@ public class DateTimePreference extends DialogPreference implements
 		mDatePicker.setCalendarViewShown(false);
 		mDatePicker.setMinDate(System.currentTimeMillis() - 1000);
 
-		mDatePicker.updateDate(mCal.get(Calendar.YEAR),
-				mCal.get(Calendar.MONTH), mCal.get(Calendar.DAY_OF_MONTH));
+		mDatePicker.updateDate(mCal.get(Calendar.YEAR), mCal.get(Calendar.MONTH), mCal.get(Calendar.DAY_OF_MONTH));
 
 		mTimePicker.setIs24HourView(true);
 		mTimePicker.setCurrentHour(mCal.get(Calendar.HOUR_OF_DAY));

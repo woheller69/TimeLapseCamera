@@ -54,7 +54,7 @@
         <activity
             android:name=".settings.Camera2SettingsActivity"
             android:exported="false"
-            android:label="@string/pref_scheduling_settings_title" />
+            android:label="@string/pref_camera_settings_category" />
         <activity
             android:name=".settings.StopSettingsActivity"
             android:exported="false"

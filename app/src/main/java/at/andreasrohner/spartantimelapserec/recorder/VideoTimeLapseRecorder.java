@@ -25,28 +25,26 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
 
 import at.andreasrohner.spartantimelapserec.R;
-import at.andreasrohner.spartantimelapserec.data.RecSettings;
+import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
 
 public class VideoTimeLapseRecorder extends VideoRecorder {
 
-	public VideoTimeLapseRecorder(RecSettings settings,
-			Context context, Handler handler) {
-		super(settings,  context, handler);
+	public VideoTimeLapseRecorder(RecSettingsLegacy settings, Context context, Handler handler, File outputDir) {
+		super(settings, context, handler, outputDir);
 	}
 
 	protected void doRecord() throws IllegalStateException, IOException {
-		mMediaRecorder.setOrientationHint(getCameraRotation(mSettings
-				.getCameraId()));
+		mMediaRecorder.setOrientationHint(getCameraRotation(mSettings.getCameraId()));
 		// no need for more sensor data
 		disableOrientationSensor();
 
 		mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
-		CamcorderProfile p = CamcorderProfile.get(mSettings.getCameraId(),
-				mSettings.getRecProfile());
+		CamcorderProfile p = CamcorderProfile.get(mSettings.getCameraId(), mSettings.getRecProfile());
 		p.videoFrameWidth = mSettings.getFrameWidth();
 		p.videoFrameHeight = mSettings.getFrameHeight();
 		mMediaRecorder.setProfile(p);
@@ -56,21 +54,16 @@ public class VideoTimeLapseRecorder extends VideoRecorder {
 		if (mRate != -1)
 			mMediaRecorder.setVideoFrameRate(mRate);
 		mMediaRecorder.setOutputFile(getOutputFile("mp4").getAbsolutePath());
-		mMediaRecorder.setVideoSize(mSettings.getFrameWidth(),
-				mSettings.getFrameHeight());
+		mMediaRecorder.setVideoSize(mSettings.getFrameWidth(), mSettings.getFrameHeight());
 
 		if (mSettings.getStopRecAfter() > 0) {
 			if (mRate != -1) {
-				mRate = CamcorderProfile.get(mSettings.getCameraId(),
-						mSettings.getRecProfile()).videoFrameRate;
+				mRate = CamcorderProfile.get(mSettings.getCameraId(), mSettings.getRecProfile()).videoFrameRate;
 			}
 
 			int duration = (int) (((double) (mSettings.getStopRecAfter() / mSettings.getCaptureRate())) / mRate * 1000); //Duration of the video
 			if (duration < 500) {
-				handleError(getClass().getSimpleName(),
-						mContext.getString(R.string.pref_stop_recording_after)
-								+ " is too short in relation to the "
-								+ mContext.getString(R.string.pref_capture_rate));
+				handleError(getClass().getSimpleName(), mContext.getString(R.string.pref_stop_recording_after) + " is too short in relation to the " + mContext.getString(R.string.pref_capture_rate));
 				Toast.makeText(mContext, mContext.getString(R.string.error_too_short), Toast.LENGTH_SHORT).show();
 				return;
 			}
@@ -81,7 +74,8 @@ public class VideoTimeLapseRecorder extends VideoRecorder {
 
 		Log.i(getClass().getSimpleName(), "Starting video recording");
 		mMediaRecorder.setOnErrorListener(this);
-		if (mSettings.getVideoEncodingBitRate()>0) mMediaRecorder.setVideoEncodingBitRate(mSettings.getVideoEncodingBitRate());
+		if (mSettings.getVideoEncodingBitRate() > 0)
+			mMediaRecorder.setVideoEncodingBitRate(mSettings.getVideoEncodingBitRate());
 		mMediaRecorder.prepare();
 
 		mMediaRecorder.start();

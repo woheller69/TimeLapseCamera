@@ -11,8 +11,6 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
-import at.andreasrohner.spartantimelapserec.data.RecMode;
-import at.andreasrohner.spartantimelapserec.data.RecSettings;
 import at.andreasrohner.spartantimelapserec.settings.ShowActivityPreference;
 
 /**
@@ -26,11 +24,6 @@ public class MainSettingsFragment extends PreferenceFragmentCompat implements Sh
 	private ListPreference prefRecMode;
 
 	/**
-	 * Main scheduling entry
-	 */
-	private Preference prefMainMenuScheduling;
-
-	/**
 	 * Constructor
 	 */
 	public MainSettingsFragment() {
@@ -41,7 +34,6 @@ public class MainSettingsFragment extends PreferenceFragmentCompat implements Sh
 		setPreferencesFromResource(R.xml.main_preferences, rootKey);
 
 		prefRecMode = (ListPreference) findPreference("pref_rec_mode");
-		prefMainMenuScheduling = findPreference("pref_main_menu_scheduling");
 
 		setRecMode(getPreferenceManager().getSharedPreferences());
 
@@ -54,7 +46,6 @@ public class MainSettingsFragment extends PreferenceFragmentCompat implements Sh
 		getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 
 		updateSummary();
-		updatePresMode(getPreferenceManager().getSharedPreferences());
 	}
 
 	@Override
@@ -124,17 +115,6 @@ public class MainSettingsFragment extends PreferenceFragmentCompat implements Sh
 		if (key.equals("pref_rec_mode")) {
 			setRecMode(prefs);
 			updateSummary();
-			updatePresMode(prefs);
 		}
-	}
-
-	/**
-	 * Update preferences according to the Mode
-	 *
-	 * @param prefs Preferences
-	 */
-	private void updatePresMode(SharedPreferences prefs) {
-		// Disable Scheduling Menu in Camera 2 Mode, not yet implemented!
-		prefMainMenuScheduling.setVisible(RecSettings.getRecMode(prefs) != RecMode.CAMERA2_TIME_LAPSE);
 	}
 }

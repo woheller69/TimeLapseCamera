@@ -26,57 +26,60 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager.WakeLock;
 import android.os.SystemClock;
-import android.text.format.DateFormat;
 import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
 
-import at.andreasrohner.spartantimelapserec.data.RecSettings;
+import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
 import at.andreasrohner.spartantimelapserec.sensor.OrientationSensor;
 
 public abstract class Recorder {
+
 	protected Context mContext;
-	protected RecSettings mSettings;
+
+	protected RecSettingsLegacy mSettings;
+
 	protected Camera mCamera;
+
 	protected boolean mCanDisableShutterSound;
+
 	protected Handler mHandler;
+
 	protected int mInitDelay;
+
 	private OrientationSensor mOrientation;
+
 	protected MuteShutter mMute;
+
 	private File mOutputDir;
+
 	private int mFileIndex;
 
-	public static Recorder getInstance(RecSettings settings,
-			 Context context, Handler handler,
-			WakeLock wakeLock) {
+	public static Recorder getInstance(RecSettingsLegacy settings, Context context, Handler handler, WakeLock wakeLock, File outputDir) {
 		Recorder recorder;
 
 		switch (settings.getRecMode()) {
-		case VIDEO_TIME_LAPSE:
-			recorder = new VideoTimeLapseRecorder(settings,
-					context, handler);
-			break;
-		case IMAGE_TIME_LAPSE:
-			if (settings.shouldUsePowerSaveMode()) {
-				recorder = new PowerSavingImageRecorder(settings,
-						 context, handler, wakeLock);
-			} else {
-				recorder = new ImageRecorder(settings,  context,
-						handler);
-			}
-			break;
-		default:
-			recorder = new VideoRecorder(settings,  context,
-					handler);
-			break;
+			case VIDEO_TIME_LAPSE:
+				recorder = new VideoTimeLapseRecorder(settings, context, handler, outputDir);
+				break;
+			case IMAGE_TIME_LAPSE:
+				if (settings.shouldUsePowerSaveMode()) {
+					recorder = new PowerSavingImageRecorder(settings, context, handler, wakeLock, outputDir);
+				} else {
+					recorder = new ImageRecorder(settings, context, handler, outputDir);
+				}
+				break;
+			default:
+				recorder = new VideoRecorder(settings, context, handler, outputDir);
+				break;
 		}
 
 		return recorder;
 	}
 
-	public Recorder(RecSettings settings, 			Context context, Handler handler) {
+	public Recorder(RecSettingsLegacy settings, Context context, Handler handler, File outputDir) {
 		mContext = context;
 
 		mOrientation = new OrientationSensor(context);
@@ -90,10 +93,7 @@ public abstract class Recorder {
 		mCanDisableShutterSound = info.canDisableShutterSound;
 
 		mMute = new MuteShutter(context);
-		mOutputDir = new File(settings.getProjectPath() + "/"
-				+ settings.getProjectName() + "/"
-				+ DateFormat.format("yyyy-MM-dd", System.currentTimeMillis())
-				+ "/");
+		mOutputDir = outputDir;
 
 		if (!mOutputDir.exists() && !mOutputDir.mkdirs()) {
 			Log.e("TimeLapseCamera", "Failed to make directory: " + mOutputDir.toString());
@@ -181,7 +181,7 @@ public abstract class Recorder {
 			}
 		};
 
-		if (mHandler == null  || mContext == null)
+		if (mHandler == null || mContext == null)
 			return;
 
 		enableOrientationSensor();
@@ -211,8 +211,7 @@ public abstract class Recorder {
 	protected File getOutputFile(String ext) throws IOException {
 		File outFile;
 		do {
-			outFile = new File(mOutputDir, mSettings.getProjectName()
-					+ mFileIndex + "." + ext);
+			outFile = new File(mOutputDir, mSettings.getProjectName() + mFileIndex + "." + ext);
 			mFileIndex++;
 		} while (outFile.isFile());
 
@@ -227,7 +226,6 @@ public abstract class Recorder {
 			return mOrientation.getCameraRotation(cameraId);
 		return 0;
 	}
-
 
 	protected void muteShutter() {
 		if (mSettings != null && mSettings.isMuteShutter()) {

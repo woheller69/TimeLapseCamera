@@ -10,5 +10,5 @@ public interface ServiceStatusListener {
 	 *
 	 * @param status New state
 	 */
-	public void onServiceStatusChange(boolean status);
+	void onServiceStatusChange(ServiceState status);
 }

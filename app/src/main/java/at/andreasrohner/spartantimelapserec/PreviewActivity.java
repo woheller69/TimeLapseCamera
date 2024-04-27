@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Set;
 
 import androidx.preference.PreferenceManager;
-import at.andreasrohner.spartantimelapserec.data.RecSettings;
+import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
 
 public class PreviewActivity extends Activity implements ErrorCallback, AutoFocusCallback {
 
@@ -50,7 +50,7 @@ public class PreviewActivity extends Activity implements ErrorCallback, AutoFocu
 
 	private Camera mCamera;
 
-	private RecSettings mSettings;
+	private RecSettingsLegacy mSettings;
 
 	private boolean mUseAutoFocus;
 
@@ -63,8 +63,8 @@ public class PreviewActivity extends Activity implements ErrorCallback, AutoFocu
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-		mSettings = new RecSettings();
-		mSettings.load(getApplicationContext(), PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
+		mSettings = new RecSettingsLegacy();
+		mSettings.load(getApplicationContext());
 
 		// Create a RelativeLayout container that will hold a SurfaceView,
 		// and set it as the content of our activity.
@@ -263,13 +263,13 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
 
 	private Camera mCamera;
 
-	private RecSettings mSettings;
+	private RecSettingsLegacy mSettings;
 
 	private Size mPreviewSize;
 
 	private List<Size> mSupportedPreviewSizes;
 
-	Preview(Context context, RecSettings settings) {
+	Preview(Context context, RecSettingsLegacy settings) {
 		super(context);
 
 		mSettings = settings;
