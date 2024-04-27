@@ -40,23 +40,27 @@
             android:name=".camera2.Preview2Activity"
             android:exported="false" />
         <activity
-            android:name=".settings.RestSettingsActivity"
+            android:name=".preference.activity.RestSettingsActivity"
             android:exported="false"
             android:label="@string/pref_restapi_settings_header" />
         <activity
-            android:name=".settings.LegacyCamera1SettingsActivity"
+            android:name=".preference.activity.LegacyCamera1SettingsActivity"
             android:exported="false"
             android:label="@string/pref_camera_settings_category" />
         <activity
-            android:name=".settings.LegacyScheduling1SettingsActivity"
+            android:name=".preference.activity.LegacyScheduling1SettingsActivity"
             android:exported="false"
             android:label="@string/pref_scheduling_settings_title" />
         <activity
-            android:name=".settings.Camera2SettingsActivity"
+            android:name=".preference.activity.SchedulingSettingsActivity"
+            android:exported="false"
+            android:label="@string/pref_scheduling_settings_title" />
+        <activity
+            android:name=".preference.activity.Camera2SettingsActivity"
             android:exported="false"
             android:label="@string/pref_camera_settings_category" />
         <activity
-            android:name=".settings.StopSettingsActivity"
+            android:name=".preference.activity.StopSettingsActivity"
             android:exported="false"
             android:label="@string/pref_stop_settings_category" />
         <activity

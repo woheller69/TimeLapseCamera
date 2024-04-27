@@ -8,10 +8,8 @@ import android.os.Bundle;
 
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
-import androidx.preference.PreferenceCategory;
-import androidx.preference.PreferenceScreen;
-import at.andreasrohner.spartantimelapserec.settings.ShowActivityPreference;
-import at.andreasrohner.spartantimelapserec.updateableprefs.UpdateablePreferenceFragmentCompat;
+import at.andreasrohner.spartantimelapserec.preference.mainmenu.ShowActivityPreference;
+import at.andreasrohner.spartantimelapserec.preference.update.UpdateablePreferenceFragmentCompat;
 
 /**
  * Main Settings menu

@@ -43,7 +43,7 @@ import at.andreasrohner.spartantimelapserec.data.RecMode;
 import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
 import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
-import at.andreasrohner.spartantimelapserec.settings.RestControlUtil;
+import at.andreasrohner.spartantimelapserec.rest.RestControlUtil;
 
 /**
  * Main activity of the

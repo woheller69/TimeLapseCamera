@@ -22,7 +22,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import androidx.preference.PreferenceManager;
-import at.andreasrohner.spartantimelapserec.preference.DateTimePreference;
+import at.andreasrohner.spartantimelapserec.legacypreference.DateTimePreference;
 
 /**
  * Load and parse scheduling settings
@@ -105,12 +105,5 @@ public class SchedulingSettings {
 	 */
 	public int getInitDelay() {
 		return initDelay;
-	}
-
-	/**
-	 * @param initDelay Initial delay
-	 */
-	public void setInitDelay(int initDelay) {
-		this.initDelay = initDelay;
 	}
 }

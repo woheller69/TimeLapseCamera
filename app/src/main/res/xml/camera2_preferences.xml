@@ -8,12 +8,12 @@
             app:key="pref_camera"
             app:title="@string/pref_camera" />
 
-        <at.andreasrohner.spartantimelapserec.settings.TimeSpanPreference
+        <at.andreasrohner.spartantimelapserec.preference.preftype.TimeSpanPreference
             android:defaultValue="1000"
             android:dialogMessage="@string/pref_capture_rate_summ"
             android:key="pref_capture_rate"
             android:title="@string/pref_capture_rate"
             app:icon="@drawable/ic_timespan" />
-        
+
     </PreferenceCategory>
 </PreferenceScreen>
