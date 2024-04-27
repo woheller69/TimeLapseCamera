@@ -12,14 +12,8 @@
             android:defaultValue="1000"
             android:dialogMessage="@string/pref_capture_rate_summ"
             android:key="pref_capture_rate"
-            android:title="@string/pref_capture_rate" />
-
-        <!--
-        <at.andreasrohner.spartantimelapserec.preference.IntervalPickerPreference
-            android:defaultValue="1000"
-            android:dialogMessage="@string/pref_capture_rate_summ"
-            android:key="pref_capture_rate"
-            android:title="@string/pref_capture_rate" />
-            -->
+            android:title="@string/pref_capture_rate"
+            app:icon="@drawable/ic_timespan" />
+        
     </PreferenceCategory>
 </PreferenceScreen>
