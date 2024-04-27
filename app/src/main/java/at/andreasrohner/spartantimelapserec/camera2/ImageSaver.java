@@ -1,4 +1,4 @@
-package at.andreasrohner.spartantimelapserec.camera2.util;
+package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.media.Image;
 import android.media.ImageReader;

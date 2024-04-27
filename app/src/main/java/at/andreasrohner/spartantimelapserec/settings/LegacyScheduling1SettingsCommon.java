@@ -18,6 +18,7 @@
 
 package at.andreasrohner.spartantimelapserec.settings;
 
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,6 +27,7 @@ import android.os.Build;
 import android.preference.PreferenceScreen;
 
 import at.andreasrohner.spartantimelapserec.Camera1ForegroundService;
+import at.andreasrohner.spartantimelapserec.ServiceHelper;
 import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
 import at.andreasrohner.spartantimelapserec.preference.DateTimePreference;
 import at.andreasrohner.spartantimelapserec.preference.SeekBarPreference;
@@ -69,17 +71,11 @@ public class LegacyScheduling1SettingsCommon extends BaseLegacySettingsCommon im
 			prefScheduleRec.setSummary(prefScheduleRec.formatDateTime());
 			SchedulingSettings settings = new SchedulingSettings();
 			settings.load(context);
+			ServiceHelper serviceHelper = new ServiceHelper(context);
 			if (settings.isSchedRecEnabled() && settings.getSchedRecTime() > System.currentTimeMillis()) {
-				Intent intent = new Intent(context, Camera1ForegroundService.class);
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-					context.startForegroundService(intent);
-				} else {
-					context.startService(intent);
-				}
+				serviceHelper.start(true);
 			} else {
-				Intent intent = new Intent(context, Camera1ForegroundService.class);
-				intent.setAction(Camera1ForegroundService.ACTION_STOP_SERVICE);
-				context.startService(intent);
+				serviceHelper.stop();
 			}
 		} else if (key.equals("pref_stop_recording_after")) {
 			prefStopRecAfter.setSummary(onFormatOutputValue(prefStopRecAfter.getmValue(), "min"));

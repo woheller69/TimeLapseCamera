@@ -5,6 +5,9 @@ package at.andreasrohner.spartantimelapserec;
  */
 public class ServiceState {
 
+	/**
+	 * State Enum
+	 */
 	public enum State {
 
 		/**

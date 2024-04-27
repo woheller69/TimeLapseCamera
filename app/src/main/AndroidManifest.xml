@@ -79,6 +79,10 @@
             android:exported="false"
             android:foregroundServiceType="camera" />
         <service
+            android:name=".camera2.Camera2ForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="camera" />
+        <service
             android:name=".rest.RestService"
             android:exported="false"
             android:foregroundServiceType="camera" />

@@ -29,9 +29,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.preference.PreferenceManager;
-
 import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,6 +37,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.camera2.Preview2Activity;
 import at.andreasrohner.spartantimelapserec.data.RecMode;
 import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
@@ -80,7 +78,8 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 		filter.addAction("android.intent.action.ACTION_BATTERY_LOW");
 		filter.addAction("android.intent.action.ACTION_DEVICE_STORAGE_LOW");
 		filter.addAction("android.intent.action.ACTION_SHUTDOWN");
-		//filter.addAction("android.intent.action.AIRPLANE_MODE"); //for testing
+		// for testing
+		// filter.addAction("android.intent.action.AIRPLANE_MODE");
 		ContextCompat.registerReceiver(getApplicationContext(), broadcastReceiver, filter, ContextCompat.RECEIVER_EXPORTED);
 
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {  //WRITE_EXTERNAL_STORAGE is deprecated (and is not granted) when targeting Android 13+, in addition POST_NOTIFICATION is needed
@@ -114,9 +113,9 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Camera1ForegroundService.registerStatusListener(this);
+		BaseForegroundService.registerStatusListener(this);
 		if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) && ((ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) && ((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) || Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)) {
-			//PERMISSION POST_NOTIFICATION is required and not tested here
+			// PERMISSION POST_NOTIFICATION is required and not tested here
 
 			// Display the fragment as the main content.
 			if (settingsFragment == null) {
@@ -221,5 +220,7 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 	@Override
 	public void onServiceStatusChange(ServiceState status) {
 		invalidateOptionsMenu();
+
+		runOnUiThread(() -> settingsFragment.updateStateDisplay());
 	}
 }

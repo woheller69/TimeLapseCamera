@@ -5,8 +5,14 @@ import android.content.Context;
 import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
 import at.andreasrohner.spartantimelapserec.recorder.Recorder;
 
+/**
+ * Camera 1 implementaion
+ */
 public class Camera1ForegroundService extends BaseForegroundService {
 
+	/**
+	 * Recorder
+	 */
 	private Recorder recorder;
 
 	/**

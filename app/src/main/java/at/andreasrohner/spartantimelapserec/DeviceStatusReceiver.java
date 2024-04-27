@@ -25,7 +25,16 @@ import android.content.SharedPreferences;
 
 import androidx.preference.PreferenceManager;
 
+/**
+ * Receive states, stop on low storage / low battery
+ */
 public class DeviceStatusReceiver extends BroadcastReceiver {
+
+	/**
+	 * Constructor
+	 */
+	public DeviceStatusReceiver() {
+	}
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -33,17 +42,17 @@ public class DeviceStatusReceiver extends BroadcastReceiver {
 
 		boolean stopOnLowBattery = prefs.getBoolean("pref_stop_low_battery", true);
 		boolean stopOnLowStorage = prefs.getBoolean("pref_stop_low_storage", true);
+
 		/*
 		 * battery or storage is low if we don't stop the recording the mp4
 		 * files get corrupted and are not playable any more
 		 */
 		if ((stopOnLowBattery && intent.getAction().equals(Intent.ACTION_BATTERY_LOW)) || (stopOnLowStorage && intent.getAction().equals(Intent.ACTION_DEVICE_STORAGE_LOW)) || intent.getAction().equals(Intent.ACTION_SHUTDOWN)) {
-			Intent stopintent = new Intent(context, Camera1ForegroundService.class);
-			stopintent.setAction(Camera1ForegroundService.ACTION_STOP_SERVICE);
-			context.startService(stopintent);
+			ServiceHelper serviceHelper = new ServiceHelper(context);
+			serviceHelper.stop();
 		}
 
-		//if (intent.getAction().equals(Intent.ACTION_AIRPLANE_MODE_CHANGED)) Log.d("DeviceStatusReceiver","ACTION_AIRPLANE_MODE_CHANGED");  //for testing: Activate filter in MainActivity
-
+		// for testing: Activate filter in MainActivity
+		// if (intent.getAction().equals(Intent.ACTION_AIRPLANE_MODE_CHANGED)) Log.d("DeviceStatusReceiver","ACTION_AIRPLANE_MODE_CHANGED");
 	}
 }

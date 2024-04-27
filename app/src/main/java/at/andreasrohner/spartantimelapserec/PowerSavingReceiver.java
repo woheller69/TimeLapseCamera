@@ -26,8 +26,7 @@ public class PowerSavingReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Intent serviceIntent = new Intent(context, Camera1ForegroundService.class);
-		serviceIntent.putExtra("powerSavingCallback", true);
-		context.startService(serviceIntent);
+		ServiceHelper serviceHelper = new ServiceHelper(context);
+		serviceHelper.stop();
 	}
 }

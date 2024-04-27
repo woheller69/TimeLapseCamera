@@ -4,7 +4,15 @@ import android.content.Context;
 
 import at.andreasrohner.spartantimelapserec.BaseForegroundService;
 
+/**
+ * Service for Camea 2 Implementation
+ */
 public class Camera2ForegroundService extends BaseForegroundService {
+
+	/**
+	 * Recorder implementation
+	 */
+	private Camera2Recorder recorder;
 
 	/**
 	 * Constructor
@@ -18,25 +26,22 @@ public class Camera2ForegroundService extends BaseForegroundService {
 		initHandler();
 
 		Context context = getApplicationContext();
-		/*
-		recorder = Recorder.getInstance(settings, context, handler, wakeLock);
-
+		recorder = new Camera2Recorder(handler);
 		handler.post(new Runnable() {
 			@Override
 			public void run() {
 				recorder.start();
 			}
-		});*/
+		});
 		updateNotification();
 	}
 
 	@Override
 	protected void stopRecording() {
-		/*
 		if (recorder != null) {
 			recorder.stop();
 			recorder = null;
-		}*/
+		}
 	}
 }
 

@@ -20,8 +20,6 @@ import android.view.WindowManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import at.andreasrohner.spartantimelapserec.camera2.util.ImageSaver;
-
 public class TakePicture {
 
 	private final CameraManager manager;

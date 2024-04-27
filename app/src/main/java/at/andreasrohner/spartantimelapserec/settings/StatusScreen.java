@@ -5,8 +5,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import androidx.preference.Preference;
+import at.andreasrohner.spartantimelapserec.BaseForegroundService;
 import at.andreasrohner.spartantimelapserec.OledScreensaverActivity;
 import at.andreasrohner.spartantimelapserec.R;
+import at.andreasrohner.spartantimelapserec.ServiceState;
 
 /**
  * Show status
@@ -26,6 +28,7 @@ public class StatusScreen implements MainSettingsMenu {
 
 	@Override
 	public void updateSummary(Preference pref, Context ctx, SharedPreferences prefs) {
-		pref.setSummary("TODO: Status");
+		ServiceState status = BaseForegroundService.getStatus();
+		pref.setSummary(status.getState() + " " + status.getReason());
 	}
 }

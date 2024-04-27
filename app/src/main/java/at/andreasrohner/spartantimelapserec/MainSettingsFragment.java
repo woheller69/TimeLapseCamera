@@ -103,6 +103,11 @@ public class MainSettingsFragment extends PreferenceFragmentCompat implements Sh
 		}
 	}
 
+	/**
+	 * Set Recording Mode
+	 *
+	 * @param prefs Preferences
+	 */
 	private void setRecMode(SharedPreferences prefs) {
 		CharSequence entry = prefRecMode.getEntry();
 		if (entry != null) {
@@ -116,5 +121,12 @@ public class MainSettingsFragment extends PreferenceFragmentCompat implements Sh
 			setRecMode(prefs);
 			updateSummary();
 		}
+	}
+
+	/**
+	 * Update state Display
+	 */
+	public void updateStateDisplay() {
+		updateSummary();
 	}
 }

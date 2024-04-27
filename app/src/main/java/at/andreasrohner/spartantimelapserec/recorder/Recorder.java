@@ -31,6 +31,7 @@ import android.util.Log;
 import java.io.File;
 import java.io.IOException;
 
+import at.andreasrohner.spartantimelapserec.StatusSenderUtil;
 import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
 import at.andreasrohner.spartantimelapserec.sensor.OrientationSensor;
@@ -117,28 +118,12 @@ public abstract class Recorder {
 	}
 
 	protected void handleError(String tag, String msg) {
-		if (mHandler != null) {
-			Message m = new Message();
-			Bundle b = new Bundle();
-			b.putString("status", "error");
-			b.putString("tag", tag);
-			b.putString("msg", msg);
-			m.setData(b);
-			m.setTarget(mHandler);
-			mHandler.sendMessage(m);
-			mHandler = null;
-		}
+		StatusSenderUtil.sendError(mHandler, tag, msg);
+		mHandler = null;
 	}
 
 	protected void success() {
-		if (mHandler != null) {
-			Message m = new Message();
-			Bundle b = new Bundle();
-			b.putString("status", "success");
-			m.setData(b);
-			m.setTarget(mHandler);
-			mHandler.sendMessage(m);
-		}
+		StatusSenderUtil.sendSuccess(mHandler);
 	}
 
 	protected void disableOrientationSensor() {
