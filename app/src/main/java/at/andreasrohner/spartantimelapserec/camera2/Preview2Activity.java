@@ -200,7 +200,7 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 	 * Init camera buttons
 	 */
 	private void initCameraButtons() {
-		new PopupDialogIso(this, (ImageButton) findViewById(R.id.bt_iso), camera);
+		((ImageButton) findViewById(R.id.bt_iso)).setOnClickListener(new PopupDialogIso(this, camera));
 	}
 
 	@Override

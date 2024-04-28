@@ -11,7 +11,7 @@ import at.andreasrohner.spartantimelapserec.ServiceHelper;
 import at.andreasrohner.spartantimelapserec.preference.AbstractSettingsFragment;
 import at.andreasrohner.spartantimelapserec.preference.preftype.DatePreference;
 import at.andreasrohner.spartantimelapserec.preference.preftype.DatePreferenceDialogFragment;
-import at.andreasrohner.spartantimelapserec.preference.preftype.TimeSpanPreference;
+import at.andreasrohner.spartantimelapserec.preference.preftype.DialogDisplayPreference;
 
 /**
  * Scheduling Settings
@@ -39,8 +39,8 @@ public class SchedulingSettingsActivity extends AbstractSettingsActivity {
 
 		@Override
 		public void onDisplayPreferenceDialog(@NonNull Preference preference) {
-			if (preference instanceof TimeSpanPreference) {
-				((TimeSpanPreference) preference).showDialog();
+			if (preference instanceof DialogDisplayPreference) {
+				((DialogDisplayPreference) preference).showDialog();
 			} else if (preference instanceof DatePreference) {
 				final DialogFragment f;
 				f = DatePreferenceDialogFragment.newInstance(preference.getKey());

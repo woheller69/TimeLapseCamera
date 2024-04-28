@@ -16,7 +16,7 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.preference.AbstractSettingsFragment;
-import at.andreasrohner.spartantimelapserec.preference.preftype.TimeSpanPreference;
+import at.andreasrohner.spartantimelapserec.preference.preftype.DialogDisplayPreference;
 
 /**
  * Camera 2 Settings
@@ -83,8 +83,8 @@ public class Camera2SettingsActivity extends AbstractSettingsActivity {
 
 		@Override
 		public void onDisplayPreferenceDialog(@NonNull Preference preference) {
-			if (preference instanceof TimeSpanPreference) {
-				((TimeSpanPreference) preference).showDialog();
+			if (preference instanceof DialogDisplayPreference) {
+				((DialogDisplayPreference) preference).showDialog();
 				return;
 			}
 			super.onDisplayPreferenceDialog(preference);

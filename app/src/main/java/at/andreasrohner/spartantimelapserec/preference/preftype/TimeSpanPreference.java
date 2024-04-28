@@ -17,7 +17,7 @@ import at.andreasrohner.spartantimelapserec.rest.HttpThread;
  * Allow to select a timespan
  */
 @SuppressWarnings("unused") // Loaded by reflection
-public class TimeSpanPreference extends DialogPreference implements SummaryPreference, TimeSpanDialog.ChangeListener {
+public class TimeSpanPreference extends DialogPreference implements DialogDisplayPreference, SummaryPreference, TimeSpanDialog.ChangeListener {
 
 	/**
 	 * Log Tag
@@ -97,9 +97,7 @@ public class TimeSpanPreference extends DialogPreference implements SummaryPrefe
 		this.setSummary(formatted);
 	}
 
-	/**
-	 * Show the dialog to enter the timespan
-	 */
+	@Override
 	public void showDialog() {
 		BaseTimeSpanDialog dlg;
 

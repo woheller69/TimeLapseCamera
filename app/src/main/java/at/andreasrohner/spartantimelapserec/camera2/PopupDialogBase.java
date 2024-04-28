@@ -3,7 +3,6 @@ package at.andreasrohner.spartantimelapserec.camera2;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.view.View;
-import android.widget.ImageButton;
 
 import at.andreasrohner.spartantimelapserec.R;
 
@@ -33,14 +32,17 @@ public abstract class PopupDialogBase implements View.OnClickListener {
 	private final AlertDialog alert;
 
 	/**
+	 * Dialog end listener
+	 */
+	private DialogResult dialogResult;
+
+	/**
 	 * Constructor
 	 *
 	 * @param context Context
-	 * @param button  Button
 	 */
-	public PopupDialogBase(Context context, ImageButton button) {
+	public PopupDialogBase(Context context) {
 		this.context = context;
-		button.setOnClickListener(this);
 
 		this.view = View.inflate(context, getDialogId(), null);
 
@@ -51,9 +53,24 @@ public abstract class PopupDialogBase implements View.OnClickListener {
 		builder.setView(view);
 		builder.setPositiveButton(context.getString(R.string.dialog_OK_button), (dialog, which) -> {
 			storeValue();
+			if (dialogResult != null) {
+				dialogResult.dialogFinished(true);
+			}
 		});
-		builder.setNegativeButton(context.getString(R.string.dialog_CANCEL_button), (dialog, which) -> dialog.cancel());
+		builder.setNegativeButton(context.getString(R.string.dialog_CANCEL_button), (dialog, which) -> {
+			dialog.cancel();
+			if (dialogResult != null) {
+				dialogResult.dialogFinished(true);
+			}
+		});
 		this.alert = builder.create();
+	}
+
+	/**
+	 * @param dialogResult Dialog end listener
+	 */
+	public void setDialogResult(DialogResult dialogResult) {
+		this.dialogResult = dialogResult;
 	}
 
 	/**
@@ -78,6 +95,26 @@ public abstract class PopupDialogBase implements View.OnClickListener {
 
 	@Override
 	public void onClick(View v) {
+		showDialog();
+	}
+
+	/**
+	 * Display the dialog
+	 */
+	public void showDialog() {
 		alert.show();
+	}
+
+	/**
+	 * Dialog end listener
+	 */
+	public interface DialogResult {
+
+		/**
+		 * Called if the dialog closed
+		 *
+		 * @param accepted True if the value was accepted
+		 */
+		void dialogFinished(boolean accepted);
 	}
 }

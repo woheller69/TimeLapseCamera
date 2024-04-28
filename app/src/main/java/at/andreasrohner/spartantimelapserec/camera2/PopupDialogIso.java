@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.camera2.CameraCharacteristics;
 import android.util.Range;
-import android.widget.ImageButton;
 import android.widget.NumberPicker;
 
 import java.util.ArrayList;
@@ -32,11 +31,10 @@ public class PopupDialogIso extends PopupDialogBase {
 	 * Constructor
 	 *
 	 * @param context Context
-	 * @param button  Button
 	 * @param camera  Camera
 	 */
-	public PopupDialogIso(Context context, ImageButton button, Camera2Wrapper camera) {
-		super(context, button);
+	public PopupDialogIso(Context context, Camera2Wrapper camera) {
+		super(context);
 
 		displayValues.add(context.getString(R.string.iso_auto));
 
