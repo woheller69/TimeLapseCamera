@@ -7,7 +7,6 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.ImageReader;
 import android.os.Bundle;
@@ -21,7 +20,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.Arrays;
 
 import androidx.annotation.NonNull;
@@ -33,15 +31,21 @@ import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 /**
  * Preview with Camera 2 Activity
  */
-public class Preview2Activity extends AppCompatActivity implements CameraPreview, Camera2Wrapper.CameraOpenCallback, TakePicture.ImageTakenListener, ProcessErrorHandler {
+public class Preview2Activity extends AppCompatActivity implements Camera2Wrapper.CameraOpenCallback, TakePicture.ImageTakenListener, ProcessErrorHandler {
 
 	/**
 	 * Log Tag
 	 */
 	private static final String TAG = HttpThread.class.getSimpleName();
 
+	/**
+	 * Take image Button
+	 */
 	private Button takePictureButton;
 
+	/**
+	 * Texture view
+	 */
 	private TextureView textureView;
 
 	/**
@@ -49,20 +53,26 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 	 */
 	private Camera2Wrapper camera;
 
+	/**
+	 * Capture session
+	 */
 	protected CameraCaptureSession cameraCaptureSessions;
 
-	protected CaptureRequest captureRequest;
-
+	/**
+	 * Capture Request Builder
+	 */
 	protected CaptureRequest.Builder captureRequestBuilder;
 
 	private ImageReader imageReader;
 
-	private File file;
-
-	private boolean mFlashSupported;
-
+	/**
+	 * Handler to store image
+	 */
 	private Handler backgroundHandler;
 
+	/**
+	 * Thread to store image
+	 */
 	private HandlerThread backgroundThread;
 
 	/**
@@ -111,21 +121,15 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 		}
 	};
 
-	final CameraCaptureSession.CaptureCallback captureCallbackListener = new CameraCaptureSession.CaptureCallback() {
-		@Override
-		public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
-			super.onCaptureCompleted(session, request, result);
-			Toast.makeText(Preview2Activity.this, "Saved:" + file, Toast.LENGTH_SHORT).show();
-			createCameraPreview();
-		}
-	};
-
 	protected void startBackgroundThread() {
 		backgroundThread = new HandlerThread("Camera Background");
 		backgroundThread.start();
 		backgroundHandler = new Handler(backgroundThread.getLooper());
 	}
 
+	/**
+	 * Stop the background Thread
+	 */
 	protected synchronized void stopBackgroundThread() {
 		if (backgroundThread == null) {
 			return;
@@ -133,16 +137,16 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 		backgroundThread.quitSafely();
 		try {
 			backgroundThread.join();
-			backgroundThread = null;
-			backgroundHandler = null;
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			Log.w(TAG, "Error stopping background Thread");
 		}
+		backgroundThread = null;
+		backgroundHandler = null;
 	}
 
 	protected void takePicture() {
 		if (!camera.isOpen()) {
-			Log.e(TAG, "cameraDevice is not open");
+			error("Camera is not open!", null);
 			return;
 		}
 
@@ -190,7 +194,7 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 				}
 			}, null);
 		} catch (CameraAccessException e) {
-			e.printStackTrace();
+			error("Create Preview failed", e);
 		}
 	}
 
@@ -215,7 +219,7 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 
 	protected void updatePreview() {
 		if (!camera.isOpen()) {
-			Log.e(TAG, "updatePreview error, return");
+			error("Update preview failed!", null);
 			return;
 		}
 
@@ -224,7 +228,7 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 		try {
 			cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, backgroundHandler);
 		} catch (CameraAccessException e) {
-			e.printStackTrace();
+			error("Error configure camera", e);
 		}
 	}
 
