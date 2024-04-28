@@ -32,7 +32,7 @@ public class Camera2Recorder implements Runnable {
 	/**
 	 * Camera wrapper
 	 */
-	//private Camera2Wrapper camera;
+	private Camera2Wrapper camera;
 
 	/**
 	 * Interval time in ms
@@ -70,7 +70,8 @@ public class Camera2Recorder implements Runnable {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		captureIntervalTime = prefs.getInt("pref_capture_rate", 1000);
 
-		//camera = new Camera2Wrapper();
+		camera = new Camera2Wrapper(context);
+		camera.open();
 		running = true;
 		handler.postDelayed(this, start);
 	}
@@ -80,7 +81,7 @@ public class Camera2Recorder implements Runnable {
 	 */
 	@Override
 	public void run() {
-		if (running == false) {
+		if (!running) {
 			Log.i(TAG, "Stop now because of running flag");
 			return;
 		}

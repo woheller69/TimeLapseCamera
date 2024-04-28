@@ -1,13 +1,10 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
@@ -35,7 +32,7 @@ import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 /**
  * Preview with Camera 2 Activity
  */
-public class Preview2Activity extends AppCompatActivity implements CameraPreview, Camera2Wrapper.CameraOpenCallback {
+public class Preview2Activity extends AppCompatActivity implements CameraPreview, Camera2Wrapper.CameraOpenCallback, TakePicture.ImageTakenListener {
 
 	/**
 	 * Log Tag
@@ -60,8 +57,6 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 	private ImageReader imageReader;
 
 	private File file;
-
-	private static final int REQUEST_CAMERA_PERMISSION = 200;
 
 	private boolean mFlashSupported;
 
@@ -147,8 +142,17 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 			return;
 		}
 
-		TakePicture picture = new TakePicture(camera, (CameraManager) getSystemService(Context.CAMERA_SERVICE), textureView, mBackgroundHandler, this.getApplicationContext(), this);
+		TakePicture picture = new TakePicture(camera, mBackgroundHandler);
+		picture.setImageTakenListener(this);
 		picture.create();
+	}
+
+	@Override
+	public void takeImageFinished() {
+		// Image taken, start the preview again
+
+		// TODO Focusing crashes on take image, needs to wait until the camera is ready again!
+		createCameraPreview();
 	}
 
 	public void createCameraPreview() {
@@ -230,19 +234,6 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 			imageReader.close();
 			imageReader = null;
 		}
-	}
-
-	@Override
-	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-		if (requestCode == REQUEST_CAMERA_PERMISSION) {
-			if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-				// close the app
-				Toast.makeText(Preview2Activity.this, "Sorry!!!, you can't use this app without granting permission", Toast.LENGTH_LONG).show();
-				finish();
-			}
-		}
-
-		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 	}
 
 	@Override

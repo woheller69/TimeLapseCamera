@@ -99,6 +99,13 @@ public class Camera2Wrapper {
 	}
 
 	/**
+	 * @return Context
+	 */
+	public Context getContext() {
+		return context;
+	}
+
+	/**
 	 * @param openCallback Callback to get informed when the camera is open
 	 */
 	public void setOpenCallback(CameraOpenCallback openCallback) {

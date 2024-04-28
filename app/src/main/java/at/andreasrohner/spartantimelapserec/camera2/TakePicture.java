@@ -6,56 +6,72 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
+import android.media.Image;
 import android.media.ImageReader;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Size;
 import android.view.Surface;
-import android.view.TextureView;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
-
-public class TakePicture {
-
-	/**
-	 * Log Tag
-	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+public class TakePicture implements ImageReader.OnImageAvailableListener {
 
 	/**
 	 * Camera implementation
 	 */
 	private Camera2Wrapper camera;
 
-	private final CameraManager manager;
+	/**
+	 * Background Thread to use to store the image
+	 */
+	private final Handler backgroundHandler;
 
-	private final TextureView textureView;
-
-	private final Handler mBackgroundHandler;
-
+	/**
+	 * Context
+	 */
 	private final Context context;
 
-	private final CameraPreview cameraPreview;
+	/**
+	 * Interface to get notified when the image is taken
+	 */
+	private ImageTakenListener imageTakenListener;
 
-	public TakePicture(Camera2Wrapper camera, CameraManager manager, TextureView textureView, Handler mBackgroundHandler, Context context, CameraPreview cameraPreview) {
+	/**
+	 * Constructor
+	 *
+	 * @param camera            Camera
+	 * @param backgroundHandler Background Thread to use to store the image
+	 */
+	public TakePicture(Camera2Wrapper camera, Handler backgroundHandler) {
 		this.camera = camera;
-		this.manager = manager;
-		this.textureView = textureView;
-		this.mBackgroundHandler = mBackgroundHandler;
-		this.context = context;
-		this.cameraPreview = cameraPreview;
+		this.backgroundHandler = backgroundHandler;
+		this.context = camera.getContext();
 	}
 
+	/**
+	 * @param imageTakenListener Interface to get notified when the image is taken
+	 */
+	public void setImageTakenListener(ImageTakenListener imageTakenListener) {
+		this.imageTakenListener = imageTakenListener;
+	}
+
+	/**
+	 * Create a picture
+	 */
 	public void create() {
 		try {
 			CameraDevice cameraDevice = camera.getCameraDevice();
-			CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraDevice.getId());
+			CameraCharacteristics characteristics = camera.getCharacteristics();
 			Size[] jpegSizes = null;
 			if (characteristics != null) {
 				jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
@@ -67,23 +83,23 @@ public class TakePicture {
 				height = jpegSizes[0].getHeight();
 			}
 			ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
-			List<Surface> outputSurfaces = new ArrayList<>(2);
+			List<Surface> outputSurfaces = new ArrayList<>(1);
 			outputSurfaces.add(reader.getSurface());
 
-			// TODO is this needed or is this just for preview?
-			outputSurfaces.add(new Surface(textureView.getSurfaceTexture()));
 			final CaptureRequest.Builder captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
 			captureBuilder.addTarget(reader.getSurface());
 			captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 			// Orientation
 			CameraOrientation orientaion = new CameraOrientation(context);
 			captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, orientaion.getRotation());
-			reader.setOnImageAvailableListener(new ImageSaver(), mBackgroundHandler);
+			reader.setOnImageAvailableListener(this, backgroundHandler);
 			final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
 				@Override
 				public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
 					super.onCaptureCompleted(session, request, result);
-					cameraPreview.createCameraPreview();
+					if (imageTakenListener != null) {
+						imageTakenListener.takeImageFinished();
+					}
 				}
 			};
 			cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
@@ -91,7 +107,7 @@ public class TakePicture {
 				public void onConfigured(CameraCaptureSession session) {
 					try {
 						// TODO Configure Camera, here te picture is started
-						session.capture(captureBuilder.build(), captureListener, mBackgroundHandler);
+						session.capture(captureBuilder.build(), captureListener, backgroundHandler);
 					} catch (CameraAccessException e) {
 						e.printStackTrace();
 					}
@@ -100,9 +116,38 @@ public class TakePicture {
 				@Override
 				public void onConfigureFailed(CameraCaptureSession session) {
 				}
-			}, mBackgroundHandler);
+			}, backgroundHandler);
 		} catch (CameraAccessException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void onImageAvailable(ImageReader reader) {
+		try (Image image = reader.acquireLatestImage()) {
+			ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+			byte[] bytes = new byte[buffer.capacity()];
+			buffer.get(bytes);
+
+			// TODO Filename
+			final File file = new File(Environment.getExternalStorageDirectory() + "/pic.jpg");
+
+			try (OutputStream output = new FileOutputStream(file)) {
+				output.write(bytes);
+			}
+		} catch (IOException e) {
+			ProcessErrorHandler.error("Error saving image", e);
+		}
+	}
+
+	/**
+	 * Interface to get notified when the image is taken
+	 */
+	public interface ImageTakenListener {
+
+		/**
+		 * The image is taken
+		 */
+		void takeImageFinished();
 	}
 }
