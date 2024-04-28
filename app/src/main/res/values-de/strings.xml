@@ -108,6 +108,12 @@
     <string name="pref_scheduling_summ_scheduling">Geplant:</string>
     <string name="pref_state_title">Status</string>
     <string name="pref_overview_category">Übersicht</string>
+    <string name="title_activity_oled_screensaver">OLED Bildschirmschoner</string>
     <string name="pref_oled_screensaver_category">OLED Status anzeigen</string>
     <string name="show_oled_screensaver_summary">Zeigt die Informationen an zufälliger Stelle an, um einbrennen zu verhindern</string>
+    <string name="pref_schedule_settings_category_calendar">Start an Datum / Zeit planen</string>
+    <string name="pref_schedule_recording_enabled">Stop recording at the configured date / time</string>
+    <string name="pref_schedule_recording_enabled_title">Enable scheduled start</string>
+    <string name="pref_schedule_recording_date">Datum</string>
+    <string name="pref_schedule_recording_time">Zeit</string>
 </resources>

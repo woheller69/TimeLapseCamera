@@ -84,11 +84,11 @@
     <string name="pref_restapi_port_title">HTTP server port</string>
     <string name="pref_restapi_pw_title">Password</string>
     <string name="pref_restapi_port_hint">Port</string>
-    <string name="pref_restapi_port_summ">Port, 1024 - 65535, default 8085. Restart of the REST API needed.</string>
+    <string name="pref_restapi_port_summ">Port, 1024 – 65535, default 8085. Restart of the REST API needed.</string>
     <string name="pref_restapi_pw_summ">Password to access the REST API</string>
     <string name="pref_restapi_pw_hint">Password</string>
-    <string name="info_restapi_started">REST API started...</string>
-    <string name="info_restapi_stopped">REST API stopped...</string>
+    <string name="info_restapi_started">REST API started…</string>
+    <string name="info_restapi_stopped">REST API stopped…</string>
     <string name="error_port_invalid">Port invalid, use 8085</string>
     <string name="pref_restapi_connectioninfo_title">Connection Info</string>
     <string name="pref_restapi_connectioninfo_title_on">REST API on</string>
@@ -110,8 +110,11 @@
     <string name="pref_state_title">State</string>
     <string name="pref_overview_category">Overview</string>
     <string name="pref_oled_screensaver_category">Show OLED Status Screen</string>
-    <string name="title_activity_oled_screensaver">OledScreensaverActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_oled_screensaver">OLED Screensaver</string>
     <string name="show_oled_screensaver_summary">Show information at random location to prevent OLED burn in</string>
+    <string name="pref_schedule_settings_category_calendar">Schedule start at date / time</string>
+    <string name="pref_schedule_recording_enabled">Start recording at the configured date / time</string>
+    <string name="pref_schedule_recording_enabled_title">Enable scheduled start</string>
+    <string name="pref_schedule_recording_date">Date</string>
+    <string name="pref_schedule_recording_time">Time</string>
 </resources>

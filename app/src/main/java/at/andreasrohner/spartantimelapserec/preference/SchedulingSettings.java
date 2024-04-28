@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import androidx.preference.Preference;
 import at.andreasrohner.spartantimelapserec.FormatUtil;
@@ -28,7 +31,6 @@ public class SchedulingSettings implements MainSettingsMenu {
 	@Override
 	public Class<? extends Activity> getActivityClass(SharedPreferences prefs) {
 		return SchedulingSettingsActivity.class;
-		//		return LegacyScheduling1SettingsActivity.class;
 	}
 
 	@Override
@@ -38,8 +40,7 @@ public class SchedulingSettings implements MainSettingsMenu {
 		//2880 = infinite
 		int stopRecordingAfter = prefs.getInt("pref_stop_recording_after", 2880);
 
-		// null = disabled
-		String scheduleRecording = prefs.getString("pref_schedule_recording", null);
+		boolean schedRecEnabled = prefs.getBoolean("pref_schedule_recording_enabled", false);
 
 		StringBuilder b = new StringBuilder();
 		b.append(ctx.getString(R.string.pref_scheduling_summ_start));
@@ -53,13 +54,25 @@ public class SchedulingSettings implements MainSettingsMenu {
 			b.append(FormatUtil.formatTimeMin(stopRecordingAfter, ctx));
 		}
 
-		if (scheduleRecording != null && scheduleRecording.startsWith("1|")) {
+		if (schedRecEnabled) {
 			b.append(", ");
 			b.append(ctx.getString(R.string.pref_scheduling_summ_scheduling));
 			b.append(' ');
-			DateFormat f = SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.MEDIUM, SimpleDateFormat.SHORT);
 
-			b.append(f.format(Long.parseLong(scheduleRecording.substring(2))));
+			try {
+				Date date = new SimpleDateFormat("yyyy-MM-dd").parse(prefs.getString("pref_schedule_recording_date", ""));
+				Calendar c = Calendar.getInstance();
+				c.setTime(date);
+				int time = prefs.getInt("pref_schedule_recording_time", 0);
+
+				c.set(Calendar.HOUR_OF_DAY, time / 100);
+				c.set(Calendar.MINUTE, time % 100);
+
+				DateFormat f = SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.MEDIUM, SimpleDateFormat.SHORT);
+				b.append(f.format(c.getTime()));
+			} catch (ParseException e) {
+				b.append("Invalid Date");
+			}
 		}
 
 		pref.setSummary(b.toString());

@@ -18,21 +18,29 @@
             android:title="@string/pref_stop_recording_after"
             app:timeSpanType="formatHour" />
 
+    </PreferenceCategory>
 
-        <!--
+    <PreferenceCategory android:title="@string/pref_schedule_settings_category_calendar">
 
- />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_check"
+            android:key="pref_schedule_recording_enabled"
+            android:summary="@string/pref_schedule_recording_enabled"
+            android:title="@string/pref_schedule_recording_enabled_title" />
 
-            app:log="1.2"
-            app:max="2880"
+        <at.andreasrohner.spartantimelapserec.preference.preftype.DatePreference
+            android:defaultValue=""
+            android:icon="@drawable/ic_calendar"
+            android:key="pref_schedule_recording_date"
+            android:title="@string/pref_schedule_recording_date" />
 
-
-        <at.andreasrohner.spartantimelapserec.preference.DateTimePreference
-            android:dialogMessage="@string/pref_schedule_recording"
-            android:key="pref_schedule_recording"
-            android:title="@string/pref_schedule_recording" />
-
-            -->
+        <at.andreasrohner.spartantimelapserec.preference.preftype.TimeSpanPreference
+            android:defaultValue="0"
+            android:icon="@drawable/ic_clock"
+            android:key="pref_schedule_recording_time"
+            android:title="@string/pref_schedule_recording_time"
+            app:timeSpanType="formatHourMinClock" />
 
     </PreferenceCategory>
 </PreferenceScreen>

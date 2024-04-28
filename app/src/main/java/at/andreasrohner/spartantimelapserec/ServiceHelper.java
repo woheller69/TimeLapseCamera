@@ -91,4 +91,16 @@ public class ServiceHelper {
 		Log.i(TAG, "Rec mode: " + mode);
 		return mode;
 	}
+
+	/**
+	 * Start / stop depending on scheduling
+	 */
+	public void startStopIfSchedulingIsActive() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		if (prefs.getBoolean("pref_schedule_recording_enabled", false)) {
+			start(true);
+		} else {
+			stop();
+		}
+	}
 }

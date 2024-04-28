@@ -3,6 +3,7 @@ package at.andreasrohner.spartantimelapserec;
 import android.content.Context;
 
 import java.text.DecimalFormat;
+import java.util.Locale;
 
 /**
  * Utility class for formatting
@@ -13,6 +14,16 @@ public final class FormatUtil {
 	 * Utility class
 	 */
 	private FormatUtil() {
+	}
+
+	/**
+	 * Format int 1234 as Time 12:34
+	 *
+	 * @param time Int
+	 * @return Formatted String
+	 */
+	public static String formatTimeFromInt(int time) {
+		return String.format(Locale.getDefault(), "%02d:%02d", time / 100, time % 100);
 	}
 
 	/**

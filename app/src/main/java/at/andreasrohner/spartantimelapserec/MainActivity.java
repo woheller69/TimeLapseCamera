@@ -42,8 +42,8 @@ import at.andreasrohner.spartantimelapserec.camera2.Preview2Activity;
 import at.andreasrohner.spartantimelapserec.data.RecMode;
 import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
 import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
-import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
 import at.andreasrohner.spartantimelapserec.rest.RestControlUtil;
+import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
 
 /**
  * Main activity of the
@@ -108,6 +108,9 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 		}
 
 		RestControlUtil.startStopRestApiServer(context);
+
+		ServiceHelper h = new ServiceHelper(context);
+		h.startStopIfSchedulingIsActive();
 	}
 
 	@Override

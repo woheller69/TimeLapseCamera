@@ -26,7 +26,7 @@ public class TimeSpanDialogHour extends BaseTimeSpanDialog {
 	/**
 	 * Infinite checkbox
 	 */
-	private CheckBox infiniteCheckbox;
+	protected CheckBox infiniteCheckbox;
 
 	/**
 	 * Constructor
@@ -47,6 +47,22 @@ public class TimeSpanDialogHour extends BaseTimeSpanDialog {
 		view = View.inflate(context, R.layout.dialog_intervalpicker_h_preference, null);
 		builder.setView(view);
 
+		infiniteCheckbox = (CheckBox) view.findViewById(R.id.dialog_seekbar_preference_infinite);
+		minutesPicker = (NumberPicker) view.findViewById(R.id.dialog_seekbar_preference_minutes);
+		minutesPicker.setMinValue(0);
+		minutesPicker.setMaxValue(59);
+
+		hoursPicker = (NumberPicker) view.findViewById(R.id.dialog_seekbar_preference_hours);
+		hoursPicker.setMinValue(0);
+		hoursPicker.setMaxValue(47);
+
+		loadData();
+	}
+
+	/**
+	 * Load data
+	 */
+	protected void loadData() {
 		boolean infinite = false;
 		int min = 0;
 		int hour = 0;
@@ -57,17 +73,10 @@ public class TimeSpanDialogHour extends BaseTimeSpanDialog {
 			hour = (value - (value % 60)) / 60;
 		}
 
-		infiniteCheckbox = (CheckBox) view.findViewById(R.id.dialog_seekbar_preference_infinite);
 		infiniteCheckbox.setChecked(infinite);
 
-		minutesPicker = (NumberPicker) view.findViewById(R.id.dialog_seekbar_preference_minutes);
-		minutesPicker.setMinValue(0);
-		minutesPicker.setMaxValue(59);
 		minutesPicker.setValue(min);
 
-		hoursPicker = (NumberPicker) view.findViewById(R.id.dialog_seekbar_preference_hours);
-		hoursPicker.setMinValue(0);
-		hoursPicker.setMaxValue(47);
 		hoursPicker.setValue(hour);
 	}
 

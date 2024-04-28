@@ -18,11 +18,16 @@
 
 package at.andreasrohner.spartantimelapserec.data;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import androidx.preference.PreferenceManager;
-import at.andreasrohner.spartantimelapserec.legacypreference.DateTimePreference;
 
 /**
  * Load and parse scheduling settings
@@ -54,6 +59,7 @@ public class SchedulingSettings {
 	 *
 	 * @param context Context
 	 */
+	@SuppressLint("SimpleDateFormat")
 	public void load(Context context) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		stopRecAfter = prefs.getInt("pref_stop_recording_after", 60 * 48 /* two days */);
@@ -66,16 +72,26 @@ public class SchedulingSettings {
 			stopRecAfter *= 60 * 1000;
 		}
 
-		String schedRecValue = prefs.getString("pref_schedule_recording", null);
-		if (schedRecValue != null) {
-			schedRecEnabled = DateTimePreference.parseEnabled(schedRecValue);
-			if (schedRecEnabled) {
-				schedRecTime = DateTimePreference.parseTime(schedRecValue);
+		schedRecEnabled = prefs.getBoolean("pref_schedule_recording_enabled", false);
+
+		if (schedRecEnabled) {
+			String schedRecDate = prefs.getString("pref_schedule_recording_date", "");
+			try {
+				Date date = new SimpleDateFormat("yyyy-MM-dd").parse(schedRecDate);
+				Calendar c = Calendar.getInstance();
+				c.setTime(date);
+
+				int time = prefs.getInt("pref_schedule_recording_time", 0);
+				c.set(Calendar.HOUR_OF_DAY, time / 100);
+				c.set(Calendar.MINUTE, time % 100);
+
+				schedRecTime = c.getTimeInMillis();
+			} catch (ParseException e) {
+				// Invalid date, disable scheduling
+				schedRecEnabled = false;
 			}
-		} else {
-			schedRecEnabled = false;
 		}
-		
+
 		initDelay = prefs.getInt("pref_initial_delay", 1000);
 	}
 

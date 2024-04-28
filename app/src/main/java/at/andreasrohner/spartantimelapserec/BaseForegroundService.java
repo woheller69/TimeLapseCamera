@@ -140,13 +140,13 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if (intent == null || !ACTION_STOP_SERVICE.equals(intent.getAction())) {
-			if (startupScheduled()) {
-				return START_STICKY;
-			}
-
 			initNotification();
 			initWakeLock();
 			initHandler();
+
+			if (startupScheduled()) {
+				return START_STICKY;
+			}
 
 			String projectPath = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).getPath();
 

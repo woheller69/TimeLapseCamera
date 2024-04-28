@@ -16,6 +16,7 @@ import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 /**
  * Allow to select a timespan
  */
+@SuppressWarnings("unused") // Loaded by reflection
 public class TimeSpanPreference extends DialogPreference implements SummaryPreference, TimeSpanDialog.ChangeListener {
 
 	/**
@@ -90,6 +91,8 @@ public class TimeSpanPreference extends DialogPreference implements SummaryPrefe
 			} else {
 				formatted = FormatUtil.formatTimeMin(value, getContext());
 			}
+		} else if ("formatHourMinClock".equals(timeSpanType)) {
+			formatted = FormatUtil.formatTimeFromInt(value);
 		}
 
 		this.setSummary(formatted);
@@ -105,6 +108,8 @@ public class TimeSpanPreference extends DialogPreference implements SummaryPrefe
 			dlg = new TimeSpanDialog(getContext(), getSharedPreferences(), getKey(), getTitle(), getDialogMessage(), this);
 		} else if ("formatHour".equals(timeSpanType)) {
 			dlg = new TimeSpanDialogHour(getContext(), getSharedPreferences(), getKey(), getTitle(), getDialogMessage(), this);
+		} else if ("formatHourMinClock".equals(timeSpanType)) {
+			dlg = new TimeSpanDialogHourMin(getContext(), getSharedPreferences(), getKey(), getTitle(), getDialogMessage(), this);
 		} else {
 			Log.e(TAG, "No dialog for «" + timeSpanType + "»");
 			return;
