@@ -10,10 +10,17 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
+import at.andreasrohner.spartantimelapserec.rest.HttpThread;
+
 /**
  * Save the Image when it's available
  */
 public class ImageSaver implements ImageReader.OnImageAvailableListener {
+
+	/**
+	 * Log Tag
+	 */
+	private static final String TAG = HttpThread.class.getSimpleName();
 
 	public ImageSaver() {
 	}

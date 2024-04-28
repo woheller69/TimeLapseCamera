@@ -16,13 +16,17 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
  * Sample from here: https://stackoverflow.com/questions/53324821/touch-based-focus-with-camera-api2-on-android
  */
 public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 
-	private static final String TAG = "FocusOnTouchHandler";
+	/**
+	 * Log Tag
+	 */
+	private static final String TAG = HttpThread.class.getSimpleName();
 
 	private CameraCharacteristics cameraCharacteristics;
 

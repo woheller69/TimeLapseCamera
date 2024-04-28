@@ -3,11 +3,17 @@ package at.andreasrohner.spartantimelapserec.camera2;
 import android.content.Context;
 
 import at.andreasrohner.spartantimelapserec.BaseForegroundService;
+import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
  * Service for Camea 2 Implementation
  */
 public class Camera2ForegroundService extends BaseForegroundService {
+
+	/**
+	 * Log Tag
+	 */
+	private static final String TAG = HttpThread.class.getSimpleName();
 
 	/**
 	 * Recorder implementation

@@ -3,11 +3,32 @@ package at.andreasrohner.spartantimelapserec.camera2;
 import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.SurfaceTexture;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCaptureSession;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CameraMetadata;
+import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.ImageReader;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
+import android.util.Size;
+import android.view.Surface;
+import android.view.TextureView;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+
+import java.io.File;
+import java.util.Arrays;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,67 +36,23 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
-
-import android.content.pm.PackageManager;
-import android.graphics.ImageFormat;
-import android.graphics.SurfaceTexture;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraMetadata;
-import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.TotalCaptureResult;
-import android.hardware.camera2.params.StreamConfigurationMap;
-import android.media.Image;
-import android.media.ImageReader;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.util.Size;
-import android.util.SparseIntArray;
-import android.view.Surface;
-import android.view.TextureView;
-import android.widget.Button;
-import android.widget.Toast;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
  * Preview with Camera 2 Activity
  */
 public class Preview2Activity extends AppCompatActivity implements CameraPreview {
 
-	private CameraCharacteristics characteristics;
-
 	/**
-	 * Constructor
+	 * Log Tag
 	 */
-	public Preview2Activity() {
-	}
+	private static final String TAG = HttpThread.class.getSimpleName();
 
-	private static final String TAG = "AndroidCameraApi";
+	private CameraCharacteristics characteristics;
 
 	private Button takePictureButton;
 
 	private TextureView textureView;
-
-	public static final SparseIntArray ORIENTATIONS = new SparseIntArray();
-
-	static {
-		ORIENTATIONS.append(Surface.ROTATION_0, 90);
-		ORIENTATIONS.append(Surface.ROTATION_90, 0);
-		ORIENTATIONS.append(Surface.ROTATION_180, 270);
-		ORIENTATIONS.append(Surface.ROTATION_270, 180);
-	}
 
 	private String cameraId;
 
@@ -100,6 +77,12 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 	private Handler mBackgroundHandler;
 
 	private HandlerThread mBackgroundThread;
+
+	/**
+	 * Constructor
+	 */
+	public Preview2Activity() {
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -194,7 +177,7 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 			return;
 		}
 
-		TakePicture picture = new TakePicture((CameraManager) getSystemService(Context.CAMERA_SERVICE), cameraDevice, textureView, getWindowManager(), mBackgroundHandler, this.getApplicationContext(), this);
+		TakePicture picture = new TakePicture((CameraManager) getSystemService(Context.CAMERA_SERVICE), cameraDevice, textureView, mBackgroundHandler, this.getApplicationContext(), this);
 		picture.create();
 	}
 
@@ -236,7 +219,7 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 		CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
 		Log.e(TAG, "is camera open");
 		try {
-			cameraId = prefs.getString("pref_camera",manager.getCameraIdList()[0] );
+			cameraId = prefs.getString("pref_camera", manager.getCameraIdList()[0]);
 			this.characteristics = manager.getCameraCharacteristics(cameraId);
 			StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 			assert map != null;

@@ -38,7 +38,8 @@
             android:theme="@style/Theme.TimeLapse.Fullscreen" />
         <activity
             android:name=".camera2.Preview2Activity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/camera2_header" />
         <activity
             android:name=".preference.activity.RestSettingsActivity"
             android:exported="false"
@@ -47,10 +48,6 @@
             android:name=".preference.activity.LegacyCamera1SettingsActivity"
             android:exported="false"
             android:label="@string/pref_camera_settings_category" />
-        <activity
-            android:name=".preference.activity.LegacyScheduling1SettingsActivity"
-            android:exported="false"
-            android:label="@string/pref_scheduling_settings_title" />
         <activity
             android:name=".preference.activity.SchedulingSettingsActivity"
             android:exported="false"

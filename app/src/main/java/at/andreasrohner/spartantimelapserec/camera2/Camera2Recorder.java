@@ -1,15 +1,23 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
+import android.util.Log;
 
-import at.andreasrohner.spartantimelapserec.StatusSenderUtil;
+import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
+import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
  * Handle Recording
  */
-public class Camera2Recorder {
+public class Camera2Recorder implements Runnable {
+
+	/**
+	 * Log Tag
+	 */
+	private static final String TAG = HttpThread.class.getSimpleName();
 
 	/**
 	 * Context
@@ -20,6 +28,21 @@ public class Camera2Recorder {
 	 * Handler
 	 */
 	private final Handler handler;
+
+	/**
+	 * Camera wrapper
+	 */
+	//private Camera2Wrapper camera;
+
+	/**
+	 * Interval time in ms
+	 */
+	private int captureIntervalTime;
+
+	/**
+	 * Running State
+	 */
+	private boolean running = true;
 
 	/**
 	 * Constructor
@@ -44,22 +67,38 @@ public class Camera2Recorder {
 			// Add forced initial delay to make sure all listener are attached...
 			start = 100;
 		}
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		captureIntervalTime = prefs.getInt("pref_capture_rate", 1000);
 
-		handler.postDelayed(() -> timerCallback(), start);
+		//camera = new Camera2Wrapper();
+		running = true;
+		handler.postDelayed(this, start);
 	}
 
 	/**
 	 * Timer callback, called in handler thread
 	 */
-	public void timerCallback() {
-//		handler.postDelayed(() -> timerCallback(), start);
+	@Override
+	public void run() {
+		if (running == false) {
+			Log.i(TAG, "Stop now because of running flag");
+			return;
+		}
+		// Schedule next image
+		handler.postDelayed(this, captureIntervalTime);
 
-		StatusSenderUtil.sendError(handler, "ABC", "Test crash!");
+		Log.e(TAG, "Test take image");
+
+		//	camera.takeImage();
+		// TODO Take image
+		//StatusSenderUtil.sendError(handler, "ABC", "Test crash!");
 	}
 
 	/**
 	 * Stop Recoding
 	 */
 	public void stop() {
+		running = false;
+		handler.removeCallbacks(this);
 	}
 }

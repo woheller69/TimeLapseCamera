@@ -15,12 +15,18 @@ import android.os.Handler;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
-import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import at.andreasrohner.spartantimelapserec.rest.HttpThread;
+
 public class TakePicture {
+
+	/**
+	 * Log Tag
+	 */
+	private static final String TAG = HttpThread.class.getSimpleName();
 
 	private final CameraManager manager;
 
@@ -28,19 +34,16 @@ public class TakePicture {
 
 	private final TextureView textureView;
 
-	private final WindowManager windowManager;
-
 	private final Handler mBackgroundHandler;
 
 	private final Context context;
 
 	private final CameraPreview cameraPreview;
 
-	public TakePicture(CameraManager manager, CameraDevice cameraDevice, TextureView textureView, WindowManager windowManager, Handler mBackgroundHandler, Context context, CameraPreview cameraPreview) {
+	public TakePicture(CameraManager manager, CameraDevice cameraDevice, TextureView textureView, Handler mBackgroundHandler, Context context, CameraPreview cameraPreview) {
 		this.manager = manager;
 		this.cameraDevice = cameraDevice;
 		this.textureView = textureView;
-		this.windowManager = windowManager;
 		this.mBackgroundHandler = mBackgroundHandler;
 		this.context = context;
 		this.cameraPreview = cameraPreview;
@@ -60,7 +63,7 @@ public class TakePicture {
 				height = jpegSizes[0].getHeight();
 			}
 			ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
-			List<Surface> outputSurfaces = new ArrayList<Surface>(2);
+			List<Surface> outputSurfaces = new ArrayList<>(2);
 			outputSurfaces.add(reader.getSurface());
 
 			// TODO is this needed or is this just for preview?
@@ -69,8 +72,8 @@ public class TakePicture {
 			captureBuilder.addTarget(reader.getSurface());
 			captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 			// Orientation
-			int rotation = windowManager.getDefaultDisplay().getRotation();
-			captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, Preview2Activity.ORIENTATIONS.get(rotation));
+			CameraOrientation orientaion = new CameraOrientation(context);
+			captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, orientaion.getRotation());
 			reader.setOnImageAvailableListener(new ImageSaver(), mBackgroundHandler);
 			final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
 				@Override
