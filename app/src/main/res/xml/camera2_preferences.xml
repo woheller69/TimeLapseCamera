@@ -16,5 +16,10 @@
             app:icon="@drawable/ic_timespan"
             app:timeSpanType="formatMs" />
 
+        <at.andreasrohner.spartantimelapserec.preference.preftype.DisplayPreference
+            android:defaultValue="-1"
+            android:key="pref_camera_iso"
+            android:title="@string/pref_capture_rate" />
+
     </PreferenceCategory>
 </PreferenceScreen>

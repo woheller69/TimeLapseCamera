@@ -19,11 +19,13 @@ import android.view.TextureView;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.Arrays;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
+import at.andreasrohner.spartantimelapserec.ImageRecorderState;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
@@ -36,11 +38,6 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 	 * Log Tag
 	 */
 	private static final String TAG = HttpThread.class.getSimpleName();
-
-	/**
-	 * Take image Button
-	 */
-	private ImageButton takePictureButton;
 
 	/**
 	 * Texture view
@@ -78,6 +75,11 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 	private HandlerThread backgroundThread;
 
 	/**
+	 * Touch / focus handler
+	 */
+	private CameraFocusOnTouchHandler touchFocusHandler;
+
+	/**
 	 * Constructor
 	 */
 	public Preview2Activity() {
@@ -89,34 +91,10 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 		setContentView(R.layout.activity_preview2);
 		textureView = (TextureView) findViewById(R.id.texture);
 		assert textureView != null;
-		textureView.setSurfaceTextureListener(textureListener);
+		textureView.setSurfaceTextureListener(new PreviewSurfaceListener(() -> openCamera()));
 
-		takePictureButton = (ImageButton) findViewById(R.id.btn_takepicture);
-		assert takePictureButton != null;
-		takePictureButton.setOnClickListener(v -> takePicture());
+		((ImageButton) findViewById(R.id.btn_takepicture)).setOnClickListener(v -> takePicture());
 	}
-
-	TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
-		@Override
-		public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-			//open your camera here
-			openCamera();
-		}
-
-		@Override
-		public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-			// Transform you image captured size according to the surface width and height
-		}
-
-		@Override
-		public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-			return false;
-		}
-
-		@Override
-		public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-		}
-	};
 
 	protected void startBackgroundThread() {
 		backgroundThread = new HandlerThread("Camera Background");
@@ -147,6 +125,7 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 			return;
 		}
 
+		textureView.setOnTouchListener(null);
 		camera.takePicture(backgroundHandler, this);
 	}
 
@@ -154,8 +133,14 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 	public void takeImageFinished() {
 		// Image taken, start the preview again
 
-		// TODO Focusing crashes on take image, needs to wait until the camera is ready again!
+		// Attach the Listener again, which was removed until the picture was saved
+		textureView.setOnTouchListener(touchFocusHandler);
 		createCameraPreview();
+
+		File img = ImageRecorderState.getCurrentRecordedImage();
+		if (img != null) {
+			Toast.makeText(getApplicationContext(), img.getName(), Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	public void createCameraPreview() {
@@ -182,7 +167,9 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 					// When the session is ready, we start displaying the preview.
 					cameraCaptureSessions = cameraCaptureSession;
 					updatePreview();
-					textureView.setOnTouchListener(new CameraFocusOnTouchHandler(characteristics, captureRequestBuilder, cameraCaptureSessions, backgroundHandler));
+
+					touchFocusHandler = new CameraFocusOnTouchHandler(characteristics, captureRequestBuilder, cameraCaptureSessions, backgroundHandler);
+					textureView.setOnTouchListener(touchFocusHandler);
 				}
 
 				@Override
@@ -205,6 +192,15 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 		camera = new Camera2Wrapper(this, new FileNameController(PreferenceManager.getDefaultSharedPreferences(getApplicationContext())), this);
 		camera.setOpenCallback(this);
 		camera.open();
+
+		initCameraButtons();
+	}
+
+	/**
+	 * Init camera buttons
+	 */
+	private void initCameraButtons() {
+		new PopupDialogIso(this, (ImageButton) findViewById(R.id.bt_iso), camera);
 	}
 
 	@Override
@@ -247,7 +243,7 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 		if (textureView.isAvailable()) {
 			openCamera();
 		} else {
-			textureView.setSurfaceTextureListener(textureListener);
+			textureView.setSurfaceTextureListener(new PreviewSurfaceListener(() -> openCamera()));
 		}
 	}
 

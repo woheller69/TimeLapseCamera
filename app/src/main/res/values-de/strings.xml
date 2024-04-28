@@ -117,4 +117,7 @@
     <string name="pref_schedule_recording_date">Datum</string>
     <string name="pref_schedule_recording_time">Zeit</string>
     <string name="camera2_header">Kamera Vorschau / Konfiguration</string>
+    <string name="iso">ISO</string>
+    <string name="iso_message">Kamera ISO wählen</string>
+    <string name="iso_auto">Auto</string>
 </resources>

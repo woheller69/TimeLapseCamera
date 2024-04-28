@@ -108,16 +108,17 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 						// TODO Configure Camera, here te picture is started
 						session.capture(captureBuilder.build(), captureListener, backgroundHandler);
 					} catch (CameraAccessException e) {
-						e.printStackTrace();
+						camera.getErrorHandler().error("Failed to configure camera", e);
 					}
 				}
 
 				@Override
 				public void onConfigureFailed(CameraCaptureSession session) {
+					camera.getErrorHandler().error("Camera configuration failed", null);
 				}
 			}, backgroundHandler);
 		} catch (CameraAccessException e) {
-			e.printStackTrace();
+			camera.getErrorHandler().error("Failed to create picture", e);
 		}
 	}
 

@@ -76,7 +76,6 @@ public class TimeSpanPreference extends DialogPreference implements SummaryPrefe
 		this.timeSpanType = a.getString(R.styleable.TimeLapse_timeSpanType);
 		a.recycle();
 	}
-	//formatMs
 
 	@Override
 	@SuppressWarnings("ConstantConditions")
