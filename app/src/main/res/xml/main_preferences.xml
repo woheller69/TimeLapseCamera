@@ -39,7 +39,7 @@
             android:icon="@drawable/ic_gear"
             android:key="pref_main_menu_camera"
             android:title="@string/pref_camera_settings_category"
-            app:settingsClass="at.andreasrohner.spartantimelapserec.preference.LegacyCamera1Settings" />
+            app:settingsClass="at.andreasrohner.spartantimelapserec.preference.CameraSettings" />
 
         <at.andreasrohner.spartantimelapserec.preference.mainmenu.ShowActivityPreference
             android:icon="@drawable/ic_clock"

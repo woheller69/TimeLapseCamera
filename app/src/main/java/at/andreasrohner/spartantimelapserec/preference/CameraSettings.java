@@ -3,7 +3,6 @@ package at.andreasrohner.spartantimelapserec.preference;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.hardware.Camera;
 
 import androidx.preference.Preference;
 import at.andreasrohner.spartantimelapserec.FormatUtil;
@@ -15,15 +14,15 @@ import at.andreasrohner.spartantimelapserec.preference.activity.LegacyCamera1Set
 import at.andreasrohner.spartantimelapserec.preference.mainmenu.MainSettingsMenu;
 
 /**
- * Legacy settings of Camera1 interface
+ * Camera Settings
  */
 @SuppressWarnings({"unused", "deprecated"}) // Loaded by menu / legacy classes, will not be updated
-public class LegacyCamera1Settings implements MainSettingsMenu {
+public class CameraSettings implements MainSettingsMenu {
 
 	/**
 	 * Constructor
 	 */
-	public LegacyCamera1Settings() {
+	public CameraSettings() {
 	}
 
 	@Override
@@ -41,23 +40,33 @@ public class LegacyCamera1Settings implements MainSettingsMenu {
 		RecMode recMode = RecSettingsLegacy.getRecMode(prefs);
 		StringBuilder b = new StringBuilder();
 
-		if (recMode == RecMode.CAMERA2_TIME_LAPSE) {
-			pref.setSummary("CAMERA 2 TODO");
-			return;
-		}
-
 		b.append(ctx.getString(R.string.pref_camera_camera));
 		b.append(": ");
-		if (Integer.parseInt(prefs.getString("pref_camera", "0")) == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+		if (Integer.parseInt(prefs.getString("pref_camera", "0")) == 1) {
 			b.append(ctx.getString(R.string.pref_camera_front));
 		} else {
 			b.append(ctx.getString(R.string.pref_camera_back));
 		}
 
-		b.append(", ");
-		b.append(ctx.getString(R.string.pref_frame_size));
-		b.append(": ");
-		b.append(prefs.getString("pref_frame_size", "1920x1080"));
+		if (recMode != RecMode.CAMERA2_TIME_LAPSE) {
+			// TODO Implement for CAMERA2_TIME_LAPSE
+			b.append(", ");
+			b.append(ctx.getString(R.string.pref_frame_size));
+			b.append(": ");
+			b.append(prefs.getString("pref_frame_size", "1920x1080"));
+		}
+
+		if (recMode == RecMode.CAMERA2_TIME_LAPSE) {
+			b.append(", ");
+			b.append(ctx.getString(R.string.iso));
+			b.append(": ");
+			int iso = prefs.getInt("pref_camera_iso", -1);
+			if (iso == -1) {
+				b.append(ctx.getString(R.string.iso_auto));
+			} else {
+				b.append(String.valueOf(iso));
+			}
+		}
 
 		if (recMode == RecMode.IMAGE_TIME_LAPSE || recMode == RecMode.VIDEO_TIME_LAPSE) {
 			b.append(", ");
