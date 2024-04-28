@@ -135,8 +135,7 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 				output.write(bytes);
 			}
 		} catch (IOException e) {
-			// TODO !!!
-			ProcessErrorHandler.error("Error saving image", e);
+			camera.getErrorHandler().error("Error saving image", e);
 		}
 	}
 

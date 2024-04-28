@@ -44,6 +44,11 @@ public class Camera2Wrapper {
 	private final FileNameController fileNameController;
 
 	/**
+	 * Log / Show error in timelapse recording
+	 */
+	private final ProcessErrorHandler errorHandler;
+
+	/**
 	 * CameraCharacteristics
 	 */
 	private CameraCharacteristics characteristics;
@@ -98,10 +103,12 @@ public class Camera2Wrapper {
 	 *
 	 * @param context            Context
 	 * @param fileNameController Controller for output filenames
+	 * @param errorHandler       Log / Show error in timelapse recording
 	 */
-	public Camera2Wrapper(Context context, FileNameController fileNameController) {
+	public Camera2Wrapper(Context context, FileNameController fileNameController, ProcessErrorHandler errorHandler) {
 		this.fileNameController = fileNameController;
 		this.context = context;
+		this.errorHandler = errorHandler;
 		this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		this.cameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
 	}
@@ -118,6 +125,13 @@ public class Camera2Wrapper {
 	 */
 	public FileNameController getFileNameController() {
 		return fileNameController;
+	}
+
+	/**
+	 * @return Log / Show error in timelapse recording
+	 */
+	public ProcessErrorHandler getErrorHandler() {
+		return errorHandler;
 	}
 
 	/**
@@ -139,8 +153,7 @@ public class Camera2Wrapper {
 			this.characteristics = cameraManager.getCameraCharacteristics(cameraId);
 			cameraManager.openCamera(cameraId, stateCallback, null);
 		} catch (CameraAccessException e) {
-			Log.e(TAG, "Could not open Camera", e);
-			// TODO Error Handling
+			errorHandler.error("Could not open Camera", e);
 		}
 	}
 

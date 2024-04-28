@@ -7,13 +7,14 @@ import android.os.HandlerThread;
 import android.util.Log;
 
 import androidx.preference.PreferenceManager;
+import at.andreasrohner.spartantimelapserec.StatusSenderUtil;
 import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
 import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
  * Handle Recording
  */
-public class Camera2Recorder implements Runnable, TakePicture.ImageTakenListener {
+public class Camera2Recorder implements Runnable, TakePicture.ImageTakenListener, ProcessErrorHandler {
 
 	/**
 	 * Log Tag
@@ -61,6 +62,11 @@ public class Camera2Recorder implements Runnable, TakePicture.ImageTakenListener
 	private boolean waitForImage = false;
 
 	/**
+	 * Count of missed images
+	 */
+	private int missedImages = 0;
+
+	/**
 	 * Constructor
 	 *
 	 * @param context Context
@@ -95,7 +101,7 @@ public class Camera2Recorder implements Runnable, TakePicture.ImageTakenListener
 		backgroundThread.start();
 		backgroundHandler = new Handler(backgroundThread.getLooper());
 
-		camera = new Camera2Wrapper(context, new FileNameController(prefs));
+		camera = new Camera2Wrapper(context, new FileNameController(prefs), this);
 		camera.open();
 		running = true;
 		handler.postDelayed(this, start);
@@ -134,14 +140,17 @@ public class Camera2Recorder implements Runnable, TakePicture.ImageTakenListener
 		Log.i(TAG, "Take Image");
 
 		if (waitForImage) {
-			// TODO Error handling
-			Log.e(TAG, "Still waiting for the last image!");
+			Log.e(TAG, "Still waiting for the last image! missed count: " + missedImages);
+			missedImages++;
+			if (missedImages >= 3) {
+				error("Could not create the last 3 images!", null);
+			}
+		} else {
+			missedImages = 0;
 		}
 
 		waitForImage = true;
 		camera.takePicture(backgroundHandler, this);
-		// TODO Take image
-		//StatusSenderUtil.sendError(handler, "ABC", "Test crash!");
 	}
 
 	/**
@@ -151,5 +160,21 @@ public class Camera2Recorder implements Runnable, TakePicture.ImageTakenListener
 		running = false;
 		handler.removeCallbacks(this);
 		stopBackgroundThread();
+	}
+
+	@Override
+	public void error(String msg, Exception e) {
+		Log.e(TAG, msg, e);
+		StringBuilder b = new StringBuilder();
+		b.append(msg);
+		if (e != null) {
+			b.append('\n');
+			b.append(e.getClass().getSimpleName());
+			b.append(' ');
+			if (e.getMessage() != null) {
+				b.append(e.getMessage());
+			}
+		}
+		StatusSenderUtil.sendError(handler, TAG, b.toString());
 	}
 }

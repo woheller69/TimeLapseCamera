@@ -1,21 +1,15 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
-import android.util.Log;
-
-import java.io.IOException;
-
 /**
  * Log / Show error in timelapse recording
  */
-public class ProcessErrorHandler {
+public interface ProcessErrorHandler {
 
 	/**
-	 * Constructor
+	 * Log error
+	 *
+	 * @param msg Message
+	 * @param e   Exception
 	 */
-	public ProcessErrorHandler() {
-	}
-
-	public static void error(String msg, Exception e) {
-		Log.e("LogicError", msg, e);
-	}
+	void error(String msg, Exception e);
 }

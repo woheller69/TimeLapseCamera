@@ -33,7 +33,7 @@ import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 /**
  * Preview with Camera 2 Activity
  */
-public class Preview2Activity extends AppCompatActivity implements CameraPreview, Camera2Wrapper.CameraOpenCallback, TakePicture.ImageTakenListener {
+public class Preview2Activity extends AppCompatActivity implements CameraPreview, Camera2Wrapper.CameraOpenCallback, TakePicture.ImageTakenListener, ProcessErrorHandler {
 
 	/**
 	 * Log Tag
@@ -201,7 +201,7 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 
 		closeCamera();
 
-		camera = new Camera2Wrapper(this, new FileNameController(PreferenceManager.getDefaultSharedPreferences(getApplicationContext())));
+		camera = new Camera2Wrapper(this, new FileNameController(PreferenceManager.getDefaultSharedPreferences(getApplicationContext())), this);
 		camera.setOpenCallback(this);
 		camera.open();
 	}
@@ -256,5 +256,11 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 		//closeCamera();
 		stopBackgroundThread();
 		super.onPause();
+	}
+
+	@Override
+	public void error(String msg, Exception e) {
+		Log.e(TAG, msg, e);
+		Toast.makeText(getApplicationContext(), "Error: " + msg, Toast.LENGTH_SHORT).show();
 	}
 }
