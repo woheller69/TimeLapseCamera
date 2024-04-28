@@ -16,7 +16,7 @@ import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.util.Arrays;
@@ -40,7 +40,7 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 	/**
 	 * Take image Button
 	 */
-	private Button takePictureButton;
+	private ImageButton takePictureButton;
 
 	/**
 	 * Texture view
@@ -62,6 +62,9 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 	 */
 	protected CaptureRequest.Builder captureRequestBuilder;
 
+	/**
+	 * Image Reader
+	 */
 	private ImageReader imageReader;
 
 	/**
@@ -88,7 +91,7 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 		assert textureView != null;
 		textureView.setSurfaceTextureListener(textureListener);
 
-		takePictureButton = (Button) findViewById(R.id.btn_takepicture);
+		takePictureButton = (ImageButton) findViewById(R.id.btn_takepicture);
 		assert takePictureButton != null;
 		takePictureButton.setOnClickListener(v -> takePicture());
 	}
