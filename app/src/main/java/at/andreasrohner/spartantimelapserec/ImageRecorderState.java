@@ -23,9 +23,21 @@ public final class ImageRecorderState {
 	private ImageRecorderState() {
 	}
 
+	/**
+	 * Set curent image filename
+	 *
+	 * @param file File
+	 */
 	public static void setCurrentImage(File file) {
 		currentRecordedImage = file;
 		recordedImagesCount++;
+	}
+
+	/**
+	 * Reset Image Count
+	 */
+	public static void resetImageCount() {
+		recordedImagesCount = 0;
 	}
 
 	/**

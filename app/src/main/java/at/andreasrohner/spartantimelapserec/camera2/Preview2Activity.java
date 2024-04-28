@@ -26,6 +26,7 @@ import java.util.Arrays;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
@@ -60,9 +61,9 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 
 	private boolean mFlashSupported;
 
-	private Handler mBackgroundHandler;
+	private Handler backgroundHandler;
 
-	private HandlerThread mBackgroundThread;
+	private HandlerThread backgroundThread;
 
 	/**
 	 * Constructor
@@ -120,17 +121,20 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 	};
 
 	protected void startBackgroundThread() {
-		mBackgroundThread = new HandlerThread("Camera Background");
-		mBackgroundThread.start();
-		mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
+		backgroundThread = new HandlerThread("Camera Background");
+		backgroundThread.start();
+		backgroundHandler = new Handler(backgroundThread.getLooper());
 	}
 
-	protected void stopBackgroundThread() {
-		mBackgroundThread.quitSafely();
+	protected synchronized void stopBackgroundThread() {
+		if (backgroundThread == null) {
+			return;
+		}
+		backgroundThread.quitSafely();
 		try {
-			mBackgroundThread.join();
-			mBackgroundThread = null;
-			mBackgroundHandler = null;
+			backgroundThread.join();
+			backgroundThread = null;
+			backgroundHandler = null;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -142,9 +146,7 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 			return;
 		}
 
-		TakePicture picture = new TakePicture(camera, mBackgroundHandler);
-		picture.setImageTakenListener(this);
-		picture.create();
+		camera.takePicture(backgroundHandler, this);
 	}
 
 	@Override
@@ -179,7 +181,7 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 					// When the session is ready, we start displaying the preview.
 					cameraCaptureSessions = cameraCaptureSession;
 					updatePreview();
-					textureView.setOnTouchListener(new CameraFocusOnTouchHandler(characteristics, captureRequestBuilder, cameraCaptureSessions, mBackgroundHandler));
+					textureView.setOnTouchListener(new CameraFocusOnTouchHandler(characteristics, captureRequestBuilder, cameraCaptureSessions, backgroundHandler));
 				}
 
 				@Override
@@ -199,7 +201,7 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 
 		closeCamera();
 
-		camera = new Camera2Wrapper(this);
+		camera = new Camera2Wrapper(this, new FileNameController(PreferenceManager.getDefaultSharedPreferences(getApplicationContext())));
 		camera.setOpenCallback(this);
 		camera.open();
 	}
@@ -220,7 +222,7 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 		// TODO Configure camera here
 		captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 		try {
-			cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, mBackgroundHandler);
+			cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, backgroundHandler);
 		} catch (CameraAccessException e) {
 			e.printStackTrace();
 		}

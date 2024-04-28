@@ -45,6 +45,8 @@ public class ServiceHelper {
 	public void start(boolean calledFromUi) {
 		Log.i(TAG, "Start Service");
 
+		ImageRecorderState.resetImageCount();
+
 		Intent intent;
 		if (getRecMode() == RecMode.CAMERA2_TIME_LAPSE) {
 			intent = new Intent(context, Camera2ForegroundService.class);

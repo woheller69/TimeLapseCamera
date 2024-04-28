@@ -3,6 +3,7 @@ package at.andreasrohner.spartantimelapserec.camera2;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
 
 import androidx.preference.PreferenceManager;
@@ -12,7 +13,7 @@ import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 /**
  * Handle Recording
  */
-public class Camera2Recorder implements Runnable {
+public class Camera2Recorder implements Runnable, TakePicture.ImageTakenListener {
 
 	/**
 	 * Log Tag
@@ -45,6 +46,21 @@ public class Camera2Recorder implements Runnable {
 	private boolean running = true;
 
 	/**
+	 * Handler to store image
+	 */
+	private Handler backgroundHandler;
+
+	/**
+	 * Thread to store image
+	 */
+	private HandlerThread backgroundThread;
+
+	/**
+	 * Flag to check if the image was created within the expected time
+	 */
+	private boolean waitForImage = false;
+
+	/**
 	 * Constructor
 	 *
 	 * @param context Context
@@ -53,6 +69,11 @@ public class Camera2Recorder implements Runnable {
 	public Camera2Recorder(Context context, Handler handler) {
 		this.context = context;
 		this.handler = handler;
+	}
+
+	@Override
+	public void takeImageFinished() {
+		waitForImage = false;
 	}
 
 	/**
@@ -70,10 +91,32 @@ public class Camera2Recorder implements Runnable {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		captureIntervalTime = prefs.getInt("pref_capture_rate", 1000);
 
-		camera = new Camera2Wrapper(context);
+		backgroundThread = new HandlerThread("Picture Thread");
+		backgroundThread.start();
+		backgroundHandler = new Handler(backgroundThread.getLooper());
+
+		camera = new Camera2Wrapper(context, new FileNameController(prefs));
 		camera.open();
 		running = true;
 		handler.postDelayed(this, start);
+	}
+
+	/**
+	 * Stop the background Thread
+	 */
+	protected synchronized void stopBackgroundThread() {
+		if (backgroundThread == null) {
+			return;
+		}
+		backgroundThread.quitSafely();
+		try {
+			backgroundThread.join();
+		} catch (InterruptedException e) {
+			Log.e(TAG, "Error joining background Thread", e);
+		}
+
+		backgroundThread = null;
+		backgroundHandler = null;
 	}
 
 	/**
@@ -88,9 +131,15 @@ public class Camera2Recorder implements Runnable {
 		// Schedule next image
 		handler.postDelayed(this, captureIntervalTime);
 
-		Log.e(TAG, "Test take image");
+		Log.i(TAG, "Take Image");
 
-		//	camera.takeImage();
+		if (waitForImage) {
+			// TODO Error handling
+			Log.e(TAG, "Still waiting for the last image!");
+		}
+
+		waitForImage = true;
+		camera.takePicture(backgroundHandler, this);
 		// TODO Take image
 		//StatusSenderUtil.sendError(handler, "ABC", "Test crash!");
 	}
@@ -101,5 +150,6 @@ public class Camera2Recorder implements Runnable {
 	public void stop() {
 		running = false;
 		handler.removeCallbacks(this);
+		stopBackgroundThread();
 	}
 }

@@ -7,6 +7,7 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
+import android.os.Handler;
 import android.util.Log;
 
 import androidx.preference.PreferenceManager;
@@ -36,6 +37,11 @@ public class Camera2Wrapper {
 	 * Camera Manager
 	 */
 	private final CameraManager cameraManager;
+
+	/**
+	 * Controller for output filenames
+	 */
+	private final FileNameController fileNameController;
 
 	/**
 	 * CameraCharacteristics
@@ -90,9 +96,11 @@ public class Camera2Wrapper {
 	/**
 	 * Constructor
 	 *
-	 * @param context Context
+	 * @param context            Context
+	 * @param fileNameController Controller for output filenames
 	 */
-	public Camera2Wrapper(Context context) {
+	public Camera2Wrapper(Context context, FileNameController fileNameController) {
+		this.fileNameController = fileNameController;
 		this.context = context;
 		this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		this.cameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
@@ -103,6 +111,13 @@ public class Camera2Wrapper {
 	 */
 	public Context getContext() {
 		return context;
+	}
+
+	/**
+	 * @return Controller for output filenames
+	 */
+	public FileNameController getFileNameController() {
+		return fileNameController;
 	}
 
 	/**
@@ -149,6 +164,18 @@ public class Camera2Wrapper {
 
 	public CameraCharacteristics getCharacteristics() {
 		return characteristics;
+	}
+
+	/**
+	 * Take an image
+	 *
+	 * @param backgroundHandler  Background Thread to use to store the image
+	 * @param imageTakenListener Interface to get notified when the image is taken
+	 */
+	public void takePicture(Handler backgroundHandler, TakePicture.ImageTakenListener imageTakenListener) {
+		TakePicture picture = new TakePicture(this, backgroundHandler);
+		picture.setImageTakenListener(imageTakenListener);
+		picture.create();
 	}
 
 	/**

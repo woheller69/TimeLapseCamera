@@ -11,7 +11,6 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.media.Image;
 import android.media.ImageReader;
-import android.os.Environment;
 import android.os.Handler;
 import android.util.Size;
 import android.view.Surface;
@@ -129,13 +128,14 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 			byte[] bytes = new byte[buffer.capacity()];
 			buffer.get(bytes);
 
-			// TODO Filename
-			final File file = new File(Environment.getExternalStorageDirectory() + "/pic.jpg");
+			FileNameController fileNameController = camera.getFileNameController();
+			final File file = fileNameController.getOutputFile("jpg");
 
 			try (OutputStream output = new FileOutputStream(file)) {
 				output.write(bytes);
 			}
 		} catch (IOException e) {
+			// TODO !!!
 			ProcessErrorHandler.error("Error saving image", e);
 		}
 	}
