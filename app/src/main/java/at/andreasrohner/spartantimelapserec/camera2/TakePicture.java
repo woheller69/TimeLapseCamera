@@ -28,9 +28,12 @@ public class TakePicture {
 	 */
 	private static final String TAG = HttpThread.class.getSimpleName();
 
-	private final CameraManager manager;
+	/**
+	 * Camera implementation
+	 */
+	private Camera2Wrapper camera;
 
-	private final CameraDevice cameraDevice;
+	private final CameraManager manager;
 
 	private final TextureView textureView;
 
@@ -40,9 +43,9 @@ public class TakePicture {
 
 	private final CameraPreview cameraPreview;
 
-	public TakePicture(CameraManager manager, CameraDevice cameraDevice, TextureView textureView, Handler mBackgroundHandler, Context context, CameraPreview cameraPreview) {
+	public TakePicture(Camera2Wrapper camera, CameraManager manager, TextureView textureView, Handler mBackgroundHandler, Context context, CameraPreview cameraPreview) {
+		this.camera = camera;
 		this.manager = manager;
-		this.cameraDevice = cameraDevice;
 		this.textureView = textureView;
 		this.mBackgroundHandler = mBackgroundHandler;
 		this.context = context;
@@ -51,6 +54,7 @@ public class TakePicture {
 
 	public void create() {
 		try {
+			CameraDevice cameraDevice = camera.getCameraDevice();
 			CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraDevice.getId());
 			Size[] jpegSizes = null;
 			if (characteristics != null) {

@@ -1,8 +1,6 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -15,7 +13,6 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.ImageReader;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -32,39 +29,33 @@ import java.util.Arrays;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
  * Preview with Camera 2 Activity
  */
-public class Preview2Activity extends AppCompatActivity implements CameraPreview {
+public class Preview2Activity extends AppCompatActivity implements CameraPreview, Camera2Wrapper.CameraOpenCallback {
 
 	/**
 	 * Log Tag
 	 */
 	private static final String TAG = HttpThread.class.getSimpleName();
 
-	private CameraCharacteristics characteristics;
-
 	private Button takePictureButton;
 
 	private TextureView textureView;
 
-	private String cameraId;
-
-	protected CameraDevice cameraDevice;
+	/**
+	 * Camera implementation
+	 */
+	private Camera2Wrapper camera;
 
 	protected CameraCaptureSession cameraCaptureSessions;
 
 	protected CaptureRequest captureRequest;
 
 	protected CaptureRequest.Builder captureRequestBuilder;
-
-	private Size imageDimension;
 
 	private ImageReader imageReader;
 
@@ -124,27 +115,6 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 		}
 	};
 
-	private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
-		@Override
-		public void onOpened(CameraDevice camera) {
-			//This is called when the camera is open
-			Log.e(TAG, "onOpened");
-			cameraDevice = camera;
-			createCameraPreview();
-		}
-
-		@Override
-		public void onDisconnected(CameraDevice camera) {
-			cameraDevice.close();
-		}
-
-		@Override
-		public void onError(CameraDevice camera, int error) {
-			cameraDevice.close();
-			cameraDevice = null;
-		}
-	};
-
 	final CameraCaptureSession.CaptureCallback captureCallbackListener = new CameraCaptureSession.CaptureCallback() {
 		@Override
 		public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
@@ -172,19 +142,25 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 	}
 
 	protected void takePicture() {
-		if (null == cameraDevice) {
-			Log.e(TAG, "cameraDevice is null");
+		if (!camera.isOpen()) {
+			Log.e(TAG, "cameraDevice is not open");
 			return;
 		}
 
-		TakePicture picture = new TakePicture((CameraManager) getSystemService(Context.CAMERA_SERVICE), cameraDevice, textureView, mBackgroundHandler, this.getApplicationContext(), this);
+		TakePicture picture = new TakePicture(camera, (CameraManager) getSystemService(Context.CAMERA_SERVICE), textureView, mBackgroundHandler, this.getApplicationContext(), this);
 		picture.create();
 	}
 
 	public void createCameraPreview() {
 		try {
+			CameraDevice cameraDevice = camera.getCameraDevice();
 			SurfaceTexture texture = textureView.getSurfaceTexture();
 			assert texture != null;
+
+			CameraCharacteristics characteristics = camera.getCharacteristics();
+			StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+			assert map != null;
+			Size imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
 			texture.setDefaultBufferSize(imageDimension.getWidth(), imageDimension.getHeight());
 			Surface surface = new Surface(texture);
 			captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
@@ -212,41 +188,29 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 		}
 	}
 
-	private void openCamera() {
+	private synchronized void openCamera() {
+		if (camera != null) {
+			camera.close();
+		}
+
 		closeCamera();
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-		Log.e(TAG, "is camera open");
-		try {
-			cameraId = prefs.getString("pref_camera", manager.getCameraIdList()[0]);
-			this.characteristics = manager.getCameraCharacteristics(cameraId);
-			StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-			assert map != null;
-			imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
-			// Add permission for camera and let user grant the permission
+		camera = new Camera2Wrapper(this);
+		camera.setOpenCallback(this);
+		camera.open();
+	}
 
-			// TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {  //WRITE_EXTERNAL_STORAGE is deprecated (and is not granted) when targeting Android 13+, in addition POST_NOTIFICATION is needed
-				if ((ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(android.Manifest.permission.CAMERA)) || (ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(android.Manifest.permission.RECORD_AUDIO)) || (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(android.Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
-					ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.CAMERA, android.Manifest.permission.RECORD_AUDIO, android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 123);
-				}
-			} else {
-				if ((ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(android.Manifest.permission.CAMERA)) || (ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(android.Manifest.permission.RECORD_AUDIO)) || (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED && !shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS))) {
-					ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.CAMERA, android.Manifest.permission.RECORD_AUDIO, Manifest.permission.POST_NOTIFICATIONS}, 123);
-				}
-			}
-			manager.openCamera(cameraId, stateCallback, null);
-
-		} catch (CameraAccessException e) {
-			e.printStackTrace();
+	@Override
+	public void cameraOpened(boolean success) {
+		if (success) {
+			createCameraPreview();
 		}
-		Log.e(TAG, "openCamera X");
 	}
 
 	protected void updatePreview() {
-		if (null == cameraDevice) {
+		if (!camera.isOpen()) {
 			Log.e(TAG, "updatePreview error, return");
+			return;
 		}
 
 		// TODO Configure camera here
@@ -259,9 +223,8 @@ public class Preview2Activity extends AppCompatActivity implements CameraPreview
 	}
 
 	private void closeCamera() {
-		if (null != cameraDevice) {
-			cameraDevice.close();
-			cameraDevice = null;
+		if (camera != null) {
+			camera.close();
 		}
 		if (null != imageReader) {
 			imageReader.close();
