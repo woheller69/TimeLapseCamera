@@ -1,5 +1,7 @@
 package at.andreasrohner.spartantimelapserec;
 
+import androidx.annotation.NonNull;
+
 /**
  * Hold the state and the reason why the service is in the current state
  */
@@ -64,5 +66,11 @@ public class ServiceState {
 	 */
 	public String getReason() {
 		return reason;
+	}
+
+	@NonNull
+	@Override
+	public String toString() {
+		return getState() + " " + getReason();
 	}
 }

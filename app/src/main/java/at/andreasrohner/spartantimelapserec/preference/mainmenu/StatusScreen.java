@@ -28,6 +28,6 @@ public class StatusScreen implements MainSettingsMenu {
 	@Override
 	public void updateSummary(Preference pref, Context ctx, SharedPreferences prefs) {
 		ServiceState status = BaseForegroundService.getStatus();
-		pref.setSummary(status.getState() + " " + status.getReason());
+		pref.setSummary(status.toString());
 	}
 }

@@ -1,4 +1,4 @@
-package at.andreasrohner.spartantimelapserec;
+package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.util.Log;
 

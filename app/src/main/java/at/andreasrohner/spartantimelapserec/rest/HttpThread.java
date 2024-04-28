@@ -1,6 +1,5 @@
 package at.andreasrohner.spartantimelapserec.rest;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -28,10 +27,10 @@ import java.util.Map;
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.BaseForegroundService;
 import at.andreasrohner.spartantimelapserec.BuildConfig;
+import at.andreasrohner.spartantimelapserec.ImageRecorderState;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.ServiceHelper;
 import at.andreasrohner.spartantimelapserec.ServiceState;
-import at.andreasrohner.spartantimelapserec.recorder.ImageRecorder;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
 import static at.andreasrohner.spartantimelapserec.R.raw;
@@ -233,7 +232,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	 */
 	private boolean processCurrentRequest(String command) throws IOException {
 		if ("img".equals(command)) {
-			File lastImg = ImageRecorder.getCurrentRecordedImage();
+			File lastImg = ImageRecorderState.getCurrentRecordedImage();
 			if (lastImg != null && lastImg.isFile()) {
 				sendFileFromFilesystem(lastImg);
 				return true;
@@ -242,9 +241,9 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 
 		String result = null;
 		if ("imgcount".equals(command)) {
-			result = String.valueOf(ImageRecorder.getRecordedImagesCount());
+			result = String.valueOf(ImageRecorderState.getRecordedImagesCount());
 		} else if ("lastimg".equals(command)) {
-			File lastImg = ImageRecorder.getCurrentRecordedImage();
+			File lastImg = ImageRecorderState.getCurrentRecordedImage();
 			if (lastImg == null) {
 				result = "null";
 			} else {

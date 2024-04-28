@@ -5,13 +5,10 @@ import android.media.ImageReader;
 import android.os.Environment;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-
-import at.andreasrohner.spartantimelapserec.ProcessErrorHandler;
 
 /**
  * Save the Image when it's available
@@ -34,7 +31,7 @@ public class ImageSaver implements ImageReader.OnImageAvailableListener {
 				output.write(bytes);
 			}
 		} catch (IOException e) {
-			ProcessErrorHandler.error("Error saving image",e);
+			ProcessErrorHandler.error("Error saving image", e);
 		}
 	}
 }

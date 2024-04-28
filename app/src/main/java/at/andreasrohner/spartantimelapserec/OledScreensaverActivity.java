@@ -1,18 +1,22 @@
 package at.andreasrohner.spartantimelapserec;
 
 import android.annotation.SuppressLint;
-
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowInsets;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import at.andreasrohner.spartantimelapserec.databinding.ActivityOledScreensaverBinding;
 
 /**
@@ -37,6 +41,16 @@ public class OledScreensaverActivity extends AppCompatActivity {
 	 * and a change of the status and navigation bar.
 	 */
 	private static final int UI_ANIMATION_DELAY = 300;
+
+	/**
+	 * Refresh interval in ms
+	 */
+	private static final int REFRESH_INTERVAL = 10000;
+
+	/**
+	 * Date format
+	 */
+	private DateFormat dateFormat = SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.MEDIUM, SimpleDateFormat.SHORT);
 
 	private final Handler mHideHandler = new Handler(Looper.myLooper());
 
@@ -83,6 +97,16 @@ public class OledScreensaverActivity extends AppCompatActivity {
 
 	private ActivityOledScreensaverBinding binding;
 
+	/**
+	 * Status label
+	 */
+	private TextView mStatusLabel;
+
+	/**
+	 * Fullscreen layout
+	 */
+	private FrameLayout mFullscreenContent;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -93,6 +117,8 @@ public class OledScreensaverActivity extends AppCompatActivity {
 		mVisible = true;
 		mControlsView = binding.fullscreenContentControls;
 		mContentView = binding.fullscreenContent;
+		mStatusLabel = binding.statusLabel;
+		mFullscreenContent = binding.fullscreenContent;
 
 		// Set up the user interaction to manually show or hide the system UI.
 		mContentView.setOnClickListener(new View.OnClickListener() {
@@ -101,6 +127,44 @@ public class OledScreensaverActivity extends AppCompatActivity {
 				toggle();
 			}
 		});
+
+		Timer t = new Timer();
+		t.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						updateText();
+					}
+				});
+			}
+		}, 10, REFRESH_INTERVAL);
+	}
+
+	/**
+	 * Update Text, called in UI Thread
+	 */
+	private void updateText() {
+		StringBuffer b = new StringBuffer();
+		b.append(dateFormat.format(System.currentTimeMillis()));
+		b.append('\n');
+		b.append(BaseForegroundService.getStatus());
+		if (ImageRecorderState.getRecordedImagesCount() > 0) {
+			b.append("\n∑ ");
+			b.append(ImageRecorderState.getRecordedImagesCount());
+			b.append("\n");
+			b.append(ImageRecorderState.getCurrentRecordedImage());
+		}
+
+		mStatusLabel.setText(b.toString());
+
+		int w = mFullscreenContent.getWidth() - mStatusLabel.getWidth();
+		int h = mFullscreenContent.getHeight() - mStatusLabel.getHeight();
+
+		int left = (int) (Math.random() * w);
+		int top = (int) (Math.random() * h);
+		mStatusLabel.setPadding(left, top, 0, 0);
 	}
 
 	@Override
