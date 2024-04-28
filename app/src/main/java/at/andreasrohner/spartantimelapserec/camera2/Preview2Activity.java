@@ -16,7 +16,6 @@ import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -91,12 +90,7 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 
 		takePictureButton = (Button) findViewById(R.id.btn_takepicture);
 		assert takePictureButton != null;
-		takePictureButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				takePicture();
-			}
-		});
+		takePictureButton.setOnClickListener(v -> takePicture());
 	}
 
 	TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
