@@ -33,7 +33,10 @@ public class ConfigureCamera2FromPrefs {
 		if (iso != -1) { //-1: Auto
 			captureBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, iso);
 		}
-		
-		//			captureBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, (long) 1000);
+
+		long exposure = prefs.getLong("pref_camera_exposure", -1);
+		if (exposure != -1) {
+			captureBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, exposure);
+		}
 	}
 }

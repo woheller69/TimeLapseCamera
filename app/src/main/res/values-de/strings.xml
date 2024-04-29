@@ -119,5 +119,7 @@
     <string name="camera2_header">Kamera Vorschau / Konfiguration</string>
     <string name="iso">ISO</string>
     <string name="iso_message">Kamera ISO wählen</string>
-    <string name="iso_auto">Auto</string>
+    <string name="camera_value_auto">Auto</string>
+    <string name="exposure_time">Belichtungszeit</string>
+    <string name="exposure_time_message">Belichtungszeit wählen</string>
 </resources>

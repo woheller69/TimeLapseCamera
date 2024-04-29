@@ -40,7 +40,7 @@ public class CameraControlButtonHandler implements PopupDialogBase.DialogResult 
 	/**
 	 * Brightness button
 	 */
-	private ImageButton brightnessButton;
+	private ImageButton exposureButton;
 
 	/**
 	 * Camera Configuration Listener
@@ -79,7 +79,10 @@ public class CameraControlButtonHandler implements PopupDialogBase.DialogResult 
 		isoDialog.setDialogResultListener(this);
 		this.isoButton.setOnClickListener(isoDialog);
 
-		this.brightnessButton = ((ImageButton) activity.findViewById(R.id.bt_brightness));
+		this.exposureButton = ((ImageButton) activity.findViewById(R.id.bt_brightness));
+		PopupDialogExposureTime exposureDialog = new PopupDialogExposureTime(activity, camera);
+		exposureDialog.setDialogResultListener(this);
+		this.exposureButton.setOnClickListener(exposureDialog);
 
 		updateButtonImage();
 	}
@@ -95,14 +98,20 @@ public class CameraControlButtonHandler implements PopupDialogBase.DialogResult 
 			this.isoButton.setImageResource(R.drawable.ic_cam_bt_iso_enabled);
 		}
 
-/*
+		long exposure = prefs.getLong("pref_camera_exposure", -1);
+		if (exposure == -1) {
+			this.exposureButton.setImageResource(R.drawable.ic_cam_bt_brightness);
+		} else {
+			this.exposureButton.setImageResource(R.drawable.ic_cam_bt_brightness_enabled);
+		}
+
+		/*
 		if (iso == -1) {
 			this.afmfButton.setImageResource(R.drawable.ic_cam_bt_afmf);
 		} else {
 			this.afmfButton.setImageResource(R.drawable.ic_cam_bt_afmf_enabled);
 		}
 */
-		//	this.brightnessButton = ((ImageButton) activity.findViewById(R.id.bt_brightness));
 	}
 
 	@Override

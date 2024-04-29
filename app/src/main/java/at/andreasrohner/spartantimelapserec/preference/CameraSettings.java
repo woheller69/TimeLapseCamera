@@ -62,7 +62,7 @@ public class CameraSettings implements MainSettingsMenu {
 			b.append(": ");
 			int iso = prefs.getInt("pref_camera_iso", -1);
 			if (iso == -1) {
-				b.append(ctx.getString(R.string.iso_auto));
+				b.append(ctx.getString(R.string.camera_value_auto));
 			} else {
 				b.append(String.valueOf(iso));
 			}

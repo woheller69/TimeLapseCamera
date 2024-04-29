@@ -36,7 +36,7 @@ public class PopupDialogIso extends PopupDialogBase {
 	public PopupDialogIso(Context context, Camera2Wrapper camera) {
 		super(context);
 
-		displayValues.add(context.getString(R.string.iso_auto));
+		displayValues.add(context.getString(R.string.camera_value_auto));
 
 		Range<Integer> ranges = camera.getCharacteristics().get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
 		int upper = ranges.getUpper();
@@ -87,7 +87,7 @@ public class PopupDialogIso extends PopupDialogBase {
 
 	@Override
 	public int getDialogId() {
-		return R.layout.dialog_cam_iso;
+		return R.layout.dialog_cam_selnumber;
 	}
 
 	@Override
