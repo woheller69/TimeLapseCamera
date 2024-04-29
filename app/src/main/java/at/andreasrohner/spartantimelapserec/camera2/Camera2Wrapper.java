@@ -157,6 +157,9 @@ public class Camera2Wrapper {
 		}
 	}
 
+	/**
+	 * Close the camera device
+	 */
 	public synchronized void close() {
 		if (cameraDevice != null) {
 			cameraDevice.close();
@@ -171,10 +174,16 @@ public class Camera2Wrapper {
 		return cameraDevice != null;
 	}
 
+	/**
+	 * @return Camera Device
+	 */
 	public CameraDevice getCameraDevice() {
 		return cameraDevice;
 	}
 
+	/**
+	 * @return CameraCharacteristics
+	 */
 	public CameraCharacteristics getCharacteristics() {
 		return characteristics;
 	}

@@ -79,7 +79,7 @@ public abstract class BaseCameraPreference extends DialogPreference implements D
 		camera.open();
 		PopupDialogIso dialog = createDialog(camera);
 		dialog.showDialog();
-		dialog.setDialogResult(b -> {
+		dialog.setDialogResultListener(b -> {
 			camera.close();
 			updateSummary();
 		});

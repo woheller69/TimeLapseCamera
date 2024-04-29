@@ -23,6 +23,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.preference.PreferenceManager;
+
 public class TakePicture implements ImageReader.OnImageAvailableListener {
 
 	/**
@@ -46,6 +48,11 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 	private ImageTakenListener imageTakenListener;
 
 	/**
+	 * Camera configuration
+	 */
+	private ConfigureCamera2FromPrefs cameraConfig;
+
+	/**
 	 * Constructor
 	 *
 	 * @param camera            Camera
@@ -55,6 +62,8 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 		this.camera = camera;
 		this.backgroundHandler = backgroundHandler;
 		this.context = camera.getContext();
+
+		cameraConfig = new ConfigureCamera2FromPrefs(PreferenceManager.getDefaultSharedPreferences(context));
 	}
 
 	/**
@@ -91,6 +100,9 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 			// Orientation
 			CameraOrientation orientaion = new CameraOrientation(context);
 			captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, orientaion.getRotation());
+
+			cameraConfig.config(captureBuilder);
+
 			reader.setOnImageAvailableListener(this, backgroundHandler);
 			final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
 				@Override

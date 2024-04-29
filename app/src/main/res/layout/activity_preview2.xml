@@ -26,7 +26,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@null"
-            app:srcCompat="@drawable/ic_afmf" />
+            app:srcCompat="@drawable/ic_cam_bt_afmf" />
 
         <ImageButton
             android:id="@+id/bt_iso"
@@ -34,7 +34,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@null"
-            app:srcCompat="@drawable/ic_iso" />
+            app:srcCompat="@drawable/ic_cam_bt_iso" />
 
         <ImageButton
             android:id="@+id/btn_takepicture"
@@ -52,7 +52,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@null"
-            app:srcCompat="@drawable/ic_brightness" />
+            app:srcCompat="@drawable/ic_cam_bt_brightness" />
 
         <ImageButton
             android:id="@+id/bt_switchcamera"
@@ -60,7 +60,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@null"
-            app:srcCompat="@drawable/ic_switch_camera_button" />
+            app:srcCompat="@drawable/ic_cam_bt_switch" />
     </LinearLayout>
 
 </LinearLayout>

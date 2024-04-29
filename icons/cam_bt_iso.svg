@@ -9,6 +9,16 @@
    <rect x="5" y="5" width="4990" height="4990"/>
   </clipPath>
  </defs>
+ <defs>
+  <font id="EmbeddedFont_1" horiz-adv-x="2048">
+   <font-face font-family="Liberation Sans embedded" units-per-em="2048" font-weight="normal" font-style="normal" ascent="1863" descent="445"/>
+   <missing-glyph horiz-adv-x="2048" d="M 0,0 L 2047,0 2047,2047 0,2047 0,0 Z"/>
+   <glyph unicode="T" horiz-adv-x="1187" d="M 720,1253 L 720,0 530,0 530,1253 46,1253 46,1409 1204,1409 1204,1253 720,1253 Z"/>
+   <glyph unicode="P" horiz-adv-x="1123" d="M 1258,985 C 1258,852 1215,746 1128,667 1041,588 922,549 773,549 L 359,549 359,0 168,0 168,1409 761,1409 C 919,1409 1041,1372 1128,1298 1215,1224 1258,1120 1258,985 Z M 1066,983 C 1066,1165 957,1256 738,1256 L 359,1256 359,700 746,700 C 959,700 1066,794 1066,983 Z"/>
+   <glyph unicode="H" horiz-adv-x="1187" d="M 1121,0 L 1121,653 359,653 359,0 168,0 168,1409 359,1409 359,813 1121,813 1121,1409 1312,1409 1312,0 1121,0 Z"/>
+   <glyph unicode="A" horiz-adv-x="1377" d="M 1167,0 L 1006,412 364,412 202,0 4,0 579,1409 796,1409 1362,0 1167,0 Z M 685,1265 L 676,1237 C 659,1182 635,1111 602,1024 L 422,561 949,561 768,1026 C 749,1072 731,1124 712,1182 L 685,1265 Z"/>
+  </font>
+ </defs>
  <defs class="TextShapeIndex">
   <g ooo:slide="id1" ooo:id-list="id3 id4 id5 id6 id7"/>
  </defs>
@@ -63,29 +73,29 @@
        </g>
       </g>
       <g class="Group">
-       <g class="com.sun.star.drawing.PolyPolygonShape">
+       <g class="com.sun.star.drawing.ClosedBezierShape">
         <g id="id4">
-         <rect class="BoundingBox" stroke="none" fill="none" x="1682" y="1410" width="865" height="824"/>
-         <path fill="rgb(255,255,255)" stroke="none" d="M 2280,2083 L 1948,2083 1896,2233 1683,2233 1987,1410 2240,1410 2545,2233 2332,2233 2280,2083 Z M 2001,1930 L 2227,1930 2114,1603 2001,1930 Z"/>
+         <rect class="BoundingBox" stroke="none" fill="none" x="1507" y="2068" width="214" height="825"/>
+         <path fill="rgb(255,255,255)" stroke="none" d="M 1508,2068 C 1578,2068 1649,2068 1720,2068 1720,2343 1720,2617 1720,2891 1649,2891 1578,2891 1508,2891 1508,2617 1508,2343 1508,2068 Z"/>
         </g>
        </g>
-       <g class="com.sun.star.drawing.PolyPolygonShape">
+       <g class="com.sun.star.drawing.ClosedBezierShape">
         <g id="id5">
-         <rect class="BoundingBox" stroke="none" fill="none" x="2656" y="1410" width="575" height="824"/>
-         <path fill="rgb(255,255,255)" stroke="none" d="M 2657,1410 L 3229,1410 3229,1570 2869,1570 2869,1724 3208,1724 3208,1884 2869,1884 2869,2233 2657,2233 2657,1410 Z"/>
+         <rect class="BoundingBox" stroke="none" fill="none" x="1904" y="2053" width="651" height="855"/>
+         <path fill="rgb(255,255,255)" stroke="none" d="M 2499,2094 L 2499,2268 C 2454,2248 2410,2233 2367,2222 2324,2212 2284,2207 2245,2207 2195,2207 2157,2214 2133,2228 2109,2242 2096,2264 2096,2293 2096,2315 2105,2332 2121,2345 2137,2357 2167,2367 2210,2376 L 2300,2394 C 2392,2413 2457,2441 2496,2478 2534,2516 2553,2569 2553,2638 2553,2729 2527,2796 2473,2841 2419,2885 2337,2907 2226,2907 2174,2907 2121,2902 2069,2892 2016,2882 1964,2868 1911,2848 L 1911,2669 C 1964,2697 2015,2718 2064,2732 2113,2746 2160,2753 2206,2753 2252,2753 2287,2746 2312,2730 2337,2715 2349,2693 2349,2664 2349,2638 2341,2618 2324,2604 2307,2590 2274,2578 2224,2567 L 2142,2549 C 2059,2531 1999,2503 1961,2464 1923,2426 1904,2374 1904,2308 1904,2227 1930,2164 1983,2119 2036,2075 2112,2053 2212,2053 2257,2053 2303,2057 2351,2063 2399,2070 2448,2080 2499,2094 Z"/>
         </g>
        </g>
-       <g class="com.sun.star.drawing.PolyPolygonShape">
+       <g class="com.sun.star.drawing.ClosedBezierShape">
         <g id="id6">
-         <rect class="BoundingBox" stroke="none" fill="none" x="1655" y="2727" width="918" height="824"/>
-         <path fill="rgb(255,255,255)" stroke="none" d="M 1656,2727 L 1926,2727 2113,3168 2302,2727 2571,2727 2571,3550 2371,3550 2371,2948 2181,3392 2046,3392 1857,2948 1857,3550 1656,3550 1656,2727 Z"/>
+         <rect class="BoundingBox" stroke="none" fill="none" x="2692" y="2053" width="848" height="855"/>
+         <path fill="rgb(255,255,255)" stroke="none" d="M 3116,2207 C 3051,2207 3001,2231 2965,2279 2929,2326 2912,2394 2912,2480 2912,2567 2929,2634 2965,2682 3001,2729 3051,2753 3116,2753 3181,2753 3231,2729 3267,2682 3302,2634 3320,2567 3320,2480 3320,2394 3302,2326 3267,2279 3231,2231 3181,2207 3116,2207 Z M 3116,2053 C 3248,2053 3352,2091 3427,2167 3502,2243 3539,2347 3539,2480 3539,2613 3502,2718 3427,2793 3352,2869 3248,2907 3116,2907 2984,2907 2880,2869 2805,2793 2730,2718 2692,2613 2692,2480 2692,2347 2730,2243 2805,2167 2880,2091 2984,2053 3116,2053 Z"/>
         </g>
        </g>
-       <g class="com.sun.star.drawing.PolyPolygonShape">
-        <g id="id7">
-         <rect class="BoundingBox" stroke="none" fill="none" x="2781" y="2726" width="575" height="825"/>
-         <path fill="rgb(255,255,255)" stroke="none" d="M 2782,2727 L 3354,2727 3354,2887 2994,2887 2994,3041 3333,3041 3333,3201 2994,3201 2994,3550 2782,3550 2782,2727 Z"/>
-        </g>
+      </g>
+      <g class="TextShape">
+       <g id="id7">
+        <rect class="BoundingBox" stroke="none" fill="none" x="-200" y="-1400" width="2601" height="1001"/>
+        <text class="SVGTextShape"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="635px" font-weight="400"><tspan class="TextPosition" x="50" y="-699"><tspan fill="rgb(0,0,0)" stroke="none" style="white-space: pre">PATH</tspan></tspan></tspan></text>
        </g>
       </g>
      </g>

@@ -5,7 +5,6 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.ImageReader;
@@ -32,7 +31,7 @@ import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 /**
  * Preview with Camera 2 Activity
  */
-public class Preview2Activity extends AppCompatActivity implements Camera2Wrapper.CameraOpenCallback, TakePicture.ImageTakenListener, ProcessErrorHandler {
+public class Preview2Activity extends AppCompatActivity implements Camera2Wrapper.CameraOpenCallback, TakePicture.ImageTakenListener, ProcessErrorHandler, CameraControlButtonHandler.ConfigChangeListener {
 
 	/**
 	 * Log Tag
@@ -80,6 +79,16 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 	private CameraFocusOnTouchHandler touchFocusHandler;
 
 	/**
+	 * Handle buttons and button actions of the camera preview
+	 */
+	private CameraControlButtonHandler cameraControlButtonHandler;
+
+	/**
+	 * Camera configuration
+	 */
+	private ConfigureCamera2FromPrefs cameraConfig;
+
+	/**
 	 * Constructor
 	 */
 	public Preview2Activity() {
@@ -92,6 +101,9 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 		textureView = (TextureView) findViewById(R.id.texture);
 		assert textureView != null;
 		textureView.setSurfaceTextureListener(new PreviewSurfaceListener(() -> openCamera()));
+
+		cameraControlButtonHandler = new CameraControlButtonHandler(this);
+		cameraControlButtonHandler.setConfigChangeListener(this);
 
 		((ImageButton) findViewById(R.id.btn_takepicture)).setOnClickListener(v -> takePicture());
 	}
@@ -193,14 +205,9 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 		camera.setOpenCallback(this);
 		camera.open();
 
-		initCameraButtons();
-	}
+		cameraControlButtonHandler.cameraOpened(camera);
 
-	/**
-	 * Init camera buttons
-	 */
-	private void initCameraButtons() {
-		((ImageButton) findViewById(R.id.bt_iso)).setOnClickListener(new PopupDialogIso(this, camera));
+		cameraConfig = new ConfigureCamera2FromPrefs(PreferenceManager.getDefaultSharedPreferences(this));
 	}
 
 	@Override
@@ -210,14 +217,20 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 		}
 	}
 
+	@Override
+	public void cameraConfigChanged() {
+		updatePreview();
+	}
+
 	protected void updatePreview() {
 		if (!camera.isOpen()) {
 			error("Update preview failed!", null);
 			return;
 		}
 
-		// TODO Configure camera here
-		captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+		cameraConfig.config(captureRequestBuilder);
+
+		//		captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 		try {
 			cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, backgroundHandler);
 		} catch (CameraAccessException e) {

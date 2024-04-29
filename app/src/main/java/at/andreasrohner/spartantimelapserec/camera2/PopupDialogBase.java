@@ -34,7 +34,7 @@ public abstract class PopupDialogBase implements View.OnClickListener {
 	/**
 	 * Dialog end listener
 	 */
-	private DialogResult dialogResult;
+	private DialogResult dialogResultListener;
 
 	/**
 	 * Constructor
@@ -53,24 +53,24 @@ public abstract class PopupDialogBase implements View.OnClickListener {
 		builder.setView(view);
 		builder.setPositiveButton(context.getString(R.string.dialog_OK_button), (dialog, which) -> {
 			storeValue();
-			if (dialogResult != null) {
-				dialogResult.dialogFinished(true);
+			if (dialogResultListener != null) {
+				dialogResultListener.dialogFinished(true);
 			}
 		});
 		builder.setNegativeButton(context.getString(R.string.dialog_CANCEL_button), (dialog, which) -> {
 			dialog.cancel();
-			if (dialogResult != null) {
-				dialogResult.dialogFinished(true);
+			if (dialogResultListener != null) {
+				dialogResultListener.dialogFinished(true);
 			}
 		});
 		this.alert = builder.create();
 	}
 
 	/**
-	 * @param dialogResult Dialog end listener
+	 * @param dialogResultListener Dialog end listener
 	 */
-	public void setDialogResult(DialogResult dialogResult) {
-		this.dialogResult = dialogResult;
+	public void setDialogResultListener(DialogResult dialogResultListener) {
+		this.dialogResultListener = dialogResultListener;
 	}
 
 	/**
