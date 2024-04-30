@@ -124,4 +124,5 @@
     <string name="exposure_time_message">Belichtungszeit wählen</string>
     <string name="camera_menu_config">Kamera Einstellungen</string>
     <string name="camera_menu_config_message">Weitere Kamera Einstellungen</string>
+    <string name="cam_header_wb">Weissabgleich</string>
 </resources>

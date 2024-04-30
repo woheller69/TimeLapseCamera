@@ -40,20 +40,36 @@ public class ConfigureCamera2FromPrefs {
 		}
 		// TODO !!!!!!!!!!!!!!!!!!!
 		//captureBuilder.set(CaptureRequest.LENS_FOCUS_DISTANCE, seekFocus);
-/*
-// TODO !!!!!!!!!!!!!!!!!!!
-		public static final int CONTROL_AWB_MODE_OFF = 0;
-		public static final int CONTROL_AWB_MODE_AUTO = 1;
-		public static final int CONTROL_AWB_MODE_INCANDESCENT = 2;
-		public static final int CONTROL_AWB_MODE_FLUORESCENT = 3;
-		public static final int CONTROL_AWB_MODE_WARM_FLUORESCENT = 4;
-		public static final int CONTROL_AWB_MODE_DAYLIGHT = 5;
-		public static final int CONTROL_AWB_MODE_CLOUDY_DAYLIGHT = 6;
-		public static final int CONTROL_AWB_MODE_TWILIGHT = 7;
-		public static final int CONTROL_AWB_MODE_SHADE = 8;
-		*/
 
-		captureBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_AUTO);
+		String wb = prefs.getString("pref_camera_wb", "auto");
+		int wbMode;
+		switch (wb) {
+			case "incandescent":
+				wbMode = CaptureRequest.CONTROL_AWB_MODE_INCANDESCENT;
+				break;
+
+			case "daylight":
+				wbMode = CaptureRequest.CONTROL_AWB_MODE_DAYLIGHT;
+				break;
+
+			case "fluorescent":
+				wbMode = CaptureRequest.CONTROL_AWB_MODE_FLUORESCENT;
+				break;
+
+			case "cloud":
+				wbMode = CaptureRequest.CONTROL_AWB_MODE_CLOUDY_DAYLIGHT;
+				break;
+
+			case "auto":
+			default:
+				wbMode = CaptureRequest.CONTROL_AWB_MODE_AUTO;
+				break;
+		}
+		// Not implemented: CONTROL_AWB_MODE_OFF, CONTROL_AWB_MODE_WARM_FLUORESCENT, CONTROL_AWB_MODE_TWILIGHT, CONTROL_AWB_MODE_SHADE
+		captureBuilder.set(CaptureRequest.CONTROL_AWB_MODE, wbMode);
+
+
+
                                 /*captureBuilder.set(CaptureRequest.COLOR_CORRECTION_MODE, CaptureRequest.COLOR_CORRECTION_MODE_TRANSFORM_MATRIX);
                                 captureBuilder.set(CaptureRequest.COLOR_CORRECTION_GAINS, colorTemperature(seekWb));*/
 

@@ -126,4 +126,5 @@
 
     <string name="camera_menu_config">Camera Config</string>
     <string name="camera_menu_config_message">Additional Camera Configurations</string>
+    <string name="cam_header_wb">White balance</string>
 </resources>
