@@ -43,6 +43,11 @@ public class CameraControlButtonHandler implements PopupDialogBase.DialogResult 
 	private ImageButton exposureButton;
 
 	/**
+	 * Menu Button
+	 */
+	private ImageButton menuButton;
+
+	/**
 	 * Camera Configuration Listener
 	 */
 	private ConfigChangeListener configChangeListener;
@@ -83,6 +88,11 @@ public class CameraControlButtonHandler implements PopupDialogBase.DialogResult 
 		PopupDialogExposureTime exposureDialog = new PopupDialogExposureTime(activity, camera);
 		exposureDialog.setDialogResultListener(this);
 		this.exposureButton.setOnClickListener(exposureDialog);
+
+		this.menuButton = ((ImageButton) activity.findViewById(R.id.bt_menu));
+		PopupDialogMenu menuDialog = new PopupDialogMenu(activity, camera);
+		menuDialog.setDialogResultListener(this);
+		this.menuButton.setOnClickListener(menuDialog);
 
 		updateButtonImage();
 	}

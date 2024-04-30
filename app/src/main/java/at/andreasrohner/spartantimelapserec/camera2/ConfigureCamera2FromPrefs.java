@@ -38,5 +38,24 @@ public class ConfigureCamera2FromPrefs {
 		if (exposure != -1) {
 			captureBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, exposure);
 		}
+		// TODO !!!!!!!!!!!!!!!!!!!
+		//captureBuilder.set(CaptureRequest.LENS_FOCUS_DISTANCE, seekFocus);
+/*
+// TODO !!!!!!!!!!!!!!!!!!!
+		public static final int CONTROL_AWB_MODE_OFF = 0;
+		public static final int CONTROL_AWB_MODE_AUTO = 1;
+		public static final int CONTROL_AWB_MODE_INCANDESCENT = 2;
+		public static final int CONTROL_AWB_MODE_FLUORESCENT = 3;
+		public static final int CONTROL_AWB_MODE_WARM_FLUORESCENT = 4;
+		public static final int CONTROL_AWB_MODE_DAYLIGHT = 5;
+		public static final int CONTROL_AWB_MODE_CLOUDY_DAYLIGHT = 6;
+		public static final int CONTROL_AWB_MODE_TWILIGHT = 7;
+		public static final int CONTROL_AWB_MODE_SHADE = 8;
+		*/
+
+		captureBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_AUTO);
+                                /*captureBuilder.set(CaptureRequest.COLOR_CORRECTION_MODE, CaptureRequest.COLOR_CORRECTION_MODE_TRANSFORM_MATRIX);
+                                captureBuilder.set(CaptureRequest.COLOR_CORRECTION_GAINS, colorTemperature(seekWb));*/
+
 	}
 }

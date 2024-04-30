@@ -122,4 +122,6 @@
     <string name="camera_value_auto">Auto</string>
     <string name="exposure_time">Belichtungszeit</string>
     <string name="exposure_time_message">Belichtungszeit wählen</string>
+    <string name="camera_menu_config">Kamera Einstellungen</string>
+    <string name="camera_menu_config_message">Weitere Kamera Einstellungen</string>
 </resources>

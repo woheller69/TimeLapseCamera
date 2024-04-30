@@ -55,12 +55,12 @@
             app:srcCompat="@drawable/ic_cam_bt_brightness" />
 
         <ImageButton
-            android:id="@+id/bt_switchcamera"
+            android:id="@+id/bt_menu"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@null"
-            app:srcCompat="@drawable/ic_cam_bt_switch" />
+            app:srcCompat="@drawable/ic_cam_bt_menu" />
     </LinearLayout>
 
 </LinearLayout>
