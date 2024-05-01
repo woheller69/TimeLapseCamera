@@ -218,8 +218,12 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 	}
 
 	@Override
-	public void cameraConfigChanged() {
+	public void cameraConfigChanged(int flags) {
 		updatePreview();
+		if (flags == 1) {
+			// Re-open Camera
+			openCamera();
+		}
 	}
 
 	protected void updatePreview() {

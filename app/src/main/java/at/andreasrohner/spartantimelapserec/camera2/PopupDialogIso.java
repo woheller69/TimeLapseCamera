@@ -69,7 +69,7 @@ public class PopupDialogIso extends PopupDialogBase {
 	}
 
 	@Override
-	protected void storeValue() {
+	protected int storeValue() {
 		int iso;
 		int index = input.getValue();
 		if (index == 0) {
@@ -83,6 +83,8 @@ public class PopupDialogIso extends PopupDialogBase {
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putInt("pref_camera_iso", iso);
 		editor.apply();
+
+		return 0;
 	}
 
 	@Override

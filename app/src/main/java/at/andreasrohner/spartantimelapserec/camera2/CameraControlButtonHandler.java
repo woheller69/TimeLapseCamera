@@ -129,10 +129,10 @@ public class CameraControlButtonHandler implements PopupDialogBase.DialogResult 
 	}
 
 	@Override
-	public void dialogFinished(boolean accepted) {
+	public void dialogFinished(boolean accepted, int flags) {
 		updateButtonImage();
 		if (configChangeListener != null) {
-			configChangeListener.cameraConfigChanged();
+			configChangeListener.cameraConfigChanged(flags);
 		}
 	}
 
@@ -143,7 +143,9 @@ public class CameraControlButtonHandler implements PopupDialogBase.DialogResult 
 
 		/**
 		 * Camera Configuration has been changed
+		 *
+		 * @param flags Flags to trigger actions
 		 */
-		void cameraConfigChanged();
+		void cameraConfigChanged(int flags);
 	}
 }

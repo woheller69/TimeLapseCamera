@@ -134,7 +134,7 @@ public class PopupDialogExposureTime extends PopupDialogBase {
 	}
 
 	@Override
-	protected void storeValue() {
+	protected int storeValue() {
 		int index = input.getValue();
 		long exposure = timeValues.get(index);
 
@@ -142,6 +142,7 @@ public class PopupDialogExposureTime extends PopupDialogBase {
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putLong("pref_camera_exposure", exposure);
 		editor.apply();
+		return 0;
 	}
 
 	@Override

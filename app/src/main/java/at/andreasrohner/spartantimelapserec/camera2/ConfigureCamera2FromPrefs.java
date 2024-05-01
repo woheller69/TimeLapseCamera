@@ -67,11 +67,5 @@ public class ConfigureCamera2FromPrefs {
 		}
 		// Not implemented: CONTROL_AWB_MODE_OFF, CONTROL_AWB_MODE_WARM_FLUORESCENT, CONTROL_AWB_MODE_TWILIGHT, CONTROL_AWB_MODE_SHADE
 		captureBuilder.set(CaptureRequest.CONTROL_AWB_MODE, wbMode);
-
-
-
-                                /*captureBuilder.set(CaptureRequest.COLOR_CORRECTION_MODE, CaptureRequest.COLOR_CORRECTION_MODE_TRANSFORM_MATRIX);
-                                captureBuilder.set(CaptureRequest.COLOR_CORRECTION_GAINS, colorTemperature(seekWb));*/
-
 	}
 }

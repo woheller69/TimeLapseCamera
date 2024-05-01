@@ -52,15 +52,15 @@ public abstract class PopupDialogBase implements View.OnClickListener {
 
 		builder.setView(view);
 		builder.setPositiveButton(context.getString(R.string.dialog_OK_button), (dialog, which) -> {
-			storeValue();
+			int flags = storeValue();
 			if (dialogResultListener != null) {
-				dialogResultListener.dialogFinished(true);
+				dialogResultListener.dialogFinished(true, flags);
 			}
 		});
 		builder.setNegativeButton(context.getString(R.string.dialog_CANCEL_button), (dialog, which) -> {
 			dialog.cancel();
 			if (dialogResultListener != null) {
-				dialogResultListener.dialogFinished(true);
+				dialogResultListener.dialogFinished(false, 0);
 			}
 		});
 		this.alert = builder.create();
@@ -75,8 +75,10 @@ public abstract class PopupDialogBase implements View.OnClickListener {
 
 	/**
 	 * Store the selected value
+	 *
+	 * @return Flags
 	 */
-	protected abstract void storeValue();
+	protected abstract int storeValue();
 
 	/**
 	 * @return The ID of the Dialog
@@ -114,7 +116,8 @@ public abstract class PopupDialogBase implements View.OnClickListener {
 		 * Called if the dialog closed
 		 *
 		 * @param accepted True if the value was accepted
+		 * @param flags    Special flags
 		 */
-		void dialogFinished(boolean accepted);
+		void dialogFinished(boolean accepted, int flags);
 	}
 }

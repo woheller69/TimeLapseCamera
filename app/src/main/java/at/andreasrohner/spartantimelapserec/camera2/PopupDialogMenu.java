@@ -2,7 +2,15 @@ package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
+import android.util.Log;
 import android.widget.ImageButton;
+import android.widget.NumberPicker;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
@@ -44,9 +52,24 @@ public class PopupDialogMenu extends PopupDialogBase {
 	private final ImageButton camWbCloud;
 
 	/**
+	 * Camera Selection
+	 */
+	private final NumberPicker camCameraSelection;
+
+	/**
 	 * Current WB mode
 	 */
 	private String currentWbMode;
+
+	/**
+	 * Display values
+	 */
+	private List<String> displayValues = new ArrayList<>();
+
+	/**
+	 * Camera IDs
+	 */
+	private List<String> cameraIds = new ArrayList<>();
 
 	/**
 	 * Constructor
@@ -58,6 +81,44 @@ public class PopupDialogMenu extends PopupDialogBase {
 		super(context);
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+		CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
+
+		String selectedCamera = prefs.getString("pref_camera", null);
+
+		try {
+			for (String cameraId : manager.getCameraIdList()) {
+				CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+				Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+
+				String cam;
+				if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
+					cam = cameraId + ": " + context.getString(R.string.pref_camera_front);
+				} else {
+					cam = cameraId + ": " + context.getString(R.string.pref_camera_back);
+				}
+
+				float[] focalLengths = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS);
+				if (focalLengths != null && focalLengths.length > 0) {
+					cam += " Lens: " + focalLengths[0] + "mm";
+				}
+
+				displayValues.add(cam);
+				cameraIds.add(cameraId);
+			}
+		} catch (CameraAccessException e) {
+			Log.e(TAG, "Could not list cameras", e);
+		}
+
+		this.camCameraSelection = (NumberPicker) view.findViewById(R.id.camCameraSelection);
+		this.camCameraSelection.setMinValue(0);
+		this.camCameraSelection.setMaxValue(displayValues.size() - 1);
+		this.camCameraSelection.setDisplayedValues(displayValues.toArray(new String[] {}));
+		int selectedCameraIndex = cameraIds.indexOf(selectedCamera);
+		if (selectedCameraIndex != -1) {
+			this.camCameraSelection.setValue(selectedCameraIndex);
+		}
+
 		this.currentWbMode = prefs.getString("pref_camera_wb", "auto");
 
 		this.camWbA = ((ImageButton) view.findViewById(R.id.camWbA));
@@ -120,11 +181,23 @@ public class PopupDialogMenu extends PopupDialogBase {
 	}
 
 	@Override
-	protected void storeValue() {
+	protected int storeValue() {
+		int flags = 0;
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		String selectedCamera = prefs.getString("pref_camera", null);
+		String newSelectedCamera = cameraIds.get(this.camCameraSelection.getValue());
+
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putString("pref_camera_wb", currentWbMode);
+
+		if (newSelectedCamera != null && !newSelectedCamera.equals(selectedCamera)) {
+			editor.putString("pref_camera", newSelectedCamera);
+			flags = 1;
+		}
+
 		editor.apply();
+
+		return flags;
 	}
 
 	@Override
