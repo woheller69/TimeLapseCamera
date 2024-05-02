@@ -90,6 +90,25 @@ public class ShowCameryInfoPreference extends DialogPreference {
 
 				setSummary(timing.findBestMatchingValue(exposure));
 			}
+		} else if ("pref_camera_wb".equals(key)) {
+			String currentWbMode = prefs.getString("pref_camera_wb", "auto");
+
+			if ("auto".equals(currentWbMode)) {
+				setIcon(R.drawable.ic_cam_bt_wb_a);
+				setSummary(R.string.camera_value_auto);
+			} else if ("incandescent".equals(currentWbMode)) {
+				setIcon(R.drawable.ic_cam_bt_wb_incandescent_enabled);
+				setSummary(R.string.cam_wb_incandescent);
+			} else if ("daylight".equals(currentWbMode)) {
+				setIcon(R.drawable.ic_cam_bt_wb_daylight_enabled);
+				setSummary(R.string.cam_wb_daylight);
+			} else if ("fluorescent".equals(currentWbMode)) {
+				setIcon(R.drawable.ic_cam_bt_wb_fluorescent_enabled);
+				setSummary(R.string.cam_wb_fluorescent);
+			} else if ("cloud".equals(currentWbMode)) {
+				setIcon(R.drawable.ic_cam_bt_wb_cloud_enabled);
+				setSummary(R.string.cam_wb_cloud);
+			}
 		}
 	}
 }

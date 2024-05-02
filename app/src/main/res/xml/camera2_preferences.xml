@@ -25,4 +25,9 @@
         android:key="pref_camera_exposure"
         android:title="@string/exposure_time"
         app:icon="@drawable/ic_cam_bt_brightness" />
+
+    <at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameryInfoPreference
+        android:key="pref_camera_wb"
+        android:title="@string/cam_header_wb"
+        app:icon="@drawable/ic_cam_bt_brightness" />
 </PreferenceScreen>

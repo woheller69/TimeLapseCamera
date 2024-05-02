@@ -84,6 +84,23 @@ public class CameraSettings implements MainSettingsMenu {
 
 				b.append(timing.findBestMatchingValue(exposure));
 			}
+
+			String currentWbMode = prefs.getString("pref_camera_wb", "auto");
+			if (!"auto".equals(currentWbMode)) {
+				b.append(", ");
+				b.append(ctx.getString(R.string.cam_header_wb));
+				b.append(": ");
+
+				if ("incandescent".equals(currentWbMode)) {
+					b.append(ctx.getString(R.string.cam_wb_incandescent));
+				} else if ("daylight".equals(currentWbMode)) {
+					b.append(ctx.getString(R.string.cam_wb_daylight));
+				} else if ("fluorescent".equals(currentWbMode)) {
+					b.append(ctx.getString(R.string.cam_wb_fluorescent));
+				} else if ("cloud".equals(currentWbMode)) {
+					b.append(ctx.getString(R.string.cam_wb_cloud));
+				}
+			}
 		}
 
 		if (recMode == RecMode.IMAGE_TIME_LAPSE || recMode == RecMode.VIDEO_TIME_LAPSE) {
