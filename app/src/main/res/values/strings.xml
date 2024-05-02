@@ -127,4 +127,5 @@
     <string name="camera_menu_config">Camera Config</string>
     <string name="camera_menu_config_message">Additional Camera Configurations</string>
     <string name="cam_header_wb">White balance</string>
+    <string name="pref_camera_settings_only_in_preview">The camera settings are configured in the preview. Here the settings are only displayed, and cannot be changed.</string>
 </resources>

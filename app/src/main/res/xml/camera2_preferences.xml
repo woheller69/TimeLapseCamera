@@ -1,15 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <PreferenceCategory app:title="@string/pref_camera_settings_category">
-
-<!--
-        <ListPreference
-            app:defaultValue="0"
-            app:dialogTitle="@string/pref_camera"
-            app:icon="@drawable/ic_switch_camera"
-            app:key="pref_camera"
-            app:title="@string/pref_camera" />
--->
+    <PreferenceCategory android:title="@string/pref_capture_rate">
         <at.andreasrohner.spartantimelapserec.preference.preftype.TimeSpanPreference
             android:defaultValue="1000"
             android:dialogMessage="@string/pref_capture_rate_summ"
@@ -17,12 +8,21 @@
             android:title="@string/pref_capture_rate"
             app:icon="@drawable/ic_timespan"
             app:timeSpanType="formatMs" />
-<!--
-        <at.andreasrohner.spartantimelapserec.preference.preftype.IsoPreference
-            android:defaultValue="-1"
-            android:key="pref_camera_iso"
-            android:title="@string/pref_capture_rate"
-            app:icon="@drawable/ic_iso" />
--->
     </PreferenceCategory>
+
+
+    <PreferenceCategory android:title="@string/pref_camera_settings_category">
+        <Preference android:summary="@string/pref_camera_settings_only_in_preview" />
+
+    </PreferenceCategory>
+
+    <at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameryInfoPreference
+        android:key="pref_camera_iso"
+        android:title="@string/iso"
+        app:icon="@drawable/ic_cam_bt_iso" />
+
+    <at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameryInfoPreference
+        android:key="pref_camera_exposure"
+        android:title="@string/exposure_time"
+        app:icon="@drawable/ic_cam_bt_brightness" />
 </PreferenceScreen>

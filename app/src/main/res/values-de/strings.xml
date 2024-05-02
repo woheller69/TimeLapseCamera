@@ -125,4 +125,5 @@
     <string name="camera_menu_config">Kamera Einstellungen</string>
     <string name="camera_menu_config_message">Weitere Kamera Einstellungen</string>
     <string name="cam_header_wb">Weissabgleich</string>
+    <string name="pref_camera_settings_only_in_preview">Die Kameraeinstellungen werden in der Vorschau konfiguriert. Die Einstellungen werden hier nur dargestellt, und können nicht geändert werden.</string>
 </resources>

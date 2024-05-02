@@ -28,19 +28,46 @@ public class ConfigureCamera2FromPrefs {
 	 * @param captureBuilder Camera Configuration
 	 */
 	public void config(CaptureRequest.Builder captureBuilder) {
-		captureBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
+		configureAe(captureBuilder);
+
+		// TODO !!!!!!!!!!!!!!!!!!!
+		//captureBuilder.set(CaptureRequest.LENS_FOCUS_DISTANCE, seekFocus);
+
+		configureWb(captureBuilder);
+	}
+
+	/**
+	 * Configure ISO and exposure time
+	 *
+	 * @param captureBuilder Camera Configuration
+	 */
+	private void configureAe(CaptureRequest.Builder captureBuilder) {
 		int iso = prefs.getInt("pref_camera_iso", -1);
+		long exposure = prefs.getLong("pref_camera_exposure", -1);
+
+		if (iso == -1 && exposure == -1) {
+			captureBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+
+			// TODO: Support CONTROL_AE_MODE_ON_AUTO_FLASH and CONTROL_AE_MODE_ON_ALWAYS_FLASH
+			return;
+		}
+
+		captureBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
 		if (iso != -1) { //-1: Auto
 			captureBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, iso);
 		}
 
-		long exposure = prefs.getLong("pref_camera_exposure", -1);
 		if (exposure != -1) {
 			captureBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, exposure);
 		}
-		// TODO !!!!!!!!!!!!!!!!!!!
-		//captureBuilder.set(CaptureRequest.LENS_FOCUS_DISTANCE, seekFocus);
+	}
 
+	/**
+	 * Configure white balance
+	 *
+	 * @param captureBuilder Camera Configuration
+	 */
+	private void configureWb(CaptureRequest.Builder captureBuilder) {
 		String wb = prefs.getString("pref_camera_wb", "auto");
 		int wbMode;
 		switch (wb) {

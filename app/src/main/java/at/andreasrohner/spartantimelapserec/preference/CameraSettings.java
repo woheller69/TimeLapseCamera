@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import androidx.preference.Preference;
 import at.andreasrohner.spartantimelapserec.FormatUtil;
 import at.andreasrohner.spartantimelapserec.R;
+import at.andreasrohner.spartantimelapserec.camera2.CameraTiming;
 import at.andreasrohner.spartantimelapserec.data.RecMode;
 import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
 import at.andreasrohner.spartantimelapserec.preference.activity.Camera2SettingsActivity;
@@ -18,6 +19,11 @@ import at.andreasrohner.spartantimelapserec.preference.mainmenu.MainSettingsMenu
  */
 @SuppressWarnings({"unused", "deprecated"}) // Loaded by menu / legacy classes, will not be updated
 public class CameraSettings implements MainSettingsMenu {
+
+	/**
+	 * Camera timing values
+	 */
+	private CameraTiming timing;
 
 	/**
 	 * Constructor
@@ -57,14 +63,26 @@ public class CameraSettings implements MainSettingsMenu {
 		}
 
 		if (recMode == RecMode.CAMERA2_TIME_LAPSE) {
-			b.append(", ");
-			b.append(ctx.getString(R.string.iso));
-			b.append(": ");
 			int iso = prefs.getInt("pref_camera_iso", -1);
-			if (iso == -1) {
-				b.append(ctx.getString(R.string.camera_value_auto));
-			} else {
+			if (iso != -1) {
+				b.append(", ");
+				b.append(ctx.getString(R.string.iso));
+				b.append(": ");
 				b.append(String.valueOf(iso));
+			}
+
+			long exposure = prefs.getLong("pref_camera_exposure", -1);
+			if (exposure != -1) {
+				b.append(", ");
+				b.append(ctx.getString(R.string.exposure_time));
+				b.append(": ");
+
+				if (timing == null) {
+					timing = new CameraTiming(ctx);
+					timing.buildRangeSelection(-1, Long.MAX_VALUE);
+				}
+
+				b.append(timing.findBestMatchingValue(exposure));
 			}
 		}
 
