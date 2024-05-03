@@ -131,4 +131,12 @@
     <string name="cam_wb_daylight">Tageslicht</string>
     <string name="cam_wb_fluorescent">Neonröhre</string>
     <string name="cam_wb_cloud">Wolkig</string>
+
+    <string name="autofocus">Autofokus</string>
+    <string name="autofocus_message">Fokus Modus konfigurieren</string>
+    <string name="cam_afmf_autofocus">Autofokus</string>
+    <string name="cam_afmf_field">Autofokus auf gewählte Stelle</string>
+    <string name="cam_afmf_manual">Manuell gewählte Fokusdistanz wählen</string>
+    <string name="cam_header_flash">Blitz</string>
+    <string name="cam_header_flash_info">Die Blitzeinstellungen funktionieren nur im Vollautomatik Modus</string>
 </resources>

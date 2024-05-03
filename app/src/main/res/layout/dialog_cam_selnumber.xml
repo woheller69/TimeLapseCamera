@@ -3,16 +3,6 @@
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@android:id/message"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:textSize="@dimen/dialog_intervalpicker_message_size" />
-
-
     <NumberPicker
         android:id="@+id/iso_input"
         android:layout_width="match_parent"

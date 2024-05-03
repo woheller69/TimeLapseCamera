@@ -80,6 +80,7 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 		try {
 			CameraDevice cameraDevice = camera.getCameraDevice();
 			CameraCharacteristics characteristics = camera.getCharacteristics();
+
 			Size[] jpegSizes = null;
 			if (characteristics != null) {
 				jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);

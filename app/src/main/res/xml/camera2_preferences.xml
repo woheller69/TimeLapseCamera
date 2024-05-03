@@ -16,17 +16,17 @@
 
     </PreferenceCategory>
 
-    <at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameryInfoPreference
+    <at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameraInfoPreference
         android:key="pref_camera_iso"
         android:title="@string/iso"
         app:icon="@drawable/ic_cam_bt_iso" />
 
-    <at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameryInfoPreference
+    <at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameraInfoPreference
         android:key="pref_camera_exposure"
         android:title="@string/exposure_time"
         app:icon="@drawable/ic_cam_bt_brightness" />
 
-    <at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameryInfoPreference
+    <at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameraInfoPreference
         android:key="pref_camera_wb"
         android:title="@string/cam_header_wb"
         app:icon="@drawable/ic_cam_bt_brightness" />

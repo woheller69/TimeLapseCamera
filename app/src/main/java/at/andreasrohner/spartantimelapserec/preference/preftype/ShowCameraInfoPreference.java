@@ -13,7 +13,7 @@ import at.andreasrohner.spartantimelapserec.camera2.CameraTiming;
 /**
  * Show a camera setting, read only
  */
-public class ShowCameryInfoPreference extends DialogPreference {
+public class ShowCameraInfoPreference extends DialogPreference {
 
 	/**
 	 * Camera timing values
@@ -28,7 +28,7 @@ public class ShowCameryInfoPreference extends DialogPreference {
 	 * @param defStyleAttr Style Attributes
 	 * @param defStyleRes  Style Resources
 	 */
-	public ShowCameryInfoPreference(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+	public ShowCameraInfoPreference(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
 		super(context, attrs, defStyleAttr, defStyleRes);
 	}
 
@@ -39,7 +39,7 @@ public class ShowCameryInfoPreference extends DialogPreference {
 	 * @param attrs        AttributeSet
 	 * @param defStyleAttr Style Attributes
 	 */
-	public ShowCameryInfoPreference(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+	public ShowCameraInfoPreference(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 	}
 
@@ -49,7 +49,7 @@ public class ShowCameryInfoPreference extends DialogPreference {
 	 * @param context Context
 	 * @param attrs   AttributeSet
 	 */
-	public ShowCameryInfoPreference(@NonNull Context context, @Nullable AttributeSet attrs) {
+	public ShowCameraInfoPreference(@NonNull Context context, @Nullable AttributeSet attrs) {
 		super(context, attrs);
 	}
 

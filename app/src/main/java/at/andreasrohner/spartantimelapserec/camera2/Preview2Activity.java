@@ -221,6 +221,8 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 	public void cameraConfigChanged(int flags) {
 		updatePreview();
 		if (flags == 1) {
+			// TODO: May reset invalid camera values, they may out of range now, if the camera has different parameter
+
 			// Re-open Camera
 			openCamera();
 		}
@@ -234,7 +236,6 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 
 		cameraConfig.config(captureRequestBuilder);
 
-		//		captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 		try {
 			cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, backgroundHandler);
 		} catch (CameraAccessException e) {

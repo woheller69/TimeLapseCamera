@@ -6,6 +6,7 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
 
@@ -57,9 +58,29 @@ public class PopupDialogMenu extends PopupDialogBase {
 	private final NumberPicker camCameraSelection;
 
 	/**
+	 * Current Flash mode
+	 */
+	private final ImageButton camFlashOff;
+
+	/**
+	 * Current Flash mode
+	 */
+	private final ImageButton camFlashAuto;
+
+	/**
+	 * Current Flash mode
+	 */
+	private final ImageButton camFlashOn;
+
+	/**
 	 * Current WB mode
 	 */
 	private String currentWbMode;
+
+	/**
+	 * Current Flash mode
+	 */
+	private String currentFlashMode;
 
 	/**
 	 * Display values
@@ -118,6 +139,7 @@ public class PopupDialogMenu extends PopupDialogBase {
 		if (selectedCameraIndex != -1) {
 			this.camCameraSelection.setValue(selectedCameraIndex);
 		}
+		this.camCameraSelection.setOnValueChangedListener((a, b, c) -> updateFlashButton());
 
 		this.currentWbMode = prefs.getString("pref_camera_wb", "auto");
 
@@ -132,6 +154,69 @@ public class PopupDialogMenu extends PopupDialogBase {
 		this.camWbCloud = ((ImageButton) view.findViewById(R.id.camWbCloud));
 		this.camWbCloud.setOnClickListener(l -> setWbMode("cloud"));
 		updateWbButtons();
+
+		currentFlashMode = prefs.getString("pref_camera_flash", "off");
+
+		this.camFlashOff = ((ImageButton) view.findViewById(R.id.camFlashOff));
+		this.camFlashOff.setOnClickListener(l -> setFlashMode("off"));
+		this.camFlashAuto = ((ImageButton) view.findViewById(R.id.camFlashAuto));
+		this.camFlashAuto.setOnClickListener(l -> setFlashMode("auto"));
+		this.camFlashOn = ((ImageButton) view.findViewById(R.id.camFlashOn));
+		this.camFlashOn.setOnClickListener(l -> setFlashMode("on"));
+		updateFlashButton();
+	}
+
+	/**
+	 * Set Flash Mode
+	 *
+	 * @param mode Mode
+	 */
+	private void setFlashMode(String mode) {
+		this.currentFlashMode = mode;
+
+		updateFlashButton();
+	}
+
+	/**
+	 * Update the Flash Button Images
+	 */
+	private void updateFlashButton() {
+		CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
+		String newSelectedCamera = cameraIds.get(this.camCameraSelection.getValue());
+		boolean flashSupported = false;
+		try {
+			Boolean available = manager.getCameraCharacteristics(newSelectedCamera).get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
+			flashSupported = available == null ? false : available;
+		} catch (CameraAccessException e) {
+			Log.e(TAG, "Could not get camera information", e);
+		}
+
+		if (flashSupported) {
+			this.camFlashAuto.setVisibility(View.VISIBLE);
+			this.camFlashOn.setVisibility(View.VISIBLE);
+		} else {
+			this.camFlashOff.setImageResource(R.drawable.ic_cam_bt_flash_off_enabled);
+			this.camFlashAuto.setVisibility(View.GONE);
+			this.camFlashOn.setVisibility(View.GONE);
+		}
+
+		if ("off".equals(this.currentFlashMode)) {
+			this.camFlashOff.setImageResource(R.drawable.ic_cam_bt_flash_off_enabled);
+		} else {
+			this.camFlashOff.setImageResource(R.drawable.ic_cam_bt_flash_off);
+		}
+
+		if ("auto".equals(this.currentFlashMode)) {
+			this.camFlashAuto.setImageResource(R.drawable.ic_cam_bt_flash_auto_enabled);
+		} else {
+			this.camFlashAuto.setImageResource(R.drawable.ic_cam_bt_flash_auto);
+		}
+
+		if ("on".equals(this.currentFlashMode)) {
+			this.camFlashOn.setImageResource(R.drawable.ic_cam_bt_flash_on_enabled);
+		} else {
+			this.camFlashOn.setImageResource(R.drawable.ic_cam_bt_flash_on);
+		}
 	}
 
 	/**
@@ -194,6 +279,8 @@ public class PopupDialogMenu extends PopupDialogBase {
 			editor.putString("pref_camera", newSelectedCamera);
 			flags = 1;
 		}
+
+		editor.putString("pref_camera_flash", currentFlashMode);
 
 		editor.apply();
 

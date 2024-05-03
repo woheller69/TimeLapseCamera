@@ -8,7 +8,7 @@ import androidx.preference.Preference;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.preference.AbstractSettingsFragment;
 import at.andreasrohner.spartantimelapserec.preference.preftype.DialogDisplayPreference;
-import at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameryInfoPreference;
+import at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameraInfoPreference;
 
 /**
  * Camera 2 Settings
@@ -40,7 +40,7 @@ public class Camera2SettingsActivity extends AbstractSettingsActivity {
 				((DialogDisplayPreference) preference).showDialog();
 				return;
 			}
-			if (preference instanceof ShowCameryInfoPreference) {
+			if (preference instanceof ShowCameraInfoPreference) {
 				return;
 			}
 

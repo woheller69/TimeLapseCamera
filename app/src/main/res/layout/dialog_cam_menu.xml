@@ -70,4 +70,52 @@
             android:background="@null"
             app:srcCompat="@drawable/ic_cam_bt_wb_cloud" />
     </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/textFlashHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/cam_header_flash"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textFlashInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/cam_header_flash_info" />
+
+    <LinearLayout
+        android:id="@+id/camFlashButtons"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/camFlashOff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            app:srcCompat="@drawable/ic_cam_bt_flash_off" />
+
+        <ImageButton
+            android:id="@+id/camFlashAuto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            app:srcCompat="@drawable/ic_cam_bt_flash_auto" />
+
+        <ImageButton
+            android:id="@+id/camFlashOn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            app:srcCompat="@drawable/ic_cam_bt_flash_on" />
+
+    </LinearLayout>
 </LinearLayout>

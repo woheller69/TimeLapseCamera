@@ -78,6 +78,9 @@ public class CameraControlButtonHandler implements PopupDialogBase.DialogResult 
 		this.camera = camera;
 
 		this.afmfButton = ((ImageButton) activity.findViewById(R.id.bt_afmf));
+		PopupDialogAfMf afMfDialog = new PopupDialogAfMf(activity, camera);
+		afMfDialog.setDialogResultListener(this);
+		this.afmfButton.setOnClickListener(afMfDialog);
 
 		this.isoButton = ((ImageButton) activity.findViewById(R.id.bt_iso));
 		PopupDialogIso isoDialog = new PopupDialogIso(activity, camera);
@@ -118,6 +121,11 @@ public class CameraControlButtonHandler implements PopupDialogBase.DialogResult 
 		boolean menuButtonEnabled = false;
 		String wb = prefs.getString("pref_camera_wb", "auto");
 		if (!"auto".equals(wb)) {
+			menuButtonEnabled = true;
+		}
+
+		String currentFlashMode = prefs.getString("pref_camera_flash", "off");
+		if (!"off".equals(currentFlashMode)) {
 			menuButtonEnabled = true;
 		}
 

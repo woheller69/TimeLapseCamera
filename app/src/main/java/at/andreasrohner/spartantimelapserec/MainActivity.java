@@ -109,8 +109,9 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 
 		RestControlUtil.startStopRestApiServer(context);
 
-		ServiceHelper h = new ServiceHelper(context);
-		h.startStopIfSchedulingIsActive();
+		// TODO Crash on image button press
+		//ServiceHelper h = new ServiceHelper(context);
+		// h.startStopIfSchedulingIsActive();
 	}
 
 	@Override

@@ -46,9 +46,15 @@ public class ConfigureCamera2FromPrefs {
 		long exposure = prefs.getLong("pref_camera_exposure", -1);
 
 		if (iso == -1 && exposure == -1) {
-			captureBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+			String currentFlashMode = prefs.getString("pref_camera_flash", "off");
+			if ("auto".equals(currentFlashMode)) {
+				captureBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
+			} else if ("on".equals(currentFlashMode)) {
+				captureBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
+			} else {
+				captureBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+			}
 
-			// TODO: Support CONTROL_AE_MODE_ON_AUTO_FLASH and CONTROL_AE_MODE_ON_ALWAYS_FLASH
 			return;
 		}
 
