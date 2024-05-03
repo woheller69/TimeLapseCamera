@@ -1,9 +1,10 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.widget.Button;
+import android.content.SharedPreferences;
+import android.widget.RadioGroup;
 
+import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
 
 /**
@@ -12,29 +13,9 @@ import at.andreasrohner.spartantimelapserec.R;
 public class PopupDialogAfMf extends PopupDialogBase {
 
 	/**
-	 * Autofocus mode button
+	 * Button group
 	 */
-	private final Button btAutofocus;
-
-	/**
-	 * Autofocus field mode button
-	 */
-	private final Button btAfField;
-
-	/**
-	 * Manualfocus mode button
-	 */
-	private final Button btAfManual;
-
-	/**
-	 * Default background color
-	 */
-	private final Drawable defaultBackgroundColor;
-
-	/**
-	 * Current active mode
-	 */
-	private String currentMode;
+	private final RadioGroup group;
 
 	/**
 	 * Constructor
@@ -45,58 +26,45 @@ public class PopupDialogAfMf extends PopupDialogBase {
 	public PopupDialogAfMf(Context context, Camera2Wrapper camera) {
 		super(context);
 
-		this.btAutofocus = (Button) view.findViewById(R.id.bt_afmf_autofocus);
-		this.defaultBackgroundColor = this.btAutofocus.getBackground();
-		this.btAutofocus.setOnClickListener(l -> {
-			currentMode = "auto";
-			updateButtonColor();
-		});
-		this.btAfField = (Button) view.findViewById(R.id.bt_afmf_af_field);
-		this.btAfField.setOnClickListener(l -> {
-			currentMode = "field";
-			updateButtonColor();
-		});
-		this.btAfManual = (Button) view.findViewById(R.id.bt_afmf_af_manual);
-		this.btAfManual.setOnClickListener(l -> {
-			currentMode = "manual";
-			updateButtonColor();
-		});
+		this.group = (RadioGroup) view.findViewById(R.id.bt_afmf_group);
+		updateSelectedCheckbox();
 	}
 
 	/**
-	 * Mark the current button
+	 * Select the current checkbox
 	 */
-	private void updateButtonColor() {
-		this.btAutofocus.setBackground(defaultBackgroundColor);
-		this.btAfField.setBackground(defaultBackgroundColor);
-		this.btAfManual.setBackground(defaultBackgroundColor);
+	private void updateSelectedCheckbox() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		String afMode = prefs.getString("pref_camera_af_mode", null);
 
-		if ("auto".equals(currentMode)) {
-			this.btAutofocus.setBackgroundColor(0xFF006600);
-		} else if ("field".equals(currentMode)) {
-			this.btAfField.setBackgroundColor(0xFF006600);
-		} else if ("manual".equals(currentMode)) {
-			this.btAfManual.setBackgroundColor(0xFF006600);
+		if ("field".equals(afMode)) {
+			this.group.check(R.id.bt_afmf_af_field);
+		} else if ("manual".equals(afMode)) {
+			this.group.check(R.id.bt_afmf_af_manual);
+		} else {
+			this.group.check(R.id.bt_afmf_autofocus);
 		}
 	}
 
 	@Override
 	protected int storeValue() {
-		/*
-		int iso;
-		int index = input.getValue();
-		if (index == 0) {
-			// Auto
-			iso = -1;
-		} else {
-			iso = Integer.parseInt(displayValues.get(index));
-		}
-
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		SharedPreferences.Editor editor = prefs.edit();
-		editor.putInt("pref_camera_iso", iso);
+
+		int radioButtonID = group.getCheckedRadioButtonId();
+
+		String mode;
+		if (radioButtonID == R.id.bt_afmf_af_manual) {
+			mode = "manual";
+		} else if (radioButtonID == R.id.bt_afmf_af_field) {
+			mode = "field";
+		} else {
+			mode = "auto";
+		}
+
+		editor.putString("pref_camera_af_mode", mode);
 		editor.apply();
-*/
+
 		return 0;
 	}
 

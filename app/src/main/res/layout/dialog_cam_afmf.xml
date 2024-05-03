@@ -3,21 +3,28 @@
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/bt_afmf_autofocus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/cam_afmf_autofocus" />
 
-    <Button
-        android:id="@+id/bt_afmf_af_field"
+    <RadioGroup
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/cam_afmf_field" />
+        android:id="@+id/bt_afmf_group"
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/bt_afmf_af_manual"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/cam_afmf_manual" />
+        <RadioButton
+            android:id="@+id/bt_afmf_autofocus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/cam_afmf_autofocus" />
+
+        <RadioButton
+            android:id="@+id/bt_afmf_af_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/cam_afmf_field" />
+
+        <RadioButton
+            android:id="@+id/bt_afmf_af_manual"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/cam_afmf_manual" />
+    </RadioGroup>
 </LinearLayout>

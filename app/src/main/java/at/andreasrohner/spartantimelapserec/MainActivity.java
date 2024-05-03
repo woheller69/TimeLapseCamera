@@ -30,6 +30,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -42,6 +43,7 @@ import at.andreasrohner.spartantimelapserec.camera2.Preview2Activity;
 import at.andreasrohner.spartantimelapserec.data.RecMode;
 import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
 import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
+import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 import at.andreasrohner.spartantimelapserec.rest.RestControlUtil;
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
 
@@ -49,6 +51,11 @@ import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
  * Main activity of the
  */
 public class MainActivity extends AppCompatActivity implements ServiceStatusListener {
+
+	/**
+	 * Log Tag
+	 */
+	private static final String TAG = HttpThread.class.getSimpleName();
 
 	/**
 	 * Settings menu
@@ -109,9 +116,12 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 
 		RestControlUtil.startStopRestApiServer(context);
 
-		// TODO Crash on image button press
-		//ServiceHelper h = new ServiceHelper(context);
-		// h.startStopIfSchedulingIsActive();
+		try {
+			ServiceHelper h = new ServiceHelper(context);
+			h.startStopIfSchedulingIsActive();
+		} catch (Exception e) {
+			Log.e(TAG, "Start/Stop scheduling failed!", e);
+		}
 	}
 
 	@Override

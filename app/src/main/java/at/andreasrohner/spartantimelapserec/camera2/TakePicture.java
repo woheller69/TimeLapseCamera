@@ -118,7 +118,6 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 				@Override
 				public void onConfigured(CameraCaptureSession session) {
 					try {
-						// TODO Configure Camera, here te picture is started
 						session.capture(captureBuilder.build(), captureListener, backgroundHandler);
 					} catch (CameraAccessException e) {
 						camera.getErrorHandler().error("Failed to configure camera", e);
