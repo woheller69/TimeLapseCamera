@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
-    android:orientation="vertical"
     tools:context=".camera2.Preview2Activity">
+
 
     <!-- TODO: This Layout should be fixed, the fixed layout_height should be removed -->
     <TextureView
         android:id="@+id/texture"
-        android:layout_width="match_parent"
-        android:layout_height="572dp"
-        android:layout_alignParentTop="true" />
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/cameraToolbar"
+        android:layout_alignParentTop="true"
+        android:gravity="center" />
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/cameraToolbar"
+        android:layout_width="fill_parent"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_horizontal"
         android:orientation="horizontal">
 
         <ImageButton
@@ -63,4 +68,4 @@
             app:srcCompat="@drawable/ic_cam_bt_menu" />
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>
