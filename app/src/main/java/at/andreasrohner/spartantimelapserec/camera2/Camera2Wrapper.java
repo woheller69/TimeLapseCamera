@@ -200,6 +200,10 @@ public class Camera2Wrapper {
 		picture.create();
 	}
 
+	public boolean isAfSupported() {
+		return Camera2Utils.isAfSupported(characteristics);
+	}
+
 	/**
 	 * Callback to get informed when the camera is open
 	 */

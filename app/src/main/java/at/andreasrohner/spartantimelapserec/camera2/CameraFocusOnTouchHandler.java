@@ -1,6 +1,8 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -8,6 +10,7 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureFailure;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.os.Handler;
@@ -16,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
@@ -32,6 +36,11 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 	 * Tag used for feedback
 	 */
 	private static String REQUEST_TAG = "FOCUS_TAG";
+
+	/**
+	 * Preferences
+	 */
+	private final SharedPreferences prefs;
 
 	/**
 	 * CameraCharacteristics
@@ -71,7 +80,16 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 				return;
 			}
 
-			//the focus trigger is complete - resume repeating (preview surface will get frames), clear AF trigger
+			String afMode = prefs.getString("pref_camera_af_mode", null);
+
+			if ("manual".equals(afMode)) {
+				float focusDistance = result.get(CaptureResult.LENS_FOCUS_DISTANCE);
+				SharedPreferences.Editor editor = prefs.edit();
+				editor.putFloat("pref_camera_af_manual", focusDistance);
+				editor.apply();
+			}
+
+			// the focus trigger is complete - resume repeating (preview surface will get frames), clear AF trigger
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, null);
 
 			try {
@@ -92,12 +110,14 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 	/**
 	 * Constructor
 	 *
+	 * @param context               Context
 	 * @param cameraCharacteristics CameraCharacteristics
 	 * @param previewRequestBuilder Preview Request Builder
 	 * @param captureSession        CameraCaptureSession
 	 * @param backgroundHandler     Background Thread
 	 */
-	public CameraFocusOnTouchHandler(CameraCharacteristics cameraCharacteristics, CaptureRequest.Builder previewRequestBuilder, CameraCaptureSession captureSession, Handler backgroundHandler) {
+	public CameraFocusOnTouchHandler(Context context, CameraCharacteristics cameraCharacteristics, CaptureRequest.Builder previewRequestBuilder, CameraCaptureSession captureSession, Handler backgroundHandler) {
+		this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		this.cameraCharacteristics = cameraCharacteristics;
 		if (cameraCharacteristics == null) {
 			throw new IllegalArgumentException("cameraCharacteristics == null");
@@ -124,9 +144,11 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 			return false;
 		}
 		if (manualFocusStarted) {
-			Log.d(TAG, "Manual focus already started");
+			Log.w(TAG, "Manual focus already started");
 			return true;
 		}
+
+		String afMode = prefs.getString("pref_camera_af_mode", null);
 
 		final Rect sensorArraySize = cameraCharacteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
 
@@ -137,11 +159,11 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		final int halfTouchHeight = 50; //(int)motionEvent.getTouchMinor();
 		MeteringRectangle focusAreaTouch = new MeteringRectangle(Math.max(x - halfTouchWidth, 0), Math.max(y - halfTouchHeight, 0), halfTouchWidth * 2, halfTouchHeight * 2, MeteringRectangle.METERING_WEIGHT_MAX - 1);
 
-		//first stop the existing repeating request
+		// first stop the existing repeating request
 		try {
 			captureSession.stopRepeating();
 		} catch (CameraAccessException e) {
-			e.printStackTrace();
+			Log.e(TAG, "Stop repeating for AF failed!", e);
 		}
 
 		//cancel any existing AF trigger (repeated touches, etc.)
@@ -150,35 +172,31 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		try {
 			captureSession.capture(previewRequestBuilder.build(), captureCallbackHandler, backgroundHandler);
 		} catch (CameraAccessException e) {
-			e.printStackTrace();
+			Log.e(TAG, "Start capture / cancel session failed!", e);
 		}
 
-		//Now add a new AF trigger with focus region
-		if (isMeteringAreaAFSupported()) {
+		// Now add a new AF trigger with focus region
+		if (Camera2Utils.isAfSupported(cameraCharacteristics)) {
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, new MeteringRectangle[] {focusAreaTouch});
+			if ("field".equals(afMode)) {
+				SharedPreferences.Editor editor = prefs.edit();
+				editor.putString("pref_camera_af_field", focusAreaTouch.toString());
+				editor.apply();
+			}
 		}
 		previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 		previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO);
 		previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START);
 		previewRequestBuilder.setTag(REQUEST_TAG); //we'll capture this later for resuming the preview
 
-		//then we ask for a single request (not repeating!)
+		// then we ask for a single request (not repeating!)
 		try {
 			captureSession.capture(previewRequestBuilder.build(), captureCallbackHandler, backgroundHandler);
 		} catch (CameraAccessException e) {
-			e.printStackTrace();
+			Log.e(TAG, "Start capture session failed!", e);
 		}
 		manualFocusStarted = true;
 
 		return true;
-	}
-
-	private boolean isMeteringAreaAFSupported() {
-		Integer value = cameraCharacteristics.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF);
-		if (value != null) {
-			return value >= 1;
-		} else {
-			return false;
-		}
 	}
 }

@@ -42,11 +42,12 @@ public class ConfigureCamera2FromPrefs {
 		String afMode = prefs.getString("pref_camera_af_mode", null);
 
 		if ("field".equals(afMode)) {
-			captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_MACRO);
+			// TODO !!!!!!!!!!!!!!!
+			//			captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_MACRO);
 		} else if ("manual".equals(afMode)) {
-			// TODO !!!!!!!!!!!!!!!!!!!
-			//captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
-			//captureBuilder.set(CaptureRequest.LENS_FOCUS_DISTANCE, seekFocus);
+			captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
+			float focusDistance = prefs.getFloat("pref_camera_af_manual", 0);
+			captureBuilder.set(CaptureRequest.LENS_FOCUS_DISTANCE, focusDistance);
 		} else {
 			captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO);
 		}

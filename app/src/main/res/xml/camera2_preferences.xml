@@ -29,5 +29,15 @@
     <at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameraInfoPreference
         android:key="pref_camera_wb"
         android:title="@string/cam_header_wb"
-        app:icon="@drawable/ic_cam_bt_brightness" />
+        app:icon="@drawable/ic_cam_bt_wb_a" />
+
+    <at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameraInfoPreference
+        android:key="pref_camera_flash"
+        android:title="@string/pref_flash"
+        app:icon="@drawable/ic_cam_bt_flash_on" />
+
+    <at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameraInfoPreference
+        android:key="pref_camera_af_mode"
+        android:title="@string/cam_afmf_autofocus"
+        app:icon="@drawable/ic_cam_bt_afmf" />
 </PreferenceScreen>

@@ -139,4 +139,7 @@
     <string name="cam_afmf_manual">Manuell gewählte Fokusdistanz wählen</string>
     <string name="cam_header_flash">Blitz</string>
     <string name="cam_header_flash_info">Die Blitzeinstellungen funktionieren nur im Vollautomatik Modus</string>
+    <string name="camera_flash_on">Ein</string>
+    <string name="camera_flash_off">Aus</string>
+    <string name="dioptre">Dioptrie</string>
 </resources>

@@ -6,7 +6,7 @@ import android.view.Surface;
 import android.view.WindowManager;
 
 /**
- * Handle camera orientation
+ * Handle camera orientation, used for JPEG rotation
  */
 public class CameraOrientation {
 

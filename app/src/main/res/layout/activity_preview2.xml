@@ -7,8 +7,6 @@
     android:background="#000000"
     tools:context=".camera2.Preview2Activity">
 
-
-    <!-- TODO: This Layout should be fixed, the fixed layout_height should be removed -->
     <TextureView
         android:id="@+id/texture"
         android:layout_width="fill_parent"

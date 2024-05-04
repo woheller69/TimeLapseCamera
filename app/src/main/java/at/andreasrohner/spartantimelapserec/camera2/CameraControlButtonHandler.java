@@ -119,6 +119,15 @@ public class CameraControlButtonHandler implements PopupDialogBase.DialogResult 
 			this.exposureButton.setImageResource(R.drawable.ic_cam_bt_brightness_enabled);
 		}
 
+		String afMode = prefs.getString("pref_camera_af_mode", null);
+		if (!camera.isAfSupported()) {
+			this.afmfButton.setImageResource(R.drawable.ic_cam_bt_afmf_disabled);
+		} else if ("auto".equals(afMode)) {
+			this.afmfButton.setImageResource(R.drawable.ic_cam_bt_afmf);
+		} else {
+			this.afmfButton.setImageResource(R.drawable.ic_cam_bt_afmf_enabled);
+		}
+
 		boolean menuButtonEnabled = false;
 		String wb = prefs.getString("pref_camera_wb", "auto");
 		if (!"auto".equals(wb)) {

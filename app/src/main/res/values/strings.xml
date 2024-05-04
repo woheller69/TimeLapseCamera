@@ -141,4 +141,7 @@
     <string name="cam_afmf_manual">Store manual selected focus distande</string>
     <string name="cam_header_flash">Flash</string>
     <string name="cam_header_flash_info">Flash Control just works in full auto mode</string>
+    <string name="camera_flash_on">On</string>
+    <string name="camera_flash_off">Off</string>
+    <string name="dioptre">Dioptre</string>
 </resources>

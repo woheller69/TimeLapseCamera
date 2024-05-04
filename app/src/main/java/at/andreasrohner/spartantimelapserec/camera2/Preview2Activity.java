@@ -1,5 +1,7 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
+import android.content.Context;
+import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -15,6 +17,7 @@ import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -108,6 +111,9 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 		((ImageButton) findViewById(R.id.btn_takepicture)).setOnClickListener(v -> takePicture());
 	}
 
+	/**
+	 * Start the background thread
+	 */
 	protected void startBackgroundThread() {
 		backgroundThread = new HandlerThread("Camera Background");
 		backgroundThread.start();
@@ -131,6 +137,9 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 		backgroundHandler = null;
 	}
 
+	/**
+	 * Take a picture
+	 */
 	protected void takePicture() {
 		if (!camera.isOpen()) {
 			error("Camera is not open!", null);
@@ -141,10 +150,11 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 		camera.takePicture(backgroundHandler, this);
 	}
 
+	/**
+	 * Image taken, start the preview again
+	 */
 	@Override
 	public void takeImageFinished() {
-		// Image taken, start the preview again
-
 		// Attach the Listener again, which was removed until the picture was saved
 		textureView.setOnTouchListener(touchFocusHandler);
 		createCameraPreview();
@@ -155,6 +165,9 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 		}
 	}
 
+	/**
+	 * Create the preview
+	 */
 	public void createCameraPreview() {
 		try {
 			CameraDevice cameraDevice = camera.getCameraDevice();
@@ -165,6 +178,7 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 			StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 			assert map != null;
 			Size imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
+			transformTexture(imageDimension);
 			texture.setDefaultBufferSize(imageDimension.getWidth(), imageDimension.getHeight());
 			Surface surface = new Surface(texture);
 			captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
@@ -180,7 +194,7 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 					Preview2Activity.this.cameraCaptureSession = cameraCaptureSession;
 					updatePreview();
 
-					touchFocusHandler = new CameraFocusOnTouchHandler(characteristics, captureRequestBuilder, Preview2Activity.this.cameraCaptureSession, backgroundHandler);
+					touchFocusHandler = new CameraFocusOnTouchHandler(getApplicationContext(), characteristics, captureRequestBuilder, Preview2Activity.this.cameraCaptureSession, backgroundHandler);
 					textureView.setOnTouchListener(touchFocusHandler);
 				}
 
@@ -192,6 +206,43 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 		} catch (CameraAccessException e) {
 			error("Create Preview failed", e);
 		}
+	}
+
+	/**
+	 * Set the correct transformation matrix
+	 *
+	 * @param imageDimension Image size
+	 */
+	private void transformTexture(Size imageDimension) {
+		// TODO Keep aspect ration, instead of fill the screen!
+		Matrix adjustment = new Matrix();
+		float centerX = textureView.getWidth() / 2f;
+		float centerY = textureView.getHeight() / 2f;
+
+		Context context = getApplicationContext();
+		int rotationEnum = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
+
+		if (rotationEnum == Surface.ROTATION_0) {
+			// Portrait
+		} else if (rotationEnum == Surface.ROTATION_90) {
+			// Landscape, left rotated
+			float scaleX = (float) textureView.getHeight() / (float) textureView.getWidth();
+			float scaleY = (float) textureView.getWidth() / (float) textureView.getHeight();
+			adjustment.postScale(scaleX, scaleY, centerX, centerY);
+			adjustment.postRotate(270, centerX, centerY);
+		} else if (rotationEnum == Surface.ROTATION_180) {
+			adjustment.postRotate(180, centerX, centerY);
+		} else if (rotationEnum == Surface.ROTATION_270) {
+			// Landscape, right rotated
+			float scaleX = (float) textureView.getHeight() / (float) textureView.getWidth();
+			float scaleY = (float) textureView.getWidth() / (float) textureView.getHeight();
+			adjustment.postScale(scaleX, scaleY, centerX, centerY);
+			adjustment.postRotate(90, centerX, centerY);
+		} else {
+			return;
+		}
+
+		textureView.setTransform(adjustment);
 	}
 
 	/**
@@ -230,6 +281,9 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 		}
 	}
 
+	/**
+	 * Update the preview
+	 */
 	protected void updatePreview() {
 		if (!camera.isOpen()) {
 			error("Update preview failed!", null);
@@ -245,6 +299,9 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 		}
 	}
 
+	/**
+	 * Close the camera
+	 */
 	private void closeCamera() {
 		if (camera != null) {
 			camera.close();

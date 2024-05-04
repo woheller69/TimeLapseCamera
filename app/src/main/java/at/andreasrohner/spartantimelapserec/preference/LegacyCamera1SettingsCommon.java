@@ -18,7 +18,6 @@
 
 package at.andreasrohner.spartantimelapserec.preference;
 
-import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -258,7 +257,6 @@ public class LegacyCamera1SettingsCommon extends BaseLegacySettingsCommon implem
 			prefs.edit().putInt("pref_exposurecomp", 0).apply();
 		} else if (key.equals("pref_mute_shutter")) {
 			boolean mute = prefs.getBoolean(key, false);
-			//ToDo Show dialog and explain that this is needed to allow muting the phone
 			NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 			if (!notificationManager.isNotificationPolicyAccessGranted() && mute) {
 				Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);

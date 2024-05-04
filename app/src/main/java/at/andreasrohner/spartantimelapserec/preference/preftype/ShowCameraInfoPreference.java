@@ -109,6 +109,36 @@ public class ShowCameraInfoPreference extends DialogPreference {
 				setIcon(R.drawable.ic_cam_bt_wb_cloud_enabled);
 				setSummary(R.string.cam_wb_cloud);
 			}
+		} else if ("pref_camera_flash".equals(key)) {
+			String currentFlashMode = prefs.getString("pref_camera_flash", "off");
+
+			if ("auto".equals(currentFlashMode)) {
+				setIcon(R.drawable.ic_cam_bt_flash_auto);
+				setSummary(R.string.camera_value_auto);
+			} else if ("on".equals(currentFlashMode)) {
+				setIcon(R.drawable.ic_cam_bt_flash_on);
+				setSummary(R.string.camera_flash_on);
+			} else {
+				setIcon(R.drawable.ic_cam_bt_flash_off);
+				setSummary(R.string.camera_flash_off);
+			}
+		} else if ("pref_camera_af_mode".equals(key)) {
+			String afMode = prefs.getString("pref_camera_af_mode", null);
+
+			if ("field".equals(afMode)) {
+				setSummary("F: " + prefs.getString("pref_camera_af_field", null));
+			} else if ("manual".equals(afMode)) {
+				float focusDistance = prefs.getFloat("pref_camera_af_manual", 0);
+				String m;
+				if (focusDistance == 0) {
+					m = "∞";
+				} else {
+					m = String.format("%.2f", (1.0f / focusDistance));
+				}
+				setSummary("M: " + String.format("%.4f", focusDistance) + " " + getContext().getText(R.string.dioptre) + " / " + m + "m");
+			} else {
+				setSummary(R.string.camera_value_auto);
+			}
 		}
 	}
 }
