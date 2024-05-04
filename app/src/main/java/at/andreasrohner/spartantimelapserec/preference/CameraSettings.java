@@ -54,13 +54,10 @@ public class CameraSettings implements MainSettingsMenu {
 			b.append(ctx.getString(R.string.pref_camera_back));
 		}
 
-		if (recMode != RecMode.CAMERA2_TIME_LAPSE) {
-			// TODO Implement for CAMERA2_TIME_LAPSE
-			b.append(", ");
-			b.append(ctx.getString(R.string.pref_frame_size));
-			b.append(": ");
-			b.append(prefs.getString("pref_frame_size", "1920x1080"));
-		}
+		b.append(", ");
+		b.append(ctx.getString(R.string.pref_frame_size));
+		b.append(": ");
+		b.append(prefs.getString("pref_frame_size", "1920x1080"));
 
 		if (recMode == RecMode.CAMERA2_TIME_LAPSE) {
 			int iso = prefs.getInt("pref_camera_iso", -1);

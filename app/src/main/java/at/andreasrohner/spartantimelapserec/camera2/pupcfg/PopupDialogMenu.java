@@ -1,23 +1,26 @@
-package at.andreasrohner.spartantimelapserec.camera2;
+package at.andreasrohner.spartantimelapserec.camera2.pupcfg;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.ImageFormat;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.params.StreamConfigurationMap;
 import android.util.Log;
+import android.util.Size;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
+import at.andreasrohner.spartantimelapserec.camera2.Camera2Wrapper;
+import at.andreasrohner.spartantimelapserec.camera2.PopupDialogBase;
 import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
@@ -58,7 +61,12 @@ public class PopupDialogMenu extends PopupDialogBase {
 	/**
 	 * Camera Selection
 	 */
-	private final Spinner camCameraSelection;
+	private final SpinnerHelper<CameraModel> camCameraSelection;
+
+	/**
+	 * Camera resolution
+	 */
+	private final SpinnerHelper<ResolutionModel> camCameraResolution;
 
 	/**
 	 * Current Flash mode
@@ -74,6 +82,11 @@ public class PopupDialogMenu extends PopupDialogBase {
 	 * Current Flash mode
 	 */
 	private final ImageButton camFlashOn;
+
+	/**
+	 * Camera manager
+	 */
+	private final CameraManager manager;
 
 	/**
 	 * Current WB mode
@@ -96,50 +109,25 @@ public class PopupDialogMenu extends PopupDialogBase {
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-		CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
+		this.manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
 
 		String selectedCamera = prefs.getString("pref_camera", null);
 
-		List<Camera> cameras = new ArrayList<>();
+		List<CameraModel> cameras = new ArrayList<>();
 		try {
 			for (String cameraId : manager.getCameraIdList()) {
-				cameras.add(new Camera(context, cameraId, manager.getCameraCharacteristics(cameraId)));
+				cameras.add(new CameraModel(context, cameraId, manager.getCameraCharacteristics(cameraId)));
 			}
 		} catch (CameraAccessException e) {
 			Log.e(TAG, "Could not list cameras", e);
 		}
 
-		this.camCameraSelection = (Spinner) view.findViewById(R.id.camCameraSelection);
-		ArrayAdapter<CharSequence> adapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, cameras);
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		this.camCameraSelection.setAdapter(adapter);
+		this.camCameraSelection = new SpinnerHelper<>((Spinner) view.findViewById(R.id.camCameraSelection), context);
+		this.camCameraSelection.setData(cameras);
+		this.camCameraSelection.selectById(selectedCamera);
+		this.camCameraSelection.setValueChangeListener(() -> cameraChanged());
 
-		int selectedCameraIndex = -1;
-		if (selectedCamera != null) {
-			for (int i = 0; i < cameras.size(); i++) {
-				if (selectedCamera.equals(cameras.get(i).getCameraId())) {
-					selectedCameraIndex = i;
-					break;
-				}
-			}
-		}
-
-		if (selectedCameraIndex != -1) {
-			this.camCameraSelection.setSelection(selectedCameraIndex);
-		}
-
-		this.camCameraSelection.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-				updateFlashButton();
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
-				updateFlashButton();
-			}
-		});
+		this.camCameraResolution = new SpinnerHelper<>((Spinner) view.findViewById(R.id.camCameraResolution), context);
 
 		this.currentWbMode = prefs.getString("pref_camera_wb", "auto");
 
@@ -178,11 +166,42 @@ public class PopupDialogMenu extends PopupDialogBase {
 	}
 
 	/**
+	 * Camera was changed
+	 */
+	public void cameraChanged() {
+		updateFlashButton();
+
+		final StreamConfigurationMap map;
+		try {
+			final CameraCharacteristics characteristics = manager.getCameraCharacteristics(this.camCameraSelection.getSelectedItem().getId());
+			map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+
+			if (map == null) {
+				Log.e(TAG, "Could not get camera characteristics");
+			}
+		} catch (CameraAccessException e) {
+			Log.e(TAG, "Error get camera resoltuions", e);
+			return;
+		}
+
+		List<ResolutionModel> resolutions = new ArrayList<>();
+		Size[] resolutionArray = map.getOutputSizes(ImageFormat.JPEG);
+		for (Size s : resolutionArray) {
+			resolutions.add(new ResolutionModel(s));
+		}
+		Collections.sort(resolutions);
+		this.camCameraResolution.setData(resolutions);
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		this.camCameraResolution.selectById(prefs.getString("pref_frame_size", null));
+	}
+
+	/**
 	 * Update the Flash Button Images
 	 */
 	private void updateFlashButton() {
 		CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
-		String newSelectedCamera = ((Camera) this.camCameraSelection.getSelectedItem()).getCameraId();
+		String newSelectedCamera = this.camCameraSelection.getSelectedItem().getId();
 		boolean flashSupported = false;
 		try {
 			Boolean available = manager.getCameraCharacteristics(newSelectedCamera).get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
@@ -270,7 +289,7 @@ public class PopupDialogMenu extends PopupDialogBase {
 		int flags = 0;
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		String selectedCamera = prefs.getString("pref_camera", null);
-		String newSelectedCamera = ((Camera) this.camCameraSelection.getSelectedItem()).getCameraId();
+		String newSelectedCamera = this.camCameraSelection.getSelectedItem().getId();
 
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putString("pref_camera_wb", currentWbMode);
@@ -281,6 +300,7 @@ public class PopupDialogMenu extends PopupDialogBase {
 		}
 
 		editor.putString("pref_camera_flash", currentFlashMode);
+		editor.putString("pref_frame_size", this.camCameraResolution.getSelectedItem().getId());
 
 		editor.apply();
 		return flags;
@@ -299,59 +319,5 @@ public class PopupDialogMenu extends PopupDialogBase {
 	@Override
 	public int getMessageId() {
 		return R.string.camera_menu_config_message;
-	}
-
-	/**
-	 * Camera
-	 */
-	private static class Camera {
-
-		/**
-		 * Camera ID
-		 */
-		private final String cameraId;
-
-		/**
-		 * Display name
-		 */
-		private final String name;
-
-		/**
-		 * Constructor
-		 *
-		 * @param context         Context
-		 * @param cameraId        Camera ID
-		 * @param characteristics CameraCharacteristics
-		 */
-		public Camera(Context context, String cameraId, CameraCharacteristics characteristics) {
-			this.cameraId = cameraId;
-			Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
-
-			String cam;
-			if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
-				cam = cameraId + ": " + context.getString(R.string.pref_camera_front);
-			} else {
-				cam = cameraId + ": " + context.getString(R.string.pref_camera_back);
-			}
-
-			float[] focalLengths = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS);
-			if (focalLengths != null && focalLengths.length > 0) {
-				cam += " Lens: " + focalLengths[0] + "mm";
-			}
-			this.name = cam;
-		}
-
-		/**
-		 * @return Camera ID
-		 */
-		public String getCameraId() {
-			return cameraId;
-		}
-
-		@NonNull
-		@Override
-		public String toString() {
-			return name;
-		}
 	}
 }

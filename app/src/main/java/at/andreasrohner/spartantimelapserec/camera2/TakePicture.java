@@ -1,10 +1,10 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
@@ -12,7 +12,6 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Handler;
-import android.util.Size;
 import android.view.Surface;
 
 import java.io.File;
@@ -79,28 +78,19 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 	public void create() {
 		try {
 			CameraDevice cameraDevice = camera.getCameraDevice();
-			CameraCharacteristics characteristics = camera.getCharacteristics();
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+			String sizeString = prefs.getString("pref_frame_size", "1920x1080");
+			String[] sizeParts = sizeString.split("x");
 
-			Size[] jpegSizes = null;
-			if (characteristics != null) {
-				jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
-			}
-			int width = 640;
-			int height = 480;
-			if (jpegSizes != null && 0 < jpegSizes.length) {
-				width = jpegSizes[0].getWidth();
-				height = jpegSizes[0].getHeight();
-			}
-			ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
+			ImageReader reader = ImageReader.newInstance(Integer.parseInt(sizeParts[0]), Integer.parseInt(sizeParts[1]), ImageFormat.JPEG, 1);
 			List<Surface> outputSurfaces = new ArrayList<>(1);
 			outputSurfaces.add(reader.getSurface());
 
 			final CaptureRequest.Builder captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
 			captureBuilder.addTarget(reader.getSurface());
 			captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-			// Orientation
-			CameraOrientation orientaion = new CameraOrientation(context);
-			captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, orientaion.getRotation());
+			CameraOrientation orientation = new CameraOrientation(context);
+			captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, orientation.getRotation());
 
 			cameraConfig.config(captureBuilder);
 

@@ -6,6 +6,7 @@ import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
+import at.andreasrohner.spartantimelapserec.camera2.pupcfg.PopupDialogMenu;
 
 /**
  * Handle buttons and button actions of the camera preview
