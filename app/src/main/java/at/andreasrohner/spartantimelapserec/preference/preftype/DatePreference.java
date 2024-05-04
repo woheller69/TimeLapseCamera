@@ -5,6 +5,11 @@ import android.content.res.TypedArray;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import androidx.preference.DialogPreference;
 
 /**
@@ -35,6 +40,7 @@ public class DatePreference extends DialogPreference {
 	@Override
 	protected void onSetInitialValue(Object defaultValue) {
 		setDate(getPersistedString((String) defaultValue));
+		setSummaryProvider(SimpleSummaryProvider.getInstance());
 	}
 
 	/**
@@ -106,7 +112,17 @@ public class DatePreference extends DialogPreference {
 			if (TextUtils.isEmpty(preference.getDate())) {
 				return "";
 			} else {
-				return preference.getDate();
+				String schedRecDate = preference.getDate();
+				Calendar c = Calendar.getInstance();
+				try {
+					Date date = new SimpleDateFormat("yyyy-MM-dd").parse(schedRecDate);
+					c.setTime(date);
+				} catch (Exception e) {
+					return "Invalid: " + schedRecDate;
+				}
+
+				DateFormat f = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
+				return f.format(c.getTime());
 			}
 		}
 	}

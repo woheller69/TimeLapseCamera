@@ -187,9 +187,6 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 
 		final Rect sensorArraySize = cameraCharacteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
 
-		// TODO: here I just flip x,y, but this needs to correspond with the sensor orientation (via SENSOR_ORIENTATION)
-		// Currently rotation is disabled for the preview
-
 		float sx = scaling.getScaleX();
 		float sy = scaling.getScaleY();
 		int vw = view.getWidth();
