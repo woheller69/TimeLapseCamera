@@ -15,6 +15,17 @@
         android:layout_alignParentTop="true"
         android:gravity="center" />
 
+
+    <at.andreasrohner.spartantimelapserec.camera2.PreviewOverlay
+        android:id="@+id/imageOverlay"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/cameraToolbar"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:visibility="visible" />
+
+
     <LinearLayout
         android:id="@+id/cameraToolbar"
         android:layout_width="fill_parent"

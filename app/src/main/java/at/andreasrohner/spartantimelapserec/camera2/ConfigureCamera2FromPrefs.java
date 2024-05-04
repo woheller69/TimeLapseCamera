@@ -68,7 +68,6 @@ public class ConfigureCamera2FromPrefs {
 			int meteringWeight = 1;
 			for (String p : parts) {
 				p = p.trim();
-				Log.e("xxxxxxxx", "xxxxx " + p);
 
 				String[] f = p.split(":");
 				if (f.length != 2) {

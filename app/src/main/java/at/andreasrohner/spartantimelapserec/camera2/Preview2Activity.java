@@ -19,6 +19,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -92,6 +93,11 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 	private ConfigureCamera2FromPrefs cameraConfig;
 
 	/**
+	 * Overlay
+	 */
+	private ImageView overlay;
+
+	/**
 	 * Constructor
 	 */
 	public Preview2Activity() {
@@ -102,6 +108,8 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_preview2);
 		textureView = (TextureView) findViewById(R.id.texture);
+		overlay = (ImageView) findViewById(R.id.imageOverlay);
+
 		assert textureView != null;
 		textureView.setSurfaceTextureListener(new PreviewSurfaceListener(() -> openCamera()));
 
