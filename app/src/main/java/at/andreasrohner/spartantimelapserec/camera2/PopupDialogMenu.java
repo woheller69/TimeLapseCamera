@@ -7,12 +7,15 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
-import android.widget.NumberPicker;
+import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.rest.HttpThread;
@@ -55,7 +58,7 @@ public class PopupDialogMenu extends PopupDialogBase {
 	/**
 	 * Camera Selection
 	 */
-	private final NumberPicker camCameraSelection;
+	private final Spinner camCameraSelection;
 
 	/**
 	 * Current Flash mode
@@ -83,16 +86,6 @@ public class PopupDialogMenu extends PopupDialogBase {
 	private String currentFlashMode;
 
 	/**
-	 * Display values
-	 */
-	private List<String> displayValues = new ArrayList<>();
-
-	/**
-	 * Camera IDs
-	 */
-	private List<String> cameraIds = new ArrayList<>();
-
-	/**
 	 * Constructor
 	 *
 	 * @param context Context
@@ -107,39 +100,46 @@ public class PopupDialogMenu extends PopupDialogBase {
 
 		String selectedCamera = prefs.getString("pref_camera", null);
 
+		List<Camera> cameras = new ArrayList<>();
 		try {
 			for (String cameraId : manager.getCameraIdList()) {
-				CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
-				Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
-
-				String cam;
-				if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
-					cam = cameraId + ": " + context.getString(R.string.pref_camera_front);
-				} else {
-					cam = cameraId + ": " + context.getString(R.string.pref_camera_back);
-				}
-
-				float[] focalLengths = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS);
-				if (focalLengths != null && focalLengths.length > 0) {
-					cam += " Lens: " + focalLengths[0] + "mm";
-				}
-
-				displayValues.add(cam);
-				cameraIds.add(cameraId);
+				cameras.add(new Camera(context, cameraId, manager.getCameraCharacteristics(cameraId)));
 			}
 		} catch (CameraAccessException e) {
 			Log.e(TAG, "Could not list cameras", e);
 		}
 
-		this.camCameraSelection = (NumberPicker) view.findViewById(R.id.camCameraSelection);
-		this.camCameraSelection.setMinValue(0);
-		this.camCameraSelection.setMaxValue(displayValues.size() - 1);
-		this.camCameraSelection.setDisplayedValues(displayValues.toArray(new String[] {}));
-		int selectedCameraIndex = cameraIds.indexOf(selectedCamera);
-		if (selectedCameraIndex != -1) {
-			this.camCameraSelection.setValue(selectedCameraIndex);
+		this.camCameraSelection = (Spinner) view.findViewById(R.id.camCameraSelection);
+		ArrayAdapter<CharSequence> adapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, cameras);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		this.camCameraSelection.setAdapter(adapter);
+
+		int selectedCameraIndex = -1;
+		if (selectedCamera != null) {
+			for (int i = 0; i < cameras.size(); i++) {
+				if (selectedCamera.equals(cameras.get(i).getCameraId())) {
+					selectedCameraIndex = i;
+					break;
+				}
+			}
 		}
-		this.camCameraSelection.setOnValueChangedListener((a, b, c) -> updateFlashButton());
+
+		if (selectedCameraIndex != -1) {
+			this.camCameraSelection.setSelection(selectedCameraIndex);
+		}
+
+		this.camCameraSelection.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				updateFlashButton();
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				updateFlashButton();
+			}
+		});
 
 		this.currentWbMode = prefs.getString("pref_camera_wb", "auto");
 
@@ -182,7 +182,7 @@ public class PopupDialogMenu extends PopupDialogBase {
 	 */
 	private void updateFlashButton() {
 		CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
-		String newSelectedCamera = cameraIds.get(this.camCameraSelection.getValue());
+		String newSelectedCamera = ((Camera) this.camCameraSelection.getSelectedItem()).getCameraId();
 		boolean flashSupported = false;
 		try {
 			Boolean available = manager.getCameraCharacteristics(newSelectedCamera).get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
@@ -270,7 +270,7 @@ public class PopupDialogMenu extends PopupDialogBase {
 		int flags = 0;
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		String selectedCamera = prefs.getString("pref_camera", null);
-		String newSelectedCamera = cameraIds.get(this.camCameraSelection.getValue());
+		String newSelectedCamera = ((Camera) this.camCameraSelection.getSelectedItem()).getCameraId();
 
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putString("pref_camera_wb", currentWbMode);
@@ -283,7 +283,6 @@ public class PopupDialogMenu extends PopupDialogBase {
 		editor.putString("pref_camera_flash", currentFlashMode);
 
 		editor.apply();
-
 		return flags;
 	}
 
@@ -300,5 +299,59 @@ public class PopupDialogMenu extends PopupDialogBase {
 	@Override
 	public int getMessageId() {
 		return R.string.camera_menu_config_message;
+	}
+
+	/**
+	 * Camera
+	 */
+	private static class Camera {
+
+		/**
+		 * Camera ID
+		 */
+		private final String cameraId;
+
+		/**
+		 * Display name
+		 */
+		private final String name;
+
+		/**
+		 * Constructor
+		 *
+		 * @param context         Context
+		 * @param cameraId        Camera ID
+		 * @param characteristics CameraCharacteristics
+		 */
+		public Camera(Context context, String cameraId, CameraCharacteristics characteristics) {
+			this.cameraId = cameraId;
+			Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+
+			String cam;
+			if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
+				cam = cameraId + ": " + context.getString(R.string.pref_camera_front);
+			} else {
+				cam = cameraId + ": " + context.getString(R.string.pref_camera_back);
+			}
+
+			float[] focalLengths = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS);
+			if (focalLengths != null && focalLengths.length > 0) {
+				cam += " Lens: " + focalLengths[0] + "mm";
+			}
+			this.name = cam;
+		}
+
+		/**
+		 * @return Camera ID
+		 */
+		public String getCameraId() {
+			return cameraId;
+		}
+
+		@NonNull
+		@Override
+		public String toString() {
+			return name;
+		}
 	}
 }

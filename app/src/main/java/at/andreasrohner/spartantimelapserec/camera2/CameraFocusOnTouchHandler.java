@@ -19,7 +19,7 @@ import androidx.annotation.NonNull;
 import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
- * Sample from here: https://stackoverflow.com/questions/53324821/touch-based-focus-with-camera-api2-on-android
+ * Focus touch handler
  */
 public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 
@@ -28,16 +28,75 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 	 */
 	private static final String TAG = HttpThread.class.getSimpleName();
 
+	/**
+	 * Tag used for feedback
+	 */
+	private static String REQUEST_TAG = "FOCUS_TAG";
+
+	/**
+	 * CameraCharacteristics
+	 */
 	private CameraCharacteristics cameraCharacteristics;
 
+	/**
+	 * Preview Request Builder
+	 */
 	private CaptureRequest.Builder previewRequestBuilder;
 
+	/**
+	 * CameraCaptureSession
+	 */
 	private CameraCaptureSession captureSession;
 
+	/**
+	 * Background Thread
+	 */
 	private Handler backgroundHandler;
 
-	private boolean mManualFocusEngaged = false;
+	/**
+	 * Manual focus already started
+	 */
+	private boolean manualFocusStarted = false;
 
+	/**
+	 * Callback
+	 */
+	private CameraCaptureSession.CaptureCallback captureCallbackHandler = new CameraCaptureSession.CaptureCallback() {
+		@Override
+		public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
+			super.onCaptureCompleted(session, request, result);
+			manualFocusStarted = false;
+
+			if (!REQUEST_TAG.equals(request.getTag())) {
+				return;
+			}
+
+			//the focus trigger is complete - resume repeating (preview surface will get frames), clear AF trigger
+			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, null);
+
+			try {
+				captureSession.setRepeatingRequest(previewRequestBuilder.build(), null, null);
+			} catch (CameraAccessException e) {
+				Log.e(TAG, "Error start repeating request after focus", e);
+			}
+		}
+
+		@Override
+		public void onCaptureFailed(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull CaptureFailure failure) {
+			super.onCaptureFailed(session, request, failure);
+			Log.e(TAG, "Manual AF failure: " + failure);
+			manualFocusStarted = false;
+		}
+	};
+
+	/**
+	 * Constructor
+	 *
+	 * @param cameraCharacteristics CameraCharacteristics
+	 * @param previewRequestBuilder Preview Request Builder
+	 * @param captureSession        CameraCaptureSession
+	 * @param backgroundHandler     Background Thread
+	 */
 	public CameraFocusOnTouchHandler(CameraCharacteristics cameraCharacteristics, CaptureRequest.Builder previewRequestBuilder, CameraCaptureSession captureSession, Handler backgroundHandler) {
 		this.cameraCharacteristics = cameraCharacteristics;
 		if (cameraCharacteristics == null) {
@@ -60,15 +119,12 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouch(View view, MotionEvent motionEvent) {
-
-		//Override in your touch-enabled view (this can be different than the view you use for displaying the cam preview)
-
 		final int actionMasked = motionEvent.getActionMasked();
 		if (actionMasked != MotionEvent.ACTION_DOWN) {
 			return false;
 		}
-		if (mManualFocusEngaged) {
-			Log.d(TAG, "Manual focus already engaged");
+		if (manualFocusStarted) {
+			Log.d(TAG, "Manual focus already started");
 			return true;
 		}
 
@@ -80,31 +136,6 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		final int halfTouchWidth = 50; //(int)motionEvent.getTouchMajor(); //TODO: this doesn't represent actual touch size in pixel. Values range in [3, 10]...
 		final int halfTouchHeight = 50; //(int)motionEvent.getTouchMinor();
 		MeteringRectangle focusAreaTouch = new MeteringRectangle(Math.max(x - halfTouchWidth, 0), Math.max(y - halfTouchHeight, 0), halfTouchWidth * 2, halfTouchHeight * 2, MeteringRectangle.METERING_WEIGHT_MAX - 1);
-
-		CameraCaptureSession.CaptureCallback captureCallbackHandler = new CameraCaptureSession.CaptureCallback() {
-			@Override
-			public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
-				super.onCaptureCompleted(session, request, result);
-				mManualFocusEngaged = false;
-
-				if (request.getTag() == "FOCUS_TAG") {
-					//the focus trigger is complete - resume repeating (preview surface will get frames), clear AF trigger
-					previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, null);
-					try {
-						captureSession.setRepeatingRequest(previewRequestBuilder.build(), null, null);
-					} catch (CameraAccessException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-
-			@Override
-			public void onCaptureFailed(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull CaptureFailure failure) {
-				super.onCaptureFailed(session, request, failure);
-				Log.e(TAG, "Manual AF failure: " + failure);
-				mManualFocusEngaged = false;
-			}
-		};
 
 		//first stop the existing repeating request
 		try {
@@ -129,7 +160,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 		previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO);
 		previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START);
-		previewRequestBuilder.setTag("FOCUS_TAG"); //we'll capture this later for resuming the preview
+		previewRequestBuilder.setTag(REQUEST_TAG); //we'll capture this later for resuming the preview
 
 		//then we ask for a single request (not repeating!)
 		try {
@@ -137,7 +168,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		} catch (CameraAccessException e) {
 			e.printStackTrace();
 		}
-		mManualFocusEngaged = true;
+		manualFocusStarted = true;
 
 		return true;
 	}

@@ -51,7 +51,7 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 	/**
 	 * Capture session
 	 */
-	protected CameraCaptureSession cameraCaptureSessions;
+	protected CameraCaptureSession cameraCaptureSession;
 
 	/**
 	 * Capture Request Builder
@@ -177,16 +177,16 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 						return;
 					}
 					// When the session is ready, we start displaying the preview.
-					cameraCaptureSessions = cameraCaptureSession;
+					Preview2Activity.this.cameraCaptureSession = cameraCaptureSession;
 					updatePreview();
 
-					touchFocusHandler = new CameraFocusOnTouchHandler(characteristics, captureRequestBuilder, cameraCaptureSessions, backgroundHandler);
+					touchFocusHandler = new CameraFocusOnTouchHandler(characteristics, captureRequestBuilder, Preview2Activity.this.cameraCaptureSession, backgroundHandler);
 					textureView.setOnTouchListener(touchFocusHandler);
 				}
 
 				@Override
 				public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-					Toast.makeText(Preview2Activity.this, "Configuration change", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Preview2Activity.this, "Configuration failed", Toast.LENGTH_SHORT).show();
 				}
 			}, null);
 		} catch (CameraAccessException e) {
@@ -194,6 +194,9 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 		}
 	}
 
+	/**
+	 * Open the camera, if the camera is already open, close it first
+	 */
 	private synchronized void openCamera() {
 		if (camera != null) {
 			camera.close();
@@ -236,7 +239,7 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 		cameraConfig.config(captureRequestBuilder);
 
 		try {
-			cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, backgroundHandler);
+			cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(), null, backgroundHandler);
 		} catch (CameraAccessException e) {
 			error("Error configure camera", e);
 		}
@@ -255,7 +258,6 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Log.e(TAG, "onResume");
 		startBackgroundThread();
 		if (textureView.isAvailable()) {
 			openCamera();
@@ -266,7 +268,6 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 
 	@Override
 	protected void onPause() {
-		Log.e(TAG, "onPause");
 		//closeCamera();
 		stopBackgroundThread();
 		super.onPause();
