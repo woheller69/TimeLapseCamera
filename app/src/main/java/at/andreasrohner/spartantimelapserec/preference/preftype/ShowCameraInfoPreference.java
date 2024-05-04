@@ -139,6 +139,8 @@ public class ShowCameraInfoPreference extends DialogPreference {
 			} else {
 				setSummary(R.string.camera_value_auto);
 			}
+		} else {
+			setSummary(prefs.getString(key, null));
 		}
 	}
 }

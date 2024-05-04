@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.util.Log;
+import android.util.Size;
 
 import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
@@ -23,12 +24,36 @@ public class ConfigureCamera2FromPrefs {
 	private final SharedPreferences prefs;
 
 	/**
+	 * Image Size
+	 */
+	private int sizeW;
+
+	/**
+	 * Image Size
+	 */
+	private int sizeH;
+
+	/**
 	 * Constructor
 	 *
 	 * @param prefs Preferences
 	 */
 	public ConfigureCamera2FromPrefs(SharedPreferences prefs) {
 		this.prefs = prefs;
+	}
+
+	/**
+	 * Read camera size
+	 *
+	 * @return Image Size
+	 */
+	public Size prepareSize() {
+		String sizeString = prefs.getString("pref_frame_size", "1920x1080");
+		String[] sizeParts = sizeString.split("x");
+		sizeW = Integer.parseInt(sizeParts[0]);
+		sizeH = Integer.parseInt(sizeParts[1]);
+
+		return new Size(sizeW, sizeH);
 	}
 
 	/**
@@ -51,45 +76,29 @@ public class ConfigureCamera2FromPrefs {
 		String afMode = prefs.getString("pref_camera_af_mode", null);
 
 		if ("field".equals(afMode)) {
-			// TODO This value is dependent on the current image resolution!
-
 			String afField = prefs.getString("pref_camera_af_field", null);
 			if (afField == null) {
 				Log.e(TAG, "Missing AF Field!");
 				return;
 			}
 
-			afField = afField.substring(1, afField.length() - 2);
-			String[] parts = afField.split(",");
-			int x = 0;
-			int y = 0;
-			int width = 1;
-			int height = 1;
-			int meteringWeight = 1;
-			for (String p : parts) {
-				p = p.trim();
-
-				String[] f = p.split(":");
-				if (f.length != 2) {
-					continue;
-				}
-
-				int val = Integer.parseInt(f[1]);
-				if ("x".equals(f[0])) {
-					x = val;
-				} else if ("y".equals(f[0])) {
-					y = val;
-				} else if ("w".equals(f[0])) {
-					width = val;
-				} else if ("h".equals(f[0])) {
-					height = val;
-				} else if ("wt".equals(f[0])) {
-					meteringWeight = val;
-				}
+			float px;
+			float py;
+			try {
+				String[] parts = afField.split("/");
+				px = Float.parseFloat(parts[0]);
+				py = Float.parseFloat(parts[1]);
+			} catch (Exception e) {
+				Log.e(TAG, "Invalid AF Value: «" + afField + "»");
+				return;
 			}
 
-			MeteringRectangle focusAreaTouch = new MeteringRectangle(x, y, width, height, meteringWeight);
-			captureBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, new MeteringRectangle[] {focusAreaTouch});
+			int x = (int) (sizeW * px);
+			int y = (int) (sizeH * py);
+
+			int focusSize = 50;
+			MeteringRectangle focusArea = new MeteringRectangle(Math.max(x - focusSize, 0), Math.max(y - focusSize, 0), focusSize * 2, focusSize * 2, MeteringRectangle.METERING_WEIGHT_MAX - 1);
+			captureBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, new MeteringRectangle[] {focusArea});
 		} else if ("manual".equals(afMode)) {
 			captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
 			float focusDistance = prefs.getFloat("pref_camera_af_manual", 0);

@@ -1,7 +1,6 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -12,6 +11,7 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Handler;
+import android.util.Size;
 import android.view.Surface;
 
 import java.io.File;
@@ -78,11 +78,9 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 	public void create() {
 		try {
 			CameraDevice cameraDevice = camera.getCameraDevice();
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-			String sizeString = prefs.getString("pref_frame_size", "1920x1080");
-			String[] sizeParts = sizeString.split("x");
 
-			ImageReader reader = ImageReader.newInstance(Integer.parseInt(sizeParts[0]), Integer.parseInt(sizeParts[1]), ImageFormat.JPEG, 1);
+			Size size = cameraConfig.prepareSize();
+			ImageReader reader = ImageReader.newInstance(size.getWidth(), size.getHeight(), ImageFormat.JPEG, 1);
 			List<Surface> outputSurfaces = new ArrayList<>(1);
 			outputSurfaces.add(reader.getSurface());
 

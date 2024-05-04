@@ -1,7 +1,6 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.content.Context;
-import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -19,7 +18,6 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.WindowManager;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -95,7 +93,12 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 	/**
 	 * Overlay
 	 */
-	private ImageView overlay;
+	private PreviewOverlay overlay;
+
+	/**
+	 * Calculate the scaling for the preview
+	 */
+	private PreviewScaling scaling = new PreviewScaling();
 
 	/**
 	 * Constructor
@@ -108,7 +111,8 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_preview2);
 		textureView = (TextureView) findViewById(R.id.texture);
-		overlay = (ImageView) findViewById(R.id.imageOverlay);
+		overlay = (PreviewOverlay) findViewById(R.id.imageOverlay);
+		overlay.setScaling(scaling);
 
 		assert textureView != null;
 		textureView.setSurfaceTextureListener(new PreviewSurfaceListener(() -> openCamera()));
@@ -202,8 +206,9 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 					Preview2Activity.this.cameraCaptureSession = cameraCaptureSession;
 					updatePreview();
 
-					touchFocusHandler = new CameraFocusOnTouchHandler(getApplicationContext(), characteristics, captureRequestBuilder, Preview2Activity.this.cameraCaptureSession, backgroundHandler);
+					touchFocusHandler = new CameraFocusOnTouchHandler(getApplicationContext(), characteristics, captureRequestBuilder, Preview2Activity.this.cameraCaptureSession, backgroundHandler, scaling);
 					textureView.setOnTouchListener(touchFocusHandler);
+					touchFocusHandler.setFocusChangeListener(() -> updateFocusDisplay());
 				}
 
 				@Override
@@ -217,40 +222,34 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 	}
 
 	/**
+	 * Update focus display
+	 */
+	private void updateFocusDisplay() {
+		runOnUiThread(new Runnable() {
+			public void run() {
+				overlay.invalidate();
+			}
+		});
+	}
+
+	/**
 	 * Set the correct transformation matrix
 	 *
 	 * @param imageDimension Image size
 	 */
 	private void transformTexture(Size imageDimension) {
-		// TODO Keep aspect ration, instead of fill the screen!
-		Matrix adjustment = new Matrix();
-		float centerX = textureView.getWidth() / 2f;
-		float centerY = textureView.getHeight() / 2f;
+		scaling.setTextureSize(textureView.getWidth(), textureView.getHeight());
+
+		// Image is rotated by default, therefore here width/height is swapped!
+		scaling.setImageSize(imageDimension.getHeight(), imageDimension.getWidth());
 
 		Context context = getApplicationContext();
-		int rotationEnum = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
+		scaling.setRotationEnum(((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation());
 
-		if (rotationEnum == Surface.ROTATION_0) {
-			// Portrait
-		} else if (rotationEnum == Surface.ROTATION_90) {
-			// Landscape, left rotated
-			float scaleX = (float) textureView.getHeight() / (float) textureView.getWidth();
-			float scaleY = (float) textureView.getWidth() / (float) textureView.getHeight();
-			adjustment.postScale(scaleX, scaleY, centerX, centerY);
-			adjustment.postRotate(270, centerX, centerY);
-		} else if (rotationEnum == Surface.ROTATION_180) {
-			adjustment.postRotate(180, centerX, centerY);
-		} else if (rotationEnum == Surface.ROTATION_270) {
-			// Landscape, right rotated
-			float scaleX = (float) textureView.getHeight() / (float) textureView.getWidth();
-			float scaleY = (float) textureView.getWidth() / (float) textureView.getHeight();
-			adjustment.postScale(scaleX, scaleY, centerX, centerY);
-			adjustment.postRotate(90, centerX, centerY);
-		} else {
-			return;
-		}
+		scaling.calculate();
 
-		textureView.setTransform(adjustment);
+		textureView.setTransform(scaling.createMatrix());
+		updateFocusDisplay();
 	}
 
 	/**

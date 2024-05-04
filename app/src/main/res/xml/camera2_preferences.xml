@@ -17,6 +17,11 @@
     </PreferenceCategory>
 
     <at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameraInfoPreference
+        android:key="pref_frame_size"
+        android:title="@string/pref_frame_size"
+        app:icon="@drawable/ic_imgsize" />
+
+    <at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameraInfoPreference
         android:key="pref_camera_iso"
         android:title="@string/iso"
         app:icon="@drawable/ic_cam_bt_iso" />

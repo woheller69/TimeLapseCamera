@@ -43,6 +43,11 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 	private final SharedPreferences prefs;
 
 	/**
+	 * PreviewScaling
+	 */
+	private final PreviewScaling scaling;
+
+	/**
 	 * CameraCharacteristics
 	 */
 	private CameraCharacteristics cameraCharacteristics;
@@ -68,6 +73,21 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 	private boolean manualFocusStarted = false;
 
 	/**
+	 * Listener for focus changes
+	 */
+	private FocusChangeListener focusChangeListener;
+
+	/**
+	 * Image Relative X
+	 */
+	private float relX;
+
+	/**
+	 * Image Relative Y
+	 */
+	private float relY;
+
+	/**
 	 * Callback
 	 */
 	private CameraCaptureSession.CaptureCallback captureCallbackHandler = new CameraCaptureSession.CaptureCallback() {
@@ -86,6 +106,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 				float focusDistance = result.get(CaptureResult.LENS_FOCUS_DISTANCE);
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putFloat("pref_camera_af_manual", focusDistance);
+				editor.putString("pref_camera_af_field", relX + "/" + relY);
 				editor.apply();
 			}
 
@@ -96,6 +117,10 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 				captureSession.setRepeatingRequest(previewRequestBuilder.build(), null, null);
 			} catch (CameraAccessException e) {
 				Log.e(TAG, "Error start repeating request after focus", e);
+			}
+
+			if (focusChangeListener != null) {
+				focusChangeListener.focusChanged();
 			}
 		}
 
@@ -115,8 +140,9 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 	 * @param previewRequestBuilder Preview Request Builder
 	 * @param captureSession        CameraCaptureSession
 	 * @param backgroundHandler     Background Thread
+	 * @param scaling               PreviewScaling
 	 */
-	public CameraFocusOnTouchHandler(Context context, CameraCharacteristics cameraCharacteristics, CaptureRequest.Builder previewRequestBuilder, CameraCaptureSession captureSession, Handler backgroundHandler) {
+	public CameraFocusOnTouchHandler(Context context, CameraCharacteristics cameraCharacteristics, CaptureRequest.Builder previewRequestBuilder, CameraCaptureSession captureSession, Handler backgroundHandler, PreviewScaling scaling) {
 		this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		this.cameraCharacteristics = cameraCharacteristics;
 		if (cameraCharacteristics == null) {
@@ -134,6 +160,15 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		if (backgroundHandler == null) {
 			throw new IllegalArgumentException("backgroundHandler == null");
 		}
+
+		this.scaling = scaling;
+	}
+
+	/**
+	 * @param focusChangeListener Listener for focus changes
+	 */
+	public void setFocusChangeListener(FocusChangeListener focusChangeListener) {
+		this.focusChangeListener = focusChangeListener;
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -152,12 +187,35 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 
 		final Rect sensorArraySize = cameraCharacteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
 
-		//TODO: here I just flip x,y, but this needs to correspond with the sensor orientation (via SENSOR_ORIENTATION)
-		final int y = (int) ((motionEvent.getX() / (float) view.getWidth()) * (float) sensorArraySize.height());
-		final int x = (int) ((motionEvent.getY() / (float) view.getHeight()) * (float) sensorArraySize.width());
-		final int halfTouchWidth = 50; //(int)motionEvent.getTouchMajor(); //TODO: this doesn't represent actual touch size in pixel. Values range in [3, 10]...
-		final int halfTouchHeight = 50; //(int)motionEvent.getTouchMinor();
-		MeteringRectangle focusAreaTouch = new MeteringRectangle(Math.max(x - halfTouchWidth, 0), Math.max(y - halfTouchHeight, 0), halfTouchWidth * 2, halfTouchHeight * 2, MeteringRectangle.METERING_WEIGHT_MAX - 1);
+		// TODO: here I just flip x,y, but this needs to correspond with the sensor orientation (via SENSOR_ORIENTATION)
+		// Currently rotation is disabled for the preview
+
+		float sx = scaling.getScaleX();
+		float sy = scaling.getScaleY();
+		int vw = view.getWidth();
+		int vh = view.getHeight();
+		int iw = (int) (vw * sx);
+		int ih = (int) (vh * sy);
+		int left = (vw - iw) / 2;
+		int top = (vh - ih) / 2;
+
+		Rect boundingBox = new Rect(left, top, iw + left, ih + top);
+		if (!boundingBox.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
+			// Touch not within image area
+			return true;
+		}
+
+		float tpx = motionEvent.getX() - left;
+		float tpy = motionEvent.getY() - top;
+
+		this.relX = tpx / iw;
+		this.relY = tpy / ih;
+
+		final int y = (int) (relX * (float) sensorArraySize.height());
+		final int x = (int) (relY * (float) sensorArraySize.width());
+
+		int focusSize = 50;
+		MeteringRectangle focusArea = new MeteringRectangle(Math.max(x - focusSize, 0), Math.max(y - focusSize, 0), focusSize * 2, focusSize * 2, MeteringRectangle.METERING_WEIGHT_MAX - 1);
 
 		// first stop the existing repeating request
 		try {
@@ -177,10 +235,10 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 
 		// Now add a new AF trigger with focus region
 		if (Camera2Utils.isAfSupported(cameraCharacteristics)) {
-			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, new MeteringRectangle[] {focusAreaTouch});
+			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, new MeteringRectangle[] {focusArea});
 			if ("field".equals(afMode)) {
 				SharedPreferences.Editor editor = prefs.edit();
-				editor.putString("pref_camera_af_field", focusAreaTouch.toString());
+				editor.putString("pref_camera_af_field", relX + "/" + relY);
 				editor.apply();
 			}
 		}
@@ -198,5 +256,16 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		manualFocusStarted = true;
 
 		return true;
+	}
+
+	/**
+	 * Listener for focus changes
+	 */
+	public interface FocusChangeListener {
+
+		/**
+		 * Focus has been changed
+		 */
+		void focusChanged();
 	}
 }
