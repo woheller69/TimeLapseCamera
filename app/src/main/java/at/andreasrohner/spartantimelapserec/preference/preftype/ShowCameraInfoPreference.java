@@ -2,18 +2,28 @@ package at.andreasrohner.spartantimelapserec.preference.preftype;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraManager;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.DialogPreference;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.camera2.CameraTiming;
+import at.andreasrohner.spartantimelapserec.camera2.pupcfg.CameraModel;
+import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
  * Show a camera setting, read only
  */
 public class ShowCameraInfoPreference extends DialogPreference {
+
+	/**
+	 * Log Tag
+	 */
+	private static final String TAG = HttpThread.class.getSimpleName();
 
 	/**
 	 * Camera timing values
@@ -139,6 +149,18 @@ public class ShowCameraInfoPreference extends DialogPreference {
 			} else {
 				setSummary(R.string.camera_value_auto);
 			}
+		} else if ("pref_camera".equals(key)) {
+			String cameraId = prefs.getString("pref_camera", null);
+
+			CameraManager manager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
+			try {
+				CameraModel camera = new CameraModel(getContext(), cameraId, manager.getCameraCharacteristics(cameraId));
+				setSummary(camera.toString());
+			} catch (CameraAccessException e) {
+				Log.e(TAG, "Error loading camera details", e);
+				setSummary("Could not load Camera Details: " + e);
+			}
+
 		} else {
 			setSummary(prefs.getString(key, null));
 		}

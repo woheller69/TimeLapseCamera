@@ -142,4 +142,5 @@
     <string name="camera_flash_on">Ein</string>
     <string name="camera_flash_off">Aus</string>
     <string name="dioptre">Dioptrie</string>
+    <string name="pref_camera_objective">Objektiv</string>
 </resources>

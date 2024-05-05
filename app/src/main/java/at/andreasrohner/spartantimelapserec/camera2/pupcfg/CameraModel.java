@@ -22,6 +22,16 @@ public class CameraModel implements IdData {
 	private final String name;
 
 	/**
+	 * Context
+	 */
+	private final Context context;
+
+	/**
+	 * CameraCharacteristics
+	 */
+	private final CameraCharacteristics characteristics;
+
+	/**
 	 * Constructor
 	 *
 	 * @param context         Context
@@ -29,21 +39,53 @@ public class CameraModel implements IdData {
 	 * @param characteristics CameraCharacteristics
 	 */
 	public CameraModel(Context context, String cameraId, CameraCharacteristics characteristics) {
+		this.context = context;
 		this.cameraId = cameraId;
+		this.characteristics = characteristics;
 		Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
 
-		String cam;
+		StringBuilder cam = new StringBuilder();
+		cam.append(cameraId);
+		cam.append(": ");
 		if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
-			cam = cameraId + ": " + context.getString(R.string.pref_camera_front);
+			cam.append(context.getString(R.string.pref_camera_front));
 		} else {
-			cam = cameraId + ": " + context.getString(R.string.pref_camera_back);
+			cam.append(context.getString(R.string.pref_camera_back));
 		}
 
+		buildLensList(cam);
+		this.name = cam.toString();
+	}
+
+	/**
+	 * Build the lens list
+	 *
+	 * @param cam [out] StringBuilder
+	 */
+	private void buildLensList(StringBuilder cam) {
 		float[] focalLengths = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS);
-		if (focalLengths != null && focalLengths.length > 0) {
-			cam += " Lens: " + focalLengths[0] + "mm";
+		if (focalLengths == null) {
+			return;
 		}
-		this.name = cam;
+
+		if (focalLengths.length == 0) {
+			return;
+		}
+
+		cam.append(' ');
+		cam.append(context.getString(R.string.pref_camera_objective));
+		cam.append(": ");
+
+		boolean first = true;
+		for (float fl : focalLengths) {
+			if (first) {
+				first = false;
+			} else {
+				cam.append(", ");
+			}
+			cam.append(focalLengths[0]);
+			cam.append("mm");
+		}
 	}
 
 	@Override
