@@ -4,11 +4,24 @@
         <item>Normal Video (MP4)</item>
         <item>Time Lapsed Video (MP4)</item>
         <item>Time Lapsed Images (JPG)</item>
+        <item>Extended Camera Interface, Beta, (JPG)</item>
     </string-array>
     <string-array name="pref_rec_mode_values">
         <item>VIDEO</item>
         <item>VIDEO_TIME_LAPSE</item>
         <item>IMAGE_TIME_LAPSE</item>
+        <item>CAMERA2_TIME_LAPSE</item>
+    </string-array>
+
+    <!-- Reply Preference -->
+    <string-array name="reply_entries">
+        <item>Reply</item>
+        <item>Reply to all</item>
+    </string-array>
+
+    <string-array name="reply_values">
+        <item>reply</item>
+        <item>reply_all</item>
     </string-array>
 
 </resources>

@@ -323,7 +323,7 @@ function btRefresh() {
 		document.getElementById('txtInterval').innerHTML = (config.pref_capture_rate / 1000) + 's';
 		document.getElementById('txtMode').innerHTML = config.pref_rec_mode;
 		
-		if (config.pref_rec_mode == 'IMAGE_TIME_LAPSE') {
+		if (config.pref_rec_mode == 'IMAGE_TIME_LAPSE' || config.pref_rec_mode == 'CAMERA2_TIME_LAPSE') {
 			let rowLastImage = document.getElementById('rowLastImage');
 			rowLastImage.style.display = '';
 			let rowImageCount = document.getElementById('rowImageCount');
@@ -385,7 +385,6 @@ function btAutoRefresh() {
 </head>
 
 <body>
-	<h1>TimeLapseCam</h1>
 	<div class="button">
 		<div onclick="btStart()">START</div>
 		<div onclick="btStop()">STOP</div>

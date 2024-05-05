@@ -42,6 +42,7 @@
     <string name="pref_project_settings_category">Projekt Einstellungen</string>
     <string name="pref_camera_settings_category">Kamera Einstellungen</string>
     <string name="pref_schedule_settings_category">Planung Einstellungen</string>
+    <string name="pref_stop_settings_category">Stop Einstellungen</string>
     <string name="pref_notification_icon">Benachrichtigungs Icon</string>
     <string name="pref_notification_icon_summ">Auswahl des Icons das während der Aufnahme erscheint</string>
     <string name="format_fps">fps</string>
@@ -60,6 +61,7 @@
 
     <!-- StarDialog -->
     <string name="dialog_OK_button">OK</string>
+    <string name="dialog_CANCEL_button">Abbrechen</string>
     <string name="dialog_NO_button">Nein</string>
     <string name="dialog_Later_button">Vielleicht später</string>
     <string name="dialog_StarOnGitHub">Mögen Sie diese App? Bitte vergeben Sie einen Stern auf GitHub oder spendieren Sie dem Entwickler einen Kaffee über PayPal.</string>
@@ -82,13 +84,63 @@
     <string name="pref_restapi_port_title">HTTP Server Port</string>
     <string name="pref_restapi_pw_title">Passwort</string>
     <string name="pref_restapi_port_hint">Port</string>
-    <string name="pref_restapi_port_summ">Port, 1024 - 65535, Standard 8085</string>
+    <string name="pref_restapi_port_summ">Port, 1024 - 65535, Standard 8085. Neustart der REST API nötig.</string>
     <string name="pref_restapi_pw_summ">Passwort für den REST API Zugriff</string>
     <string name="pref_restapi_pw_hint">Passwort</string>
     <string name="info_restapi_started">REST API gestartet...</string>
     <string name="info_restapi_stopped">REST API gestoppt...</string>
     <string name="error_port_invalid">Port ungültig, 8085 wird verwendet</string>
     <string name="pref_restapi_connectioninfo_title">Verbindungsinformationen</string>
+    <string name="pref_restapi_connectioninfo_title_on">REST API eingeschaltet</string>
+    <string name="pref_restapi_connectioninfo_title_off">REST API ausgeschaltet</string>
     <string name="error_no_ip_refresh">Keine IP! Berühren zum neu laden.</string>
     <string name="notification_restapi">REST API Läuft</string>
+    <string name="pref_restapi_settings_header">REST Einstellungen</string>
+    <string name="pref_stop_info_nostop">Nie stoppen</string>
+    <string name="pref_stop_info_stop_start">Stop:</string>
+    <string name="pref_stop_info_stop_battery">Akku leer</string>
+    <string name="pref_stop_info_stop_storage">wenig Speicherplatz </string>
+    <string name="pref_scheduling_settings_category">Planung</string>
+    <string name="pref_scheduling_settings_title">Planung konfigurieren</string>
+    <string name="pref_preferences_title">Einstellungen</string>
+    <string name="pref_scheduling_summ_start">Startverzögerung:</string>
+    <string name="pref_scheduling_summ_duration">Dauer:</string>
+    <string name="pref_scheduling_summ_scheduling">Geplant:</string>
+    <string name="pref_state_title">Status</string>
+    <string name="pref_overview_category">Übersicht</string>
+    <string name="title_activity_oled_screensaver">OLED Bildschirmschoner</string>
+    <string name="pref_oled_screensaver_category">OLED Status anzeigen</string>
+    <string name="show_oled_screensaver_summary">Zeigt die Informationen an zufälliger Stelle an, um einbrennen zu verhindern</string>
+    <string name="pref_schedule_settings_category_calendar">Start an Datum / Zeit planen</string>
+    <string name="pref_schedule_recording_enabled">Stop recording at the configured date / time</string>
+    <string name="pref_schedule_recording_enabled_title">Enable scheduled start</string>
+    <string name="pref_schedule_recording_date">Datum</string>
+    <string name="pref_schedule_recording_time">Zeit</string>
+    <string name="camera2_header">Kamera Vorschau / Konfiguration</string>
+    <string name="iso">ISO</string>
+    <string name="iso_message">Kamera ISO wählen</string>
+    <string name="camera_value_auto">Auto</string>
+    <string name="exposure_time">Belichtungszeit</string>
+    <string name="exposure_time_message">Belichtungszeit wählen</string>
+    <string name="camera_menu_config">Kamera Einstellungen</string>
+    <string name="camera_menu_config_message">Weitere Kamera Einstellungen</string>
+    <string name="cam_header_wb">Weissabgleich</string>
+    <string name="pref_camera_settings_only_in_preview">Die Kameraeinstellungen werden in der Vorschau konfiguriert. Die Einstellungen werden hier nur dargestellt, und können nicht geändert werden.</string>
+
+    <string name="cam_wb_incandescent">Glühbirne</string>
+    <string name="cam_wb_daylight">Tageslicht</string>
+    <string name="cam_wb_fluorescent">Neonröhre</string>
+    <string name="cam_wb_cloud">Wolkig</string>
+
+    <string name="autofocus">Autofokus</string>
+    <string name="autofocus_message">Fokus Modus konfigurieren</string>
+    <string name="cam_afmf_autofocus">Autofokus</string>
+    <string name="cam_afmf_field">Autofokus auf gewählte Stelle</string>
+    <string name="cam_afmf_manual">Manuell gewählte Fokusdistanz wählen</string>
+    <string name="cam_header_flash">Blitz</string>
+    <string name="cam_header_flash_info">Die Blitzeinstellungen funktionieren nur im Vollautomatik Modus</string>
+    <string name="camera_flash_on">Ein</string>
+    <string name="camera_flash_off">Aus</string>
+    <string name="dioptre">Dioptrie</string>
+    <string name="pref_camera_objective">Objektiv</string>
 </resources>

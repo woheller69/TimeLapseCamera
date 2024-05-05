@@ -1,12 +1,10 @@
 package at.andreasrohner.spartantimelapserec.rest;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.BatteryManager;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.BufferedOutputStream;
@@ -26,11 +24,13 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import androidx.preference.PreferenceManager;
+import at.andreasrohner.spartantimelapserec.BaseForegroundService;
 import at.andreasrohner.spartantimelapserec.BuildConfig;
-import at.andreasrohner.spartantimelapserec.ForegroundService;
+import at.andreasrohner.spartantimelapserec.ImageRecorderState;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.ServiceHelper;
-import at.andreasrohner.spartantimelapserec.recorder.ImageRecorder;
+import at.andreasrohner.spartantimelapserec.ServiceState;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
 import static at.andreasrohner.spartantimelapserec.R.raw;
@@ -232,7 +232,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	 */
 	private boolean processCurrentRequest(String command) throws IOException {
 		if ("img".equals(command)) {
-			File lastImg = ImageRecorder.getCurrentRecordedImage();
+			File lastImg = ImageRecorderState.getCurrentRecordedImage();
 			if (lastImg != null && lastImg.isFile()) {
 				sendFileFromFilesystem(lastImg);
 				return true;
@@ -241,9 +241,9 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 
 		String result = null;
 		if ("imgcount".equals(command)) {
-			result = String.valueOf(ImageRecorder.getRecordedImagesCount());
+			result = String.valueOf(ImageRecorderState.getRecordedImagesCount());
 		} else if ("lastimg".equals(command)) {
-			File lastImg = ImageRecorder.getCurrentRecordedImage();
+			File lastImg = ImageRecorderState.getCurrentRecordedImage();
 			if (lastImg == null) {
 				result = "null";
 			} else {
@@ -267,7 +267,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	 *
 	 * @param fileId      File ID
 	 * @param contentType Content Type
-	 * @throws IOException
+	 * @throws IOException on read error
 	 */
 	private void replyFile(int fileId, String contentType) throws IOException {
 		sendReplyHeader(ReplyCode.FOUND, contentType);
@@ -296,7 +296,6 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 			return true;
 		}
 
-		Context ctx = restService.getApplicationContext();
 		File rootDir = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).getPath());
 
 		if (!rootDir.isDirectory()) {
@@ -352,7 +351,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	 *
 	 * @param source Source
 	 * @param target Target
-	 * @throws IOException
+	 * @throws IOException on error
 	 */
 	private void copy(InputStream source, OutputStream target) throws IOException {
 		byte[] buf = new byte[8192];
@@ -371,7 +370,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	private boolean processControlRequest(String command) throws IOException {
 		String result = null;
 		if ("status".equals(command)) {
-			result = ForegroundService.mIsRunning ? "running" : "stopped";
+			result = BaseForegroundService.getStatus().getState() == ServiceState.State.RUNNING ? "running" : "stopped";
 		} else if ("start".equals(command)) {
 			ServiceHelper helper = new ServiceHelper(restService.getApplicationContext());
 			helper.start(false);
@@ -417,7 +416,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	 * @param code             Code
 	 * @param contentType      Content Type
 	 * @param additionalFields Additional header fields
-	 * @throws IOException
+	 * @throws IOException on error
 	 */
 	public void sendReplyHeader(ReplyCode code, String contentType, Map<String, String> additionalFields) throws IOException {
 		sendLine("HTTP/1.1 " + code.code + " " + code.text);

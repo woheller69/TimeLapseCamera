@@ -1,0 +1,53 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="@string/pref_capture_rate">
+        <at.andreasrohner.spartantimelapserec.preference.preftype.TimeSpanPreference
+            android:defaultValue="1000"
+            android:dialogMessage="@string/pref_capture_rate_summ"
+            android:key="pref_capture_rate"
+            android:title="@string/pref_capture_rate"
+            app:icon="@drawable/ic_timespan"
+            app:timeSpanType="formatMs" />
+    </PreferenceCategory>
+
+
+    <PreferenceCategory android:title="@string/pref_camera_settings_category">
+        <Preference android:summary="@string/pref_camera_settings_only_in_preview" />
+
+    </PreferenceCategory>
+
+    <at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameraInfoPreference
+        android:key="pref_camera"
+        android:title="@string/pref_camera_camera"
+        app:icon="@drawable/ic_switch_camera" />
+
+    <at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameraInfoPreference
+        android:key="pref_frame_size"
+        android:title="@string/pref_frame_size"
+        app:icon="@drawable/ic_imgsize" />
+
+    <at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameraInfoPreference
+        android:key="pref_camera_iso"
+        android:title="@string/iso"
+        app:icon="@drawable/ic_cam_bt_iso" />
+
+    <at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameraInfoPreference
+        android:key="pref_camera_exposure"
+        android:title="@string/exposure_time"
+        app:icon="@drawable/ic_cam_bt_brightness" />
+
+    <at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameraInfoPreference
+        android:key="pref_camera_wb"
+        android:title="@string/cam_header_wb"
+        app:icon="@drawable/ic_cam_bt_wb_a" />
+
+    <at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameraInfoPreference
+        android:key="pref_camera_flash"
+        android:title="@string/pref_flash"
+        app:icon="@drawable/ic_cam_bt_flash_on" />
+
+    <at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameraInfoPreference
+        android:key="pref_camera_af_mode"
+        android:title="@string/cam_afmf_autofocus"
+        app:icon="@drawable/ic_cam_bt_afmf" />
+</PreferenceScreen>

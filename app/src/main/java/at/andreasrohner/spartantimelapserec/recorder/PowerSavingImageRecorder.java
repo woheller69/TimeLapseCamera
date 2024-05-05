@@ -25,18 +25,21 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.PowerManager.WakeLock;
 import android.os.SystemClock;
+
+import java.io.File;
+
 import at.andreasrohner.spartantimelapserec.MainActivity;
 import at.andreasrohner.spartantimelapserec.PowerSavingReceiver;
-import at.andreasrohner.spartantimelapserec.data.RecSettings;
+import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
 
 public class PowerSavingImageRecorder extends ImageRecorder {
+
 	private WakeLock mWakeLock;
+
 	private AlarmManager mAlarmMgr;
 
-	public PowerSavingImageRecorder(RecSettings settings,
-			 Context context, Handler handler,
-			WakeLock wakeLock) {
-		super(settings, context, handler);
+	public PowerSavingImageRecorder(RecSettingsLegacy settings, Context context, Handler handler, WakeLock wakeLock, File outputDir) {
+		super(settings, context, handler, outputDir);
 
 		this.mWakeLock = wakeLock;
 
@@ -47,8 +50,7 @@ public class PowerSavingImageRecorder extends ImageRecorder {
 	public void stop() {
 		if (mContext != null && mAlarmMgr != null) {
 			Intent intent = new Intent(mContext, PowerSavingReceiver.class);
-			PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, 0,
-					intent, PendingIntent.FLAG_IMMUTABLE);
+			PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 			mAlarmMgr.cancel(alarmIntent);
 			mAlarmMgr = null;
 		}

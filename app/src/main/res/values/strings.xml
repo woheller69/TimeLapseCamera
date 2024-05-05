@@ -42,6 +42,7 @@
     <string name="pref_project_settings_category">Project settings</string>
     <string name="pref_camera_settings_category">Camera settings</string>
     <string name="pref_schedule_settings_category">Scheduling settings</string>
+    <string name="pref_stop_settings_category">Stop settings</string>
     <string name="pref_notification_icon">Notification Icon</string>
     <string name="pref_notification_icon_summ">Select the notification icon shown while recording</string>
     <string name="format_fps">fps</string>
@@ -60,6 +61,7 @@
 
     <!-- StarDialog -->
     <string name="dialog_OK_button">OK</string>
+    <string name="dialog_CANCEL_button">Cancel</string>
     <string name="dialog_NO_button">No</string>
     <string name="dialog_Later_button">Maybe later</string>
     <string name="dialog_StarOnGitHub">Do you like this app? Please give a star on GitHub or buy the developer a coffee via PayPal.</string>
@@ -82,13 +84,65 @@
     <string name="pref_restapi_port_title">HTTP server port</string>
     <string name="pref_restapi_pw_title">Password</string>
     <string name="pref_restapi_port_hint">Port</string>
-    <string name="pref_restapi_port_summ">Port, 1024 - 65535, default 8085</string>
+    <string name="pref_restapi_port_summ">Port, 1024 – 65535, default 8085. Restart of the REST API needed.</string>
     <string name="pref_restapi_pw_summ">Password to access the REST API</string>
     <string name="pref_restapi_pw_hint">Password</string>
-    <string name="info_restapi_started">REST API started...</string>
-    <string name="info_restapi_stopped">REST API stopped...</string>
+    <string name="info_restapi_started">REST API started…</string>
+    <string name="info_restapi_stopped">REST API stopped…</string>
     <string name="error_port_invalid">Port invalid, use 8085</string>
     <string name="pref_restapi_connectioninfo_title">Connection Info</string>
+    <string name="pref_restapi_connectioninfo_title_on">REST API on</string>
+    <string name="pref_restapi_connectioninfo_title_off">REST API off</string>
     <string name="error_no_ip_refresh">No IP! Tap to refresh.</string>
     <string name="notification_restapi">REST API Running</string>
+    <string name="pref_restapi_settings_header">REST Settings</string>
+    <string name="pref_stop_info_nostop">Never stop</string>
+    <string name="pref_stop_info_stop_start">Stop:</string>
+    <string name="pref_stop_info_stop_battery">low battery</string>
+    <string name="pref_stop_info_stop_storage">low storage</string>
+    <string name="pref_scheduling_settings_category">Scheduling</string>
+    <string name="pref_scheduling_settings_title">Configure Scheduling</string>
+    <string name="pref_preferences_title">Preferences</string>
+
+    <string name="pref_scheduling_summ_start">Start-delay:</string>
+    <string name="pref_scheduling_summ_duration">Duration:</string>
+    <string name="pref_scheduling_summ_scheduling">Scheduled:</string>
+    <string name="pref_state_title">State</string>
+    <string name="pref_overview_category">Overview</string>
+    <string name="pref_oled_screensaver_category">Show OLED Status Screen</string>
+    <string name="title_activity_oled_screensaver">OLED Screensaver</string>
+    <string name="show_oled_screensaver_summary">Show information at random location to prevent OLED burn in</string>
+    <string name="pref_schedule_settings_category_calendar">Schedule start at date / time</string>
+    <string name="pref_schedule_recording_enabled">Start recording at the configured date / time</string>
+    <string name="pref_schedule_recording_enabled_title">Enable scheduled start</string>
+    <string name="pref_schedule_recording_date">Date</string>
+    <string name="pref_schedule_recording_time">Time</string>
+    <string name="camera2_header">Camera Preview / Configuration</string>
+    <string name="iso">ISO</string>
+    <string name="iso_message">Select camera ISO</string>
+    <string name="camera_value_auto">Auto</string>
+    <string name="exposure_time">Exposure time</string>
+    <string name="exposure_time_message">Select the exposure time</string>
+
+    <string name="camera_menu_config">Camera Config</string>
+    <string name="camera_menu_config_message">Additional Camera Configurations</string>
+    <string name="cam_header_wb">White balance</string>
+    <string name="pref_camera_settings_only_in_preview">The camera settings are configured in the preview. Here the settings are only displayed, and cannot be changed.</string>
+
+    <string name="cam_wb_incandescent">Light bulb</string>
+    <string name="cam_wb_daylight">Day Light</string>
+    <string name="cam_wb_fluorescent">Fluorescent</string>
+    <string name="cam_wb_cloud">Cloudy</string>
+
+    <string name="autofocus">Autofocus</string>
+    <string name="autofocus_message">Configure focus mode</string>
+    <string name="cam_afmf_autofocus">Autofocus</string>
+    <string name="cam_afmf_field">Autofocus at selected field</string>
+    <string name="cam_afmf_manual">Store manual selected focus distande</string>
+    <string name="cam_header_flash">Flash</string>
+    <string name="cam_header_flash_info">Flash Control just works in full auto mode</string>
+    <string name="camera_flash_on">On</string>
+    <string name="camera_flash_off">Off</string>
+    <string name="dioptre">Dioptre</string>
+    <string name="pref_camera_objective">Lens</string>
 </resources>

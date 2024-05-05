@@ -1,0 +1,17 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="@string/pref_stop_settings_category">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:icon="@drawable/ic_battery_empty"
+            android:key="pref_stop_low_battery"
+            android:summary="@string/pref_stop_low_battery_summ"
+            android:title="@string/pref_stop_low_battery" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:icon="@drawable/ic_memory"
+            android:key="pref_stop_low_storage"
+            android:summary="@string/pref_stop_low_storage_summ"
+            android:title="@string/pref_stop_low_storage" />
+    </PreferenceCategory>
+</PreferenceScreen>

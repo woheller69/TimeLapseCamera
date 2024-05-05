@@ -1,0 +1,21 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="@string/pref_restapi_settings_header">
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_web"
+            android:key="pref_restapi_enabled"
+            android:summary="@string/pref_restapi_enabled_summ"
+            android:title="@string/pref_restapi_enabled" />
+
+        <EditTextPreference
+            android:defaultValue="8085"
+            android:dialogMessage="@string/pref_restapi_port_summ"
+            android:icon="@drawable/ic_rj45"
+            android:key="pref_restapi_port"
+            android:summary="@string/pref_restapi_port_hint"
+            android:title="@string/pref_restapi_port_title" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

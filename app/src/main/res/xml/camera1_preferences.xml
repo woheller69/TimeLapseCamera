@@ -1,0 +1,86 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <PreferenceCategory android:title="@string/pref_camera_settings_category">
+        <ListPreference
+            android:defaultValue="0"
+            android:dialogTitle="@string/pref_camera"
+            android:key="pref_camera"
+            android:title="@string/pref_camera" />
+
+        <at.andreasrohner.spartantimelapserec.legacypreference.SeekBarPreference
+            android:defaultValue="0"
+            android:key="pref_exposurecomp"
+            android:title="@string/pref_exposure_compensation" />
+
+        <at.andreasrohner.spartantimelapserec.legacypreference.SeekBarPreference
+            android:defaultValue="0"
+            android:key="pref_zoom"
+            android:title="@string/pref_zoom" />
+
+        <ListPreference
+            android:dialogTitle="@string/pref_frame_size"
+            android:key="pref_frame_size"
+            android:title="@string/pref_frame_size" />
+        <ListPreference
+            android:dialogTitle="@string/pref_frame_rate"
+            android:key="pref_frame_rate"
+            android:title="@string/pref_frame_rate" />
+
+        <at.andreasrohner.spartantimelapserec.legacypreference.IntervalPickerPreference
+
+            android:defaultValue="1000"
+            android:dialogMessage="@string/pref_capture_rate_summ"
+            android:key="pref_capture_rate"
+            android:title="@string/pref_capture_rate" />
+        <at.andreasrohner.spartantimelapserec.legacypreference.SeekBarPreference
+            android:defaultValue="90"
+            android:dialogMessage="@string/pref_jpeg_quality_summ"
+            android:key="pref_jpeg_quality"
+            android:title="@string/pref_jpeg_quality"
+            app:max="100"
+            app:min="1"
+            app:suffix="%" />
+
+        <EditTextPreference
+            android:dialogMessage="@string/pref_video_enc_summ"
+            android:hint="@string/pref_video_enc_hint"
+            android:inputType="number"
+            android:key="pref_video_encoding_br"
+            android:title="@string/pref_video_enc" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="pref_flash"
+            android:title="@string/pref_flash" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="pref_mute_shutter"
+            android:summary="@string/pref_mute_shutter_summ"
+            android:title="@string/pref_mute_shutter" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_camera_hardware_settings">
+        <at.andreasrohner.spartantimelapserec.legacypreference.SeekBarPreference
+            android:defaultValue="500"
+            android:dialogMessage="@string/pref_camera_init_delay_summ"
+            android:key="pref_camera_init_delay"
+            android:title="@string/pref_camera_init_delay"
+            app:max="2000"
+            app:min="0"
+            app:suffix="@string/time_format_msec" />
+        <at.andreasrohner.spartantimelapserec.legacypreference.SeekBarPreference
+            android:defaultValue="1000"
+            android:dialogMessage="@string/pref_camera_trigger_delay_summ"
+            android:key="pref_camera_trigger_delay"
+            android:title="@string/pref_camera_trigger_delay"
+            app:max="2000"
+            app:min="0"
+            app:suffix="@string/time_format_msec" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

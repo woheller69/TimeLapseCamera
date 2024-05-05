@@ -12,17 +12,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ServiceInfo;
+import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.net.wifi.WifiManager.WifiLock;
 import android.os.Build;
 import android.os.IBinder;
-import android.os.SystemClock;
-import android.preference.PreferenceManager;
-import android.util.Log;
-import android.net.wifi.WifiManager.WifiLock;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import android.net.ConnectivityManager;
+import android.os.SystemClock;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -32,7 +31,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -40,6 +38,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import androidx.core.app.NotificationCompat;
+import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.MainActivity;
 import at.andreasrohner.spartantimelapserec.R;
 
@@ -158,19 +157,6 @@ public class RestService extends Service implements Runnable {
 		// if there are not any pending start commands to be delivered to the service, it will be called with a null intent object,
 		if (intent != null && intent.getAction() != null) {
 			Log.d(TAG, "onStartCommand called with action: " + intent.getAction());
-
-			//TODO Is this needed?
-			/*
-			switch (intent.getAction()) {
-				case ACTION_REQUEST_START:
-					if (isRunning()) {
-						return START_STICKY;
-					}
-					break;
-				case ACTION_REQUEST_STOP:
-					stopSelf();
-					return START_NOT_STICKY;
-			}*/
 		}
 
 		shouldExit = false;

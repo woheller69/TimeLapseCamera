@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    tools:context=".camera2.Preview2Activity">
+
+    <TextureView
+        android:id="@+id/texture"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/cameraToolbar"
+        android:layout_alignParentTop="true"
+        android:gravity="center" />
+
+
+    <at.andreasrohner.spartantimelapserec.camera2.PreviewOverlay
+        android:id="@+id/imageOverlay"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/cameraToolbar"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:visibility="visible" />
+
+
+    <LinearLayout
+        android:id="@+id/cameraToolbar"
+        android:layout_width="fill_parent"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/bt_afmf"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            app:srcCompat="@drawable/ic_cam_bt_afmf" />
+
+        <ImageButton
+            android:id="@+id/bt_iso"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            app:srcCompat="@drawable/ic_cam_bt_iso" />
+
+        <ImageButton
+            android:id="@+id/btn_takepicture"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_weight="1"
+            android:background="@null"
+            app:srcCompat="@drawable/ic_shutter_button" />
+
+        <ImageButton
+            android:id="@+id/bt_brightness"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            app:srcCompat="@drawable/ic_cam_bt_brightness" />
+
+        <ImageButton
+            android:id="@+id/bt_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            app:srcCompat="@drawable/ic_cam_bt_menu" />
+    </LinearLayout>
+
+</RelativeLayout>

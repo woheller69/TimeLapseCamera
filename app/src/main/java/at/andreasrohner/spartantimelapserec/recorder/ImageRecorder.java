@@ -18,13 +18,6 @@
 
 package at.andreasrohner.spartantimelapserec.recorder;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import android.content.Context;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
@@ -36,56 +29,47 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
 
-import at.andreasrohner.spartantimelapserec.data.RecSettings;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-public class ImageRecorder extends Recorder implements Runnable,
-		Camera.PictureCallback, ErrorCallback, AutoFocusCallback {
+import at.andreasrohner.spartantimelapserec.ImageRecorderState;
+import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
+
+public class ImageRecorder extends Recorder implements Runnable, Camera.PictureCallback, ErrorCallback, AutoFocusCallback {
+
 	private static final int CONTINUOUS_CAPTURE_THRESHOLD = 3000;
+
 	private static final int RELEASE_CAMERA_THRESHOLD = 2000;
+
 	protected long mEndTime;
+
 	protected long mStartPreviewTime;
+
 	protected boolean mUseAutoFocus;
+
 	protected Camera.PictureCallback pictureCallback;
+
 	protected AutoFocusCallback autoFocusCallback;
+
 	protected boolean mWaitCamReady;
 
-	/**
-	 * Current / last recorded image
-	 */
-	private static File currentRecordedImage;
+	public ImageRecorder(RecSettingsLegacy settings, Context context, Handler handler, File outputDir) {
+		super(settings, context, handler, outputDir);
 
-	/**
-	 * Count of recorded images within the whole app session
-	 */
-	private static int recordedImagesCount = 0;
+		if (settings.getStopRecAfter() > 0) {
+			mEndTime = System.currentTimeMillis() + settings.getInitDelay() + settings.getStopRecAfter();
+		}
 
-	public ImageRecorder(RecSettings settings,
-			Context context, Handler handler) {
-		super(settings, context, handler);
-
-		if (settings.getStopRecAfter() > 0)
-			mEndTime = System.currentTimeMillis() + settings.getInitDelay()
-					+ settings.getStopRecAfter();
-
-		if (mCanDisableShutterSound)
+		if (mCanDisableShutterSound) {
 			mMute = null;
+		}
 
-		pictureCallback=this;
-		autoFocusCallback=this;
-	}
-
-	/**
-	 * @return Current / last recorded image
-	 */
-	public static File getCurrentRecordedImage() {
-		return currentRecordedImage;
-	}
-
-	/**
-	 * @return Count of recorded images within the whole app session
-	 */
-	public static int getRecordedImagesCount() {
-		return recordedImagesCount;
+		pictureCallback = this;
+		autoFocusCallback = this;
 	}
 
 	@Override
@@ -101,7 +85,7 @@ public class ImageRecorder extends Recorder implements Runnable,
 	protected void scheduleNextPicture() {
 		long diffTime = SystemClock.elapsedRealtime() - mStartPreviewTime;
 		long delay = mSettings.getCaptureRate() - diffTime;
-		if (delay >= RELEASE_CAMERA_THRESHOLD && mSettings.getCaptureRate() >= CONTINUOUS_CAPTURE_THRESHOLD){
+		if (delay >= RELEASE_CAMERA_THRESHOLD && mSettings.getCaptureRate() >= CONTINUOUS_CAPTURE_THRESHOLD) {
 			releaseCamera();
 		}
 
@@ -115,12 +99,11 @@ public class ImageRecorder extends Recorder implements Runnable,
 	public void onPictureTaken(byte[] data, Camera camera) {
 		try {
 			File file = getOutputFile("jpg");
-			currentRecordedImage = file;
+			ImageRecorderState.setCurrentImage(file);
 			FileOutputStream out = new FileOutputStream(file);
 			out.write(data);
 			out.close();
 			mWaitCamReady = false;
-			recordedImagesCount++;
 			scheduleNextPicture();
 		} catch (Exception e) {
 			handleError(getClass().getSimpleName(), e.getMessage());
@@ -132,7 +115,7 @@ public class ImageRecorder extends Recorder implements Runnable,
 		try {
 			muteShutter();
 			new Handler(Looper.getMainLooper()).postDelayed(() -> {
-				if (mCamera!=null) {
+				if (mCamera != null) {
 					camera.takePicture(null, null, pictureCallback);
 				}
 			}, mWaitCamReady ? mSettings.getCameraTriggerDelay() : 0);
@@ -156,29 +139,27 @@ public class ImageRecorder extends Recorder implements Runnable,
 			if (mCamera == null)
 				prepareRecord();
 
-			Log.d("Camera","Wait:"+ mWaitCamReady);
+			Log.d("Camera", "Wait:" + mWaitCamReady);
 
 			new Handler(Looper.getMainLooper()).postDelayed(() -> {
-				if (mCamera!=null) {
+				if (mCamera != null) {
 					mCamera.startPreview();
 					if (mUseAutoFocus) {
 						mCamera.autoFocus(autoFocusCallback);
-					}
-					else {
+					} else {
 						onAutoFocus(true, mCamera);
 					}
 				}
 			}, mWaitCamReady ? mSettings.getCameraInitDelay() : 0);
 
 		} catch (Exception e) {
-			Log.e("Error","startPreview");
+			Log.e("Error", "startPreview");
 			e.printStackTrace();
 			handleError(getClass().getSimpleName(), e.getMessage());
 		}
 	}
 
-	protected void setWhiteBalance(Camera.Parameters params,
-			Set<String> suppModes) {
+	protected void setWhiteBalance(Camera.Parameters params, Set<String> suppModes) {
 		if (suppModes.contains(Camera.Parameters.WHITE_BALANCE_AUTO)) {
 			params.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_AUTO);
 		}
@@ -187,8 +168,7 @@ public class ImageRecorder extends Recorder implements Runnable,
 	protected void setFocusMode(Camera.Parameters params, Set<String> suppModes) {
 		if (mSettings.getCaptureRate() < CONTINUOUS_CAPTURE_THRESHOLD && suppModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
 			params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-		} else if (suppModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)
-				&& mSettings.getCaptureRate() < CONTINUOUS_CAPTURE_THRESHOLD) {
+		} else if (suppModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) && mSettings.getCaptureRate() < CONTINUOUS_CAPTURE_THRESHOLD) {
 			params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
 		} else if (suppModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
 			params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
@@ -221,8 +201,7 @@ public class ImageRecorder extends Recorder implements Runnable,
 
 		params.setPictureFormat(ImageFormat.JPEG);
 
-		params.setPictureSize(mSettings.getFrameWidth(),
-				mSettings.getFrameHeight());
+		params.setPictureSize(mSettings.getFrameWidth(), mSettings.getFrameHeight());
 
 		params.setJpegQuality(mSettings.getJpegQuality());
 		params.setRotation(getCameraRotation(mSettings.getCameraId()));
@@ -254,13 +233,12 @@ public class ImageRecorder extends Recorder implements Runnable,
 	@Override
 	public void onError(int error, Camera camera) {
 		switch (error) {
-		case Camera.CAMERA_ERROR_SERVER_DIED:
-			handleError(getClass().getSimpleName(), "Cameraserver died");
-			break;
-		default:
-			handleError(getClass().getSimpleName(),
-					"Unkown error occured while recording");
-			break;
+			case Camera.CAMERA_ERROR_SERVER_DIED:
+				handleError(getClass().getSimpleName(), "Cameraserver died");
+				break;
+			default:
+				handleError(getClass().getSimpleName(), "Unkown error occured while recording");
+				break;
 		}
 	}
 }

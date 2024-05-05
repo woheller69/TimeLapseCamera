@@ -18,11 +18,6 @@
 
 package at.andreasrohner.spartantimelapserec;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
@@ -31,7 +26,6 @@ import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.ErrorCallback;
 import android.hardware.Camera.Size;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -41,13 +35,23 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
-import at.andreasrohner.spartantimelapserec.data.RecSettings;
 
-public class PreviewActivity extends Activity implements ErrorCallback,
-		AutoFocusCallback {
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import androidx.preference.PreferenceManager;
+import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
+
+public class PreviewActivity extends Activity implements ErrorCallback, AutoFocusCallback {
+
 	private Preview mPreview;
+
 	private Camera mCamera;
-	private RecSettings mSettings;
+
+	private RecSettingsLegacy mSettings;
+
 	private boolean mUseAutoFocus;
 
 	@Override
@@ -59,9 +63,8 @@ public class PreviewActivity extends Activity implements ErrorCallback,
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-		mSettings = new RecSettings();
-		mSettings.load(getApplicationContext(), PreferenceManager
-				.getDefaultSharedPreferences(getApplicationContext()));
+		mSettings = new RecSettingsLegacy();
+		mSettings.load(getApplicationContext());
 
 		// Create a RelativeLayout container that will hold a SurfaceView,
 		// and set it as the content of our activity.
@@ -97,26 +100,24 @@ public class PreviewActivity extends Activity implements ErrorCallback,
 		}
 	}
 
-	private static void setCameraDisplayOrientation(Activity activity,
-			int cameraId, Camera camera) {
+	private static void setCameraDisplayOrientation(Activity activity, int cameraId, Camera camera) {
 		CameraInfo info = new Camera.CameraInfo();
 		Camera.getCameraInfo(cameraId, info);
-		int rotation = activity.getWindowManager().getDefaultDisplay()
-				.getRotation();
+		int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
 		int degrees = 0;
 		switch (rotation) {
-		case Surface.ROTATION_0:
-			degrees = 0;
-			break;
-		case Surface.ROTATION_90:
-			degrees = 90;
-			break;
-		case Surface.ROTATION_180:
-			degrees = 180;
-			break;
-		case Surface.ROTATION_270:
-			degrees = 270;
-			break;
+			case Surface.ROTATION_0:
+				degrees = 0;
+				break;
+			case Surface.ROTATION_90:
+				degrees = 90;
+				break;
+			case Surface.ROTATION_180:
+				degrees = 180;
+				break;
+			case Surface.ROTATION_270:
+				degrees = 270;
+				break;
 		}
 
 		int result;
@@ -209,12 +210,12 @@ public class PreviewActivity extends Activity implements ErrorCallback,
 		String msg;
 
 		switch (error) {
-		case Camera.CAMERA_ERROR_SERVER_DIED:
-			msg = "Cameraserver died";
-			break;
-		default:
-			msg = "Unkown error occured while recording";
-			break;
+			case Camera.CAMERA_ERROR_SERVER_DIED:
+				msg = "Cameraserver died";
+				break;
+			default:
+				msg = "Unkown error occured while recording";
+				break;
 		}
 
 		final Context context = getApplicationContext();
@@ -245,6 +246,7 @@ public class PreviewActivity extends Activity implements ErrorCallback,
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 /**
  * A simple wrapper around a Camera and a SurfaceView that renders a centered
  * preview of the Camera to the surface. We need to center the SurfaceView
@@ -252,16 +254,22 @@ public class PreviewActivity extends Activity implements ErrorCallback,
  * aspect ratio as the device's display.
  */
 class Preview extends ViewGroup implements SurfaceHolder.Callback {
+
 	private final String TAG = "Preview";
 
 	private SurfaceView mSurfaceView;
+
 	private SurfaceHolder mHolder;
+
 	private Camera mCamera;
-	private RecSettings mSettings;
+
+	private RecSettingsLegacy mSettings;
+
 	private Size mPreviewSize;
+
 	private List<Size> mSupportedPreviewSizes;
 
-	Preview(Context context, RecSettings settings) {
+	Preview(Context context, RecSettingsLegacy settings) {
 		super(context);
 
 		mSettings = settings;
@@ -279,12 +287,10 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
 	public void setCamera(Camera camera) {
 		mCamera = camera;
 		if (mCamera != null) {
-			mSupportedPreviewSizes = mCamera.getParameters()
-					.getSupportedPreviewSizes();
+			mSupportedPreviewSizes = mCamera.getParameters().getSupportedPreviewSizes();
 
 			if (mSupportedPreviewSizes != null) {
-				mPreviewSize = getOptimalPreviewSize(mSupportedPreviewSizes,
-						mSettings.getFrameWidth(), mSettings.getFrameHeight());
+				mPreviewSize = getOptimalPreviewSize(mSupportedPreviewSizes, mSettings.getFrameWidth(), mSettings.getFrameHeight());
 			}
 			requestLayout();
 		}
@@ -305,29 +311,24 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
 				previewHeight = mPreviewSize.height;
 			}
 
-			int rotation = ((Activity) getContext()).getWindowManager()
-					.getDefaultDisplay().getRotation();
+			int rotation = ((Activity) getContext()).getWindowManager().getDefaultDisplay().getRotation();
 			switch (rotation) {
-			case Surface.ROTATION_0:
-			case Surface.ROTATION_180:
-				if (mPreviewSize != null) {
-					previewWidth = mPreviewSize.height;
-					previewHeight = mPreviewSize.width;
-				}
-				break;
+				case Surface.ROTATION_0:
+				case Surface.ROTATION_180:
+					if (mPreviewSize != null) {
+						previewWidth = mPreviewSize.height;
+						previewHeight = mPreviewSize.width;
+					}
+					break;
 			}
 
 			// Center the child SurfaceView within the parent.
 			if (width * previewHeight > height * previewWidth) {
-				final int scaledChildWidth = previewWidth * height
-						/ previewHeight;
-				child.layout((width - scaledChildWidth) / 2, 0,
-						(width + scaledChildWidth) / 2, height);
+				final int scaledChildWidth = previewWidth * height / previewHeight;
+				child.layout((width - scaledChildWidth) / 2, 0, (width + scaledChildWidth) / 2, height);
 			} else {
-				final int scaledChildHeight = previewHeight * width
-						/ previewWidth;
-				child.layout(0, (height - scaledChildHeight) / 2, width,
-						(height + scaledChildHeight) / 2);
+				final int scaledChildHeight = previewHeight * width / previewWidth;
+				child.layout(0, (height - scaledChildHeight) / 2, width, (height + scaledChildHeight) / 2);
 			}
 		}
 	}

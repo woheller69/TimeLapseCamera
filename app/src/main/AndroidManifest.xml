@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="at.andreasrohner.spartantimelapserec">
 
@@ -8,53 +9,89 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"
+    <uses-permission
+        android:name="android.permission.SCHEDULE_EXACT_ALARM"
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
-        android:requestLegacyExternalStorage="true"
+        android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:launchMode="singleTask"
-        android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-        android:theme="@style/Theme.TimeLapse" >
+        android:requestLegacyExternalStorage="true"
+        android:theme="@style/Theme.TimeLapse">
         <activity
-            android:name="at.andreasrohner.spartantimelapserec.MainActivity"
-            android:windowSoftInputMode="stateUnchanged"
-            android:exported="true">
+            android:name=".OledScreensaverActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:label="@string/title_activity_oled_screensaver"
+            android:theme="@style/Theme.TimeLapse.Fullscreen" />
+        <activity
+            android:name=".camera2.Preview2Activity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:label="@string/camera2_header"
+            android:theme="@style/Theme.Design.NoActionBar" />
+        <activity
+            android:name=".preference.activity.RestSettingsActivity"
+            android:exported="false"
+            android:label="@string/pref_restapi_settings_header" />
+        <activity
+            android:name=".preference.activity.LegacyCamera1SettingsActivity"
+            android:exported="false"
+            android:label="@string/pref_camera_settings_category" />
+        <activity
+            android:name=".preference.activity.SchedulingSettingsActivity"
+            android:exported="false"
+            android:label="@string/pref_scheduling_settings_title" />
+        <activity
+            android:name=".preference.activity.Camera2SettingsActivity"
+            android:exported="false"
+            android:label="@string/pref_camera_settings_category" />
+        <activity
+            android:name=".preference.activity.StopSettingsActivity"
+            android:exported="false"
+            android:label="@string/pref_stop_settings_category" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="stateUnchanged">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="at.andreasrohner.spartantimelapserec.PreviewActivity"
+            android:name=".PreviewActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:windowSoftInputMode="stateAlwaysHidden" >
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
         <service
+            android:name=".Camera1ForegroundService"
             android:exported="false"
-            android:foregroundServiceType="camera"
-            android:name="at.andreasrohner.spartantimelapserec.ForegroundService" />
-
+            android:foregroundServiceType="camera" />
         <service
+            android:name=".camera2.Camera2ForegroundService"
             android:exported="false"
-            android:foregroundServiceType="camera"
-            android:name="at.andreasrohner.spartantimelapserec.rest.RestService" />
+            android:foregroundServiceType="camera" />
+        <service
+            android:name=".rest.RestService"
+            android:exported="false"
+            android:foregroundServiceType="camera" />
 
-        <receiver android:name="at.andreasrohner.spartantimelapserec.ScheduleReceiver" />
-        <receiver android:name="at.andreasrohner.spartantimelapserec.PowerSavingReceiver" />
+        <receiver android:name=".ScheduleReceiver" />
+        <receiver android:name=".PowerSavingReceiver" />
     </application>
 
 </manifest>

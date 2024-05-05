@@ -1,0 +1,46 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="@string/pref_schedule_settings_category">
+
+
+        <at.andreasrohner.spartantimelapserec.preference.preftype.TimeSpanPreference
+            android:defaultValue="1000"
+            android:dialogMessage="@string/pref_initial_delay_summ"
+            android:icon="@drawable/ic_start"
+            android:key="pref_initial_delay"
+            android:title="@string/pref_initial_delay"
+            app:timeSpanType="formatMs" />
+
+        <at.andreasrohner.spartantimelapserec.preference.preftype.TimeSpanPreference
+            android:defaultValue="2880"
+            android:icon="@drawable/ic_end"
+            android:key="pref_stop_recording_after"
+            android:title="@string/pref_stop_recording_after"
+            app:timeSpanType="formatHour" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_schedule_settings_category_calendar">
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_check"
+            android:key="pref_schedule_recording_enabled"
+            android:summary="@string/pref_schedule_recording_enabled"
+            android:title="@string/pref_schedule_recording_enabled_title" />
+
+        <at.andreasrohner.spartantimelapserec.preference.preftype.DatePreference
+            android:defaultValue=""
+            android:icon="@drawable/ic_calendar"
+            android:key="pref_schedule_recording_date"
+            android:title="@string/pref_schedule_recording_date" />
+
+        <at.andreasrohner.spartantimelapserec.preference.preftype.TimeSpanPreference
+            android:defaultValue="0"
+            android:icon="@drawable/ic_clock"
+            android:key="pref_schedule_recording_time"
+            android:title="@string/pref_schedule_recording_time"
+            app:timeSpanType="formatHourMinClock" />
+
+    </PreferenceCategory>
+</PreferenceScreen>
