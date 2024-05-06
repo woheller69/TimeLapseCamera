@@ -74,7 +74,7 @@ public class Camera2Wrapper {
 	private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
 		@Override
 		public void onOpened(CameraDevice camera) {
-			Log.e(TAG, "Camera Ready");
+			Log.i(TAG, "Camera Ready");
 			cameraDevice = camera;
 			if (openCallback != null) {
 				openCallback.cameraOpened(true);
