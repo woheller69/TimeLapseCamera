@@ -90,7 +90,7 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 			captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-			String jpegOrientation = prefs.getString("jpeg_orientation", "NO_NAME");
+			String jpegOrientation = prefs.getString("jpeg_orientation", "SCREEN_ORIENTATION");
 			switch (jpegOrientation) {
 				case "NO_ORIENTATION":
 					// Nothing to do

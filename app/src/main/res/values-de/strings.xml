@@ -146,4 +146,8 @@
     <string name="pref_jpeg_settings">JPEG Einstellungen</string>
     <string name="pref_image_rotation">Bild Ausrichtung</string>
     <string name="camera_not_selected">Vorschau starten um Kamera zu konfigurieren</string>
+    <string name="exposure_absolute">Absolut</string>
+    <string name="exposure_relative">Relativ</string>
+    <string name="exposure_relative_text">Der Relative Wert wird nur verwendet, wenn der Absolutwert auf \'Auto\' steht</string>
+    <string name="logs">Logs</string>
 </resources>

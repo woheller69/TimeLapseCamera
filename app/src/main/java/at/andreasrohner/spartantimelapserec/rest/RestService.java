@@ -1,5 +1,3 @@
-
-
 package at.andreasrohner.spartantimelapserec.rest;
 
 import android.app.AlarmManager;
@@ -41,6 +39,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.MainActivity;
 import at.andreasrohner.spartantimelapserec.R;
+import at.andreasrohner.spartantimelapserec.state.StateLog;
 
 /**
  * HTTP REST API Service, for remote Control
@@ -177,6 +176,8 @@ public class RestService extends Service implements Runnable {
 			}
 		}
 		Log.d(TAG, "Creating server thread");
+		StateLog.addEntry("REST API", "Start server");
+
 		serverThread = new Thread(this);
 		serverThread.start();
 		return START_STICKY;
@@ -211,6 +212,7 @@ public class RestService extends Service implements Runnable {
 	@Override
 	public void onDestroy() {
 		Log.i(TAG, "onDestroy() Stopping server");
+		StateLog.addEntry("REST API", "Stop server");
 		shouldExit = true;
 
 		if (serverThread == null) {

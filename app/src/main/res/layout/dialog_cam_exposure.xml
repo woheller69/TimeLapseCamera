@@ -1,0 +1,58 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/exposure_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/tab_absolute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/exposure_absolute" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/tab_relative"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/exposure_relative" />
+
+    </com.google.android.material.tabs.TabLayout>
+
+    <NumberPicker
+        android:id="@+id/exposure_absolute"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/exposure_relative_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="20pt"
+        android:paddingBottom="20pt"
+        android:text="@string/exposure_relative_text" />
+
+    <TextView
+        android:id="@+id/exposure_relative_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text=""
+        android:textStyle="bold" />
+
+    <SeekBar
+        android:id="@+id/exposure_relative"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="false"
+        android:max="2"
+        android:min="-2"
+        android:progress="1" />
+
+
+</LinearLayout>

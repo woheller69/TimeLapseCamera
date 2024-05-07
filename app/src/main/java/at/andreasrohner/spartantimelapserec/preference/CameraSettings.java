@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.FormatUtil;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.camera2.CameraTiming;
@@ -23,7 +24,7 @@ public class CameraSettings implements MainSettingsMenu {
 	/**
 	 * Camera timing values
 	 */
-	private CameraTiming timing;
+	private static CameraTiming timing;
 
 	/**
 	 * Constructor
@@ -68,19 +69,7 @@ public class CameraSettings implements MainSettingsMenu {
 				b.append(String.valueOf(iso));
 			}
 
-			long exposure = prefs.getLong("pref_camera_exposure", -1);
-			if (exposure != -1) {
-				b.append(", ");
-				b.append(ctx.getString(R.string.exposure_time));
-				b.append(": ");
-
-				if (timing == null) {
-					timing = new CameraTiming(ctx);
-					timing.buildRangeSelection(-1, Long.MAX_VALUE);
-				}
-
-				b.append(timing.findBestMatchingValue(exposure));
-			}
+			b.append(formatBrightness(ctx, true));
 
 			String currentWbMode = prefs.getString("pref_camera_wb", "auto");
 			if (!"auto".equals(currentWbMode)) {
@@ -117,5 +106,49 @@ public class CameraSettings implements MainSettingsMenu {
 			}
 		}
 		pref.setSummary(b.toString());
+	}
+
+	/**
+	 * Format brightness value
+	 *
+	 * @param context    Context
+	 * @param withHeader With header
+	 * @return Formatted value
+	 */
+	public static String formatBrightness(Context context, boolean withHeader) {
+		synchronized (CameraSettings.class) {
+			if (timing == null) {
+				timing = new CameraTiming(context);
+				timing.buildRangeSelection(-1, Long.MAX_VALUE);
+			}
+		}
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		StringBuffer b = new StringBuffer();
+
+		long exposure = prefs.getLong("pref_camera_exposure", -1);
+		int relExposure = prefs.getInt("pref_camera_exposure_rel", 0);
+		if (exposure != -1 || relExposure != 0) {
+			if (withHeader) {
+				b.append(", ");
+				b.append(context.getString(R.string.exposure_time));
+				b.append(':');
+			}
+
+			if (exposure != -1) {
+				b.append(' ');
+				b.append(timing.findBestMatchingValue(exposure));
+			}
+			if (relExposure != 0) {
+				b.append(' ');
+				if (relExposure > 0) {
+					b.append('+');
+				}
+				b.append(relExposure);
+				b.append(" EV");
+			}
+		}
+
+		return b.toString().trim();
 	}
 }

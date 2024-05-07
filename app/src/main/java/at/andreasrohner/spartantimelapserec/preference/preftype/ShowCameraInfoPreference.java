@@ -12,6 +12,7 @@ import androidx.preference.DialogPreference;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.camera2.CameraTiming;
 import at.andreasrohner.spartantimelapserec.camera2.pupcfg.CameraModel;
+import at.andreasrohner.spartantimelapserec.preference.CameraSettings;
 import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
@@ -88,18 +89,15 @@ public class ShowCameraInfoPreference extends DialogPreference {
 			}
 		} else if ("pref_camera_exposure".equals(key)) {
 			long exposure = prefs.getLong("pref_camera_exposure", -1);
-			if (exposure == -1) {
+			int relExposure = prefs.getInt("pref_camera_exposure_rel", 0);
+			if (exposure == -1 && relExposure == 0) {
 				setIcon(R.drawable.ic_cam_bt_brightness);
 				setSummary(R.string.camera_value_auto);
 			} else {
 				setIcon(R.drawable.ic_cam_bt_brightness_enabled);
-				if (timing == null) {
-					timing = new CameraTiming(getContext());
-					timing.buildRangeSelection(-1, Long.MAX_VALUE);
-				}
-
-				setSummary(timing.findBestMatchingValue(exposure));
+				setSummary(CameraSettings.formatBrightness(getContext(), false));
 			}
+
 		} else if ("pref_camera_wb".equals(key)) {
 			String currentWbMode = prefs.getString("pref_camera_wb", "auto");
 

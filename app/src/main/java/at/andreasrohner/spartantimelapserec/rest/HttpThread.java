@@ -133,7 +133,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 			line = reader.readLine();
 		}
 
-		processRequest(method, url, protocol, header);
+		processRequest(method, url, protocol, header, String.valueOf(socket.getRemoteSocketAddress()));
 	}
 
 	/**
@@ -143,10 +143,11 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	 * @param url      URL
 	 * @param protocol Protocol
 	 * @param header   Header Fields
+	 * @param remote   Remote
 	 */
-	private void processRequest(String method, String url, String protocol, Map<String, String> header) throws IOException {
+	private void processRequest(String method, String url, String protocol, Map<String, String> header, String remote) throws IOException {
 		if ("GET".equals(method)) {
-			if (processGetRequest(url, header)) {
+			if (processGetRequest(url, header, remote)) {
 				return;
 			}
 		}
@@ -179,9 +180,10 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	 *
 	 * @param url    URL
 	 * @param header Header fields
+	 * @param remote Remote
 	 * @return true if processed
 	 */
-	private boolean processGetRequest(String url, Map<String, String> header) throws IOException {
+	private boolean processGetRequest(String url, Map<String, String> header, String remote) throws IOException {
 		if ("/".equals(url)) {
 			replyFile(raw.index, "text/html");
 			return true;
@@ -210,7 +212,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 		}
 
 		if (url.startsWith("/1/ctrl/")) {
-			if (processControlRequest(url.substring(8))) {
+			if (processControlRequest(url.substring(8), remote)) {
 				return true;
 			}
 		}
@@ -365,9 +367,10 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	 * Process Control Request
 	 *
 	 * @param command Command
+	 * @param remote  Remote
 	 * @return true on success, false if not a valid command
 	 */
-	private boolean processControlRequest(String command) throws IOException {
+	private boolean processControlRequest(String command, String remote) throws IOException {
 		String result = null;
 		if ("status".equals(command)) {
 			result = BaseForegroundService.getStatus().getState() == ServiceState.State.RUNNING ? "running" : "stopped";
@@ -377,7 +380,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 			result = "ok";
 		} else if ("stop".equals(command)) {
 			ServiceHelper helper = new ServiceHelper(restService.getApplicationContext());
-			helper.stop();
+			helper.stop("Stopped over REST API by " + remote);
 			result = "ok";
 		} else if ("param".equals(command)) {
 			StringBuilder b = new StringBuilder();

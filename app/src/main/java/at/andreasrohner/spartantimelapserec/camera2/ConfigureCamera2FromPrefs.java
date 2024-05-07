@@ -127,6 +127,10 @@ public class ConfigureCamera2FromPrefs {
 				captureBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
 			}
 
+			int relExposure = prefs.getInt("pref_camera_exposure_rel", 0);
+			if (relExposure != 0) {
+				captureBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, relExposure);
+			}
 			return;
 		}
 

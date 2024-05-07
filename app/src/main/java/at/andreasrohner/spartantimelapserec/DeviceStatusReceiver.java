@@ -43,13 +43,19 @@ public class DeviceStatusReceiver extends BroadcastReceiver {
 		boolean stopOnLowBattery = prefs.getBoolean("pref_stop_low_battery", true);
 		boolean stopOnLowStorage = prefs.getBoolean("pref_stop_low_storage", true);
 
+		ServiceHelper serviceHelper = new ServiceHelper(context);
 		/*
 		 * battery or storage is low if we don't stop the recording the mp4
 		 * files get corrupted and are not playable any more
 		 */
-		if ((stopOnLowBattery && intent.getAction().equals(Intent.ACTION_BATTERY_LOW)) || (stopOnLowStorage && intent.getAction().equals(Intent.ACTION_DEVICE_STORAGE_LOW)) || intent.getAction().equals(Intent.ACTION_SHUTDOWN)) {
-			ServiceHelper serviceHelper = new ServiceHelper(context);
-			serviceHelper.stop();
+		if (stopOnLowBattery && intent.getAction().equals(Intent.ACTION_BATTERY_LOW)) {
+			serviceHelper.stop("Battery low");
+		}
+		if (stopOnLowStorage && intent.getAction().equals(Intent.ACTION_DEVICE_STORAGE_LOW)) {
+			serviceHelper.stop("Storage low");
+		}
+		if (intent.getAction().equals(Intent.ACTION_SHUTDOWN)) {
+			serviceHelper.stop("ACTION_SHUTDOWN");
 		}
 
 		// for testing: Activate filter in MainActivity
