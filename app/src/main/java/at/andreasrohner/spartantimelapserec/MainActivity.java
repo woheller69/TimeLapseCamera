@@ -235,6 +235,9 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 	public void onServiceStatusChange(ServiceState status) {
 		invalidateOptionsMenu();
 
+		if (settingsFragment == null) {
+			return;
+		}
 		runOnUiThread(() -> settingsFragment.updateStateDisplay());
 	}
 }

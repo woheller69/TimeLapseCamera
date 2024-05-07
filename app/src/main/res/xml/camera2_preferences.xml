@@ -10,6 +10,15 @@
             app:timeSpanType="formatMs" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/pref_jpeg_settings">
+        <DropDownPreference
+            android:entries="@array/pref_orientation_mode"
+            android:entryValues="@array/pref_orientation_mode_values"
+            android:key="jpeg_orientation"
+            android:title="@string/pref_image_rotation"
+            app:icon="@drawable/ic_orientation"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_camera_settings_category">
         <Preference android:summary="@string/pref_camera_settings_only_in_preview" />

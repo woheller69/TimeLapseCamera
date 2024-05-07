@@ -1,4 +1,4 @@
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources>
 
     <string-array name="pref_rec_mode_entries">
         <item>Normal Video (MP4)</item>
@@ -12,6 +12,22 @@
         <item>IMAGE_TIME_LAPSE</item>
         <item>CAMERA2_TIME_LAPSE</item>
     </string-array>
+    <string-array name="pref_orientation_mode">
+        <item>Use screen orientation</item>
+        <item>Don\'t store orientation data</item>
+        <item>Portrait</item>
+        <item>Portrait flipped</item>
+        <item>Landscape left rotated</item>
+        <item>Landscape right rotated</item>
+    </string-array>
+    <string-array name="pref_orientation_mode_values">
+        <item>SCREEN_ORIENTATION</item>
+        <item>NO_ORIENTATION</item>
+        <item>PORTRAIT</item>
+        <item>PORTRAIT_FLIPPED</item>
+        <item>LANDSCAPE_LEFT</item>
+        <item>LANDSCAPE_RIGHT</item>
+    </string-array>
 
     <!-- Reply Preference -->
     <string-array name="reply_entries">
@@ -23,5 +39,4 @@
         <item>reply</item>
         <item>reply_all</item>
     </string-array>
-
 </resources>

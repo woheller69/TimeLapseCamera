@@ -1,6 +1,7 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -87,8 +88,32 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 			final CaptureRequest.Builder captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
 			captureBuilder.addTarget(reader.getSurface());
 			captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-			CameraOrientation orientation = new CameraOrientation(context);
-			captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, orientation.getRotation());
+
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+			String jpegOrientation = prefs.getString("jpeg_orientation", "NO_NAME");
+			switch (jpegOrientation) {
+				case "NO_ORIENTATION":
+					// Nothing to do
+					break;
+
+				case "PORTRAIT":
+					captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 90);
+					break;
+				case "PORTRAIT_FLIPPED":
+					captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 270);
+					break;
+				case "LANDSCAPE_LEFT":
+					captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 0);
+					break;
+				case "LANDSCAPE_RIGHT":
+					captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 180);
+					break;
+
+				case "SCREEN_ORIENTATION":
+				default:
+					CameraOrientation orientation = new CameraOrientation(context);
+					captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, orientation.getRotation());
+			}
 
 			cameraConfig.config(captureBuilder);
 
