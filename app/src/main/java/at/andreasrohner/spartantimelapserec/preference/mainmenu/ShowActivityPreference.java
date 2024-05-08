@@ -12,7 +12,6 @@ import androidx.annotation.Nullable;
 import androidx.preference.DialogPreference;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.preference.update.SummaryPreference;
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
  * Show an activity, more like a 'submenu' than a real setting
@@ -22,7 +21,7 @@ public class ShowActivityPreference extends DialogPreference implements SummaryP
 	/**
 	 * Log Tag
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+	private static final String TAG = ShowActivityPreference.class.getSimpleName();
 
 	/**
 	 * Settings implementation for this menu entry

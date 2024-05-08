@@ -14,7 +14,6 @@ import com.google.android.material.tabs.TabLayout;
 
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
  * Exposure Time Popup Dialog
@@ -24,7 +23,7 @@ public class PopupDialogExposureTime extends PopupDialogBase {
 	/**
 	 * Log Tag
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+	private static final String TAG = PopupDialogExposureTime.class.getSimpleName();
 
 	/**
 	 * Input field

@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import at.andreasrohner.spartantimelapserec.R;
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
  * Camera timing values
@@ -17,7 +16,7 @@ public class CameraTiming {
 	/**
 	 * Log Tag
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+	private static final String TAG = CameraTiming.class.getSimpleName();
 
 	/**
 	 * Predefined time values, copied from a Canon EOS Camera (a little extended)

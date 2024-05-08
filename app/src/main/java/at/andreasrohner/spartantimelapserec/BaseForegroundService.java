@@ -29,7 +29,6 @@ import java.util.List;
 import androidx.core.app.NotificationCompat;
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
 
@@ -41,7 +40,7 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 	/**
 	 * Log Tag
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+	private static final String TAG = BaseForegroundService.class.getSimpleName();
 
 	/**
 	 * Action to stop the service

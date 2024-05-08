@@ -3,15 +3,13 @@ package at.andreasrohner.spartantimelapserec.rest;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.BatteryManager;
-import android.os.Environment;
 import android.util.Log;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -24,6 +22,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import androidx.documentfile.provider.DocumentFile;
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.BaseForegroundService;
 import at.andreasrohner.spartantimelapserec.BuildConfig;
@@ -31,8 +30,12 @@ import at.andreasrohner.spartantimelapserec.ImageRecorderState;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.ServiceHelper;
 import at.andreasrohner.spartantimelapserec.ServiceState;
+import at.andreasrohner.spartantimelapserec.camera2.filename.ImageFile;
+import at.andreasrohner.spartantimelapserec.camera2.filename.ImageFileDocumentFile;
+import at.andreasrohner.spartantimelapserec.camera2.filename.ImageFileFile;
+import at.andreasrohner.spartantimelapserec.data.RecMode;
+import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
 
-import static android.os.Environment.DIRECTORY_PICTURES;
 import static at.andreasrohner.spartantimelapserec.R.raw;
 
 /**
@@ -234,8 +237,8 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	 */
 	private boolean processCurrentRequest(String command) throws IOException {
 		if ("img".equals(command)) {
-			File lastImg = ImageRecorderState.getCurrentRecordedImage();
-			if (lastImg != null && lastImg.isFile()) {
+			ImageFile lastImg = ImageRecorderState.getCurrentRecordedImage();
+			if (lastImg != null) {
 				sendFileFromFilesystem(lastImg);
 				return true;
 			}
@@ -245,12 +248,11 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 		if ("imgcount".equals(command)) {
 			result = String.valueOf(ImageRecorderState.getRecordedImagesCount());
 		} else if ("lastimg".equals(command)) {
-			File lastImg = ImageRecorderState.getCurrentRecordedImage();
+			ImageFile lastImg = ImageRecorderState.getCurrentRecordedImage();
 			if (lastImg == null) {
 				result = "null";
 			} else {
-				File rootDir = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).getPath());
-				String relative = rootDir.toURI().relativize(lastImg.toURI()).getPath();
+				String relative = lastImg.getRelativeUrl();
 				result = lastImg.getName() + "\r\n" + lastImg.lastModified() + "\r\n" + relative;
 			}
 		}
@@ -298,7 +300,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 			return true;
 		}
 
-		File rootDir = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).getPath());
+		ImageFile rootDir = initRootDir();
 
 		if (!rootDir.isDirectory()) {
 			return false;
@@ -317,7 +319,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 		}
 
 		// Download a file
-		File requestedFile = new File(rootDir, req);
+		ImageFile requestedFile = rootDir.child(req);
 		if (requestedFile.isFile()) {
 			sendFileFromFilesystem(requestedFile);
 			return true;
@@ -327,11 +329,33 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	}
 
 	/**
+	 * Initialize Root dir
+	 *
+	 * @return Root File
+	 */
+	private ImageFile initRootDir() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(restService.getApplicationContext());
+		if (RecSettingsLegacy.getRecMode(prefs) != RecMode.CAMERA2_TIME_LAPSE) {
+			return ImageFileFile.root();
+		}
+
+		boolean enabled = prefs.getBoolean("external_storage_enabled", false);
+		String externalStoragePath = prefs.getString("external_storage_path", null);
+		if (enabled && externalStoragePath != null) {
+			Uri currentUri = Uri.parse(externalStoragePath);
+			DocumentFile rootDir = DocumentFile.fromTreeUri(restService.getApplicationContext(), currentUri);
+			return new ImageFileDocumentFile(rootDir);
+		}
+
+		return ImageFileFile.root();
+	}
+
+	/**
 	 * Send a file from Filesystem
 	 *
 	 * @param file File
 	 */
-	private void sendFileFromFilesystem(File file) throws IOException {
+	private void sendFileFromFilesystem(ImageFile file) throws IOException {
 		Map<String, String> additionalFields = new HashMap<>();
 		additionalFields.put("Content-length", String.valueOf(file.length()));
 		String mime = "application/octet-stream";
@@ -343,7 +367,8 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 		}
 
 		sendReplyHeader(ReplyCode.FOUND, mime, additionalFields);
-		try (InputStream in = new FileInputStream(file)) {
+
+		try (InputStream in = file.openInputStream(restService.getApplicationContext())) {
 			copy(in, this.out);
 		}
 	}

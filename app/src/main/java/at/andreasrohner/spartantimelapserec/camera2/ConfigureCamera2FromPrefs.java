@@ -6,8 +6,6 @@ import android.hardware.camera2.params.MeteringRectangle;
 import android.util.Log;
 import android.util.Size;
 
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
-
 /**
  * Configure camera from android preferences
  */
@@ -16,7 +14,7 @@ public class ConfigureCamera2FromPrefs {
 	/**
 	 * Log Tag
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+	private static final String TAG = ConfigureCamera2FromPrefs.class.getSimpleName();
 
 	/**
 	 * Preferences

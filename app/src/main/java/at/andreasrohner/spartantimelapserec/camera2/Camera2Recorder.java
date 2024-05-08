@@ -8,8 +8,8 @@ import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.StatusSenderUtil;
+import at.andreasrohner.spartantimelapserec.camera2.filename.AbstractFileNameController;
 import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
  * Handle Recording
@@ -19,7 +19,7 @@ public class Camera2Recorder implements Runnable, TakePicture.ImageTakenListener
 	/**
 	 * Log Tag
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+	private static final String TAG = Camera2Recorder.class.getSimpleName();
 
 	/**
 	 * Context
@@ -101,7 +101,7 @@ public class Camera2Recorder implements Runnable, TakePicture.ImageTakenListener
 		backgroundThread.start();
 		backgroundHandler = new Handler(backgroundThread.getLooper());
 
-		camera = new Camera2Wrapper(context, new FileNameController(prefs), this);
+		camera = new Camera2Wrapper(context, AbstractFileNameController.createInstance(context), this);
 		camera.open();
 		running = true;
 		handler.postDelayed(this, start);

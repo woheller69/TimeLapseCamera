@@ -150,4 +150,12 @@
     <string name="exposure_relative">Relativ</string>
     <string name="exposure_relative_text">Der Relative Wert wird nur verwendet, wenn der Absolutwert auf \'Auto\' steht</string>
     <string name="logs">Logs</string>
+    <string name="external_storage">Externen Speicher konfigurieren</string>
+    <string name="external_storage_info">Um die Bilder auf einer SD Karte (wenn verfügbar) oder auf einem anderen Datenträger (z.B. USB Stick). Wählen Sie den Pfad.</string>
+    <string name="external_storage_bt_select">Pfad wählen</string>
+    <string name="external_storage_path_header">Gewählter Pfad</string>
+    <string name="external_storage_enabled">Externen Speicher aktivieren</string>
+    <string name="external_storage_info_disabled">Externer Speicher deaktiviert</string>
+    <string name="external_storage_info_enabled">Externer Speicher aktiviert</string>
+    <string name="external_storage_info_not_possible_with_camera1">Externer Speicher nur im Erweiterten Kamerainterface verfügbar</string>
 </resources>

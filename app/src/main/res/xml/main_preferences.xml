@@ -18,6 +18,11 @@
             android:summary="@string/pref_project_title_summ"
             android:title="@string/pref_project_title" />
 
+        <at.andreasrohner.spartantimelapserec.preference.mainmenu.ShowActivityPreference
+            android:icon="@drawable/ic_memory"
+            android:key="pref_main_menu_storage"
+            android:title="@string/external_storage"
+            app:settingsClass="at.andreasrohner.spartantimelapserec.preference.ExternalStorageSetupSettings" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_state_title">
@@ -58,6 +63,5 @@
             android:key="pref_main_menu_restapi"
             android:title="@string/pref_restapi_connectioninfo_title"
             app:settingsClass="at.andreasrohner.spartantimelapserec.preference.RestSettings" />
-        />
     </PreferenceCategory>
 </PreferenceScreen>

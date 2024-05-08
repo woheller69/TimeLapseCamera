@@ -8,11 +8,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.DialogPreference;
 import at.andreasrohner.spartantimelapserec.camera2.Camera2Wrapper;
-import at.andreasrohner.spartantimelapserec.camera2.FileNameController;
 import at.andreasrohner.spartantimelapserec.camera2.PopupDialogIso;
 import at.andreasrohner.spartantimelapserec.camera2.ProcessErrorHandler;
+import at.andreasrohner.spartantimelapserec.camera2.filename.AbstractFileNameController;
 import at.andreasrohner.spartantimelapserec.preference.update.SummaryPreference;
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
  * Base class for Camera preferences
@@ -23,7 +22,7 @@ public abstract class BaseCameraPreference extends DialogPreference implements D
 	/**
 	 * Log Tag
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+	private static final String TAG = BaseCameraPreference.class.getSimpleName();
 
 	/**
 	 * Constructor
@@ -67,7 +66,7 @@ public abstract class BaseCameraPreference extends DialogPreference implements D
 
 	@Override
 	public void showDialog() {
-		FileNameController fileNameController = new FileNameController(getSharedPreferences());
+		AbstractFileNameController fileNameController = AbstractFileNameController.createInstance(getContext());
 		ProcessErrorHandler errorHandler = new ProcessErrorHandler() {
 			@Override
 			public void error(String msg, Exception e) {

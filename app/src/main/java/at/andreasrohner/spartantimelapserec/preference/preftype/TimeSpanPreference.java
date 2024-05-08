@@ -11,7 +11,6 @@ import androidx.preference.DialogPreference;
 import at.andreasrohner.spartantimelapserec.FormatUtil;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.preference.update.SummaryPreference;
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
  * Allow to select a timespan
@@ -22,7 +21,7 @@ public class TimeSpanPreference extends DialogPreference implements DialogDispla
 	/**
 	 * Log Tag
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+	private static final String TAG = TimeSpanPreference.class.getSimpleName();
 
 	/**
 	 * Type of this entry

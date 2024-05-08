@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Set;
 
 import at.andreasrohner.spartantimelapserec.ImageRecorderState;
+import at.andreasrohner.spartantimelapserec.camera2.filename.ImageFileFile;
 import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
 
 public class ImageRecorder extends Recorder implements Runnable, Camera.PictureCallback, ErrorCallback, AutoFocusCallback {
@@ -74,8 +75,9 @@ public class ImageRecorder extends Recorder implements Runnable, Camera.PictureC
 
 	@Override
 	public void stop() {
-		if (mHandler != null)
+		if (mHandler != null) {
 			mHandler.removeCallbacks(this);
+		}
 
 		muteShutter();
 
@@ -89,17 +91,18 @@ public class ImageRecorder extends Recorder implements Runnable, Camera.PictureC
 			releaseCamera();
 		}
 
-		if (delay <= 0)
+		if (delay <= 0) {
 			mHandler.post(this);
-		else
+		} else {
 			mHandler.postDelayed(this, delay);
+		}
 	}
 
 	@Override
 	public void onPictureTaken(byte[] data, Camera camera) {
 		try {
 			File file = getOutputFile("jpg");
-			ImageRecorderState.setCurrentImage(file);
+			ImageRecorderState.setCurrentImage(new ImageFileFile(file));
 			FileOutputStream out = new FileOutputStream(file);
 			out.write(data);
 			out.close();
@@ -136,8 +139,9 @@ public class ImageRecorder extends Recorder implements Runnable, Camera.PictureC
 
 			mStartPreviewTime = SystemClock.elapsedRealtime();
 
-			if (mCamera == null)
+			if (mCamera == null) {
 				prepareRecord();
+			}
 
 			Log.d("Camera", "Wait:" + mWaitCamReady);
 

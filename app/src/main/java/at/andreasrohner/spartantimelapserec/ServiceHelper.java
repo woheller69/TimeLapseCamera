@@ -11,7 +11,6 @@ import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.camera2.Camera2ForegroundService;
 import at.andreasrohner.spartantimelapserec.data.RecMode;
 import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
  * Helper class to start / stop picture service
@@ -21,7 +20,7 @@ public class ServiceHelper {
 	/**
 	 * Log Tag
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+	private static final String TAG = ServiceHelper.class.getSimpleName();
 
 	/**
 	 * Context

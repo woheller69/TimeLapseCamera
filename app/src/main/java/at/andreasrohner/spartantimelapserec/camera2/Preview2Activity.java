@@ -20,7 +20,6 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.Arrays;
 
 import androidx.annotation.NonNull;
@@ -28,7 +27,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.ImageRecorderState;
 import at.andreasrohner.spartantimelapserec.R;
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
+import at.andreasrohner.spartantimelapserec.camera2.filename.AbstractFileNameController;
+import at.andreasrohner.spartantimelapserec.camera2.filename.ImageFile;
 
 /**
  * Preview with Camera 2 Activity
@@ -38,7 +38,7 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 	/**
 	 * Log Tag
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+	private static final String TAG = Preview2Activity.class.getSimpleName();
 
 	/**
 	 * Texture view
@@ -171,7 +171,7 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 		textureView.setOnTouchListener(touchFocusHandler);
 		createCameraPreview();
 
-		File img = ImageRecorderState.getCurrentRecordedImage();
+		ImageFile img = ImageRecorderState.getCurrentRecordedImage();
 		if (img != null) {
 			Toast.makeText(getApplicationContext(), img.getName(), Toast.LENGTH_SHORT).show();
 		}
@@ -262,7 +262,7 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 
 		closeCamera();
 
-		camera = new Camera2Wrapper(this, new FileNameController(PreferenceManager.getDefaultSharedPreferences(getApplicationContext())), this);
+		camera = new Camera2Wrapper(this, AbstractFileNameController.createInstance(this), this);
 		camera.setOpenCallback(this);
 		camera.open();
 

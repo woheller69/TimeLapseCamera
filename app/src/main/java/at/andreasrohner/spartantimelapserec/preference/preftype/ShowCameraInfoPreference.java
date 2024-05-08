@@ -13,7 +13,6 @@ import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.camera2.CameraTiming;
 import at.andreasrohner.spartantimelapserec.camera2.pupcfg.CameraModel;
 import at.andreasrohner.spartantimelapserec.preference.CameraSettings;
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
  * Show a camera setting, read only
@@ -24,7 +23,7 @@ public class ShowCameraInfoPreference extends DialogPreference {
 	/**
 	 * Log Tag
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+	private static final String TAG = ShowCameraInfoPreference.class.getSimpleName();
 
 	/**
 	 * Camera timing values

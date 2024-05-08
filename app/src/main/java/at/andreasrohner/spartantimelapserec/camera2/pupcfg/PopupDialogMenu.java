@@ -21,7 +21,6 @@ import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.camera2.Camera2Wrapper;
 import at.andreasrohner.spartantimelapserec.camera2.PopupDialogBase;
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
  * Menu dialog with all settings which are not directly available
@@ -31,7 +30,7 @@ public class PopupDialogMenu extends PopupDialogBase {
 	/**
 	 * Log Tag
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+	private static final String TAG = PopupDialogMenu.class.getSimpleName();
 
 	/**
 	 * White Balance Button
