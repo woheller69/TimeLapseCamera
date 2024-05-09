@@ -28,8 +28,9 @@ public class ListFolderHtml extends ListFolderPlain {
 	public boolean output(String listFolder) throws IOException {
 		this.listFolder = listFolder;
 		boolean result = super.output(listFolder);
-		out.sendLine("</body>");
-
+		if (result) {
+			out.sendLine("</body>");
+		}
 		return result;
 	}
 

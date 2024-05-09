@@ -99,6 +99,25 @@ public class ImageFileDocumentFile implements ImageFile {
 			return new ImageFileDocumentFile(null);
 		}
 
+		if (child.isEmpty()) {
+			return this;
+		}
+
+		if (child.contains("/")) {
+			ImageFile f = this;
+
+			String[] parts = child.split("/");
+			for (String p : parts) {
+				if (p.isEmpty()) {
+					continue;
+				}
+
+				f = f.child(p);
+			}
+
+			return f;
+		}
+
 		return new ImageFileDocumentFile(file.findFile(child));
 	}
 
