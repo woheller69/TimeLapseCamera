@@ -26,6 +26,7 @@
     <string name="pref_frame_rate">Playback Frame Rate</string>
     <string name="pref_frame_size">Frame Size</string>
     <string name="pref_capture_rate">Camera Capture Interval</string>
+    <string name="pref_capture_rate_short">Interval</string>
     <string name="pref_capture_rate_summ">Select the capture interval</string>
     <string name="pref_initial_delay">Initial Delay</string>
     <string name="pref_initial_delay_summ">Select the delay before capturing starts</string>

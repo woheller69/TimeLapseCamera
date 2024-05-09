@@ -89,9 +89,9 @@ public class CameraSettings implements MainSettingsMenu {
 			}
 		}
 
-		if (recMode == RecMode.IMAGE_TIME_LAPSE || recMode == RecMode.VIDEO_TIME_LAPSE) {
+		if (recMode == RecMode.CAMERA2_TIME_LAPSE || recMode == RecMode.IMAGE_TIME_LAPSE || recMode == RecMode.VIDEO_TIME_LAPSE) {
 			b.append(", ");
-			b.append(ctx.getString(R.string.pref_capture_rate));
+			b.append(ctx.getString(R.string.pref_capture_rate_short));
 			b.append(": ");
 			b.append(FormatUtil.formatTime(prefs.getInt("pref_capture_rate", 1000), ctx));
 		}
