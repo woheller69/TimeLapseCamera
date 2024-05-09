@@ -166,7 +166,7 @@ public class OledScreensaverActivity extends AppCompatActivity {
 			b.append("\n∑ ");
 			b.append(ImageRecorderState.getRecordedImagesCount());
 			b.append("\n");
-			b.append(ImageRecorderState.getCurrentRecordedImage());
+			b.append(ImageRecorderState.getCurrentRecordedImage().getRelativeUrl());
 		}
 
 		mStatusLabel.setText(b.toString());

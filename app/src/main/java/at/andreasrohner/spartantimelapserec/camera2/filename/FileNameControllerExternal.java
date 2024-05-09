@@ -43,6 +43,13 @@ public class FileNameControllerExternal extends AbstractFileNameController {
 			dir1 = rootDir.createDirectory(projectName);
 		}
 
+		if (dir1 == null) {
+			this.outputDir = null;
+			Log.e(TAG, "Error, could not write external path!");
+			StateLog.addEntry("Project Path", "Error, could not write external path!");
+			return;
+		}
+
 		String dateString = DateFormat.format("yyyy-MM-dd", System.currentTimeMillis()).toString();
 		DocumentFile dir2 = dir1.findFile(dateString);
 		if (dir2 == null || !dir2.exists()) {
@@ -63,6 +70,10 @@ public class FileNameControllerExternal extends AbstractFileNameController {
 	 * @throws IOException
 	 */
 	public OutputStream getOutputFile(String ext) throws IOException {
+		if (this.outputDir == null) {
+			throw new IOException("Cannot write to external drive");
+		}
+
 		DocumentFile outFile = null;
 		do {
 			String name = projectName + fileIndex + "." + ext;
