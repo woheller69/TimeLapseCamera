@@ -16,4 +16,13 @@
         <item>Querformat rechts rotiert</item>
     </string-array>
 
+    <string-array name="pref_orientation_mode">
+        <item>Bildschirmausrichtung verwenden</item>
+        <item>Ausrichtung nicht speichern</item>
+        <item>Hochformat</item>
+        <item>Hochformat umgekehrt</item>
+        <item>Querformat links rotiert</item>
+        <item>Querformat rechts rotiert</item>
+    </string-array>
+
 </resources>

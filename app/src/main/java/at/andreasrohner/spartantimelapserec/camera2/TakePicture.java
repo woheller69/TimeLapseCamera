@@ -1,7 +1,6 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -15,6 +14,8 @@ import android.os.Handler;
 import android.util.Size;
 import android.view.Surface;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -22,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.preference.PreferenceManager;
-import at.andreasrohner.spartantimelapserec.camera2.filename.AbstractFileNameController;
 
 public class TakePicture implements ImageReader.OnImageAvailableListener {
 
@@ -110,9 +110,8 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 
 				case "SCREEN_ORIENTATION":
 				default:
-					CameraOrientation orientation = new CameraOrientation(context);
-					captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, orientation.getRotation());
-			}
+			CameraOrientation orientation = new CameraOrientation(context);
+			captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, orientation.getRotation());
 
 			cameraConfig.config(captureBuilder);
 
@@ -153,9 +152,10 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 			byte[] bytes = new byte[buffer.capacity()];
 			buffer.get(bytes);
 
-			AbstractFileNameController fileNameController = camera.getFileNameController();
+			FileNameController fileNameController = camera.getFileNameController();
+			final File file = fileNameController.getOutputFile("jpg");
 
-			try (OutputStream output = fileNameController.getOutputFile("jpg")) {
+			try (OutputStream output = new FileOutputStream(file)) {
 				output.write(bytes);
 			}
 		} catch (IOException e) {
