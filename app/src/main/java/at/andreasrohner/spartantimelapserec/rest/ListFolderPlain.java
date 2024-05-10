@@ -1,11 +1,10 @@
 package at.andreasrohner.spartantimelapserec.rest;
 
-import android.util.Log;
-
 import java.io.IOException;
 import java.util.List;
 
 import at.andreasrohner.spartantimelapserec.camera2.filename.ImageFile;
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
  * List Folder for REST API
@@ -13,9 +12,9 @@ import at.andreasrohner.spartantimelapserec.camera2.filename.ImageFile;
 public class ListFolderPlain {
 
 	/**
-	 * Log Tag
+	 * Logger
 	 */
-	protected static final String TAG = HttpThread.class.getSimpleName();
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * Output
@@ -47,15 +46,15 @@ public class ListFolderPlain {
 	 */
 	public boolean output(String listFolder) throws IOException {
 		ImageFile listDir = rootDir.child(listFolder);
-		Log.d(TAG, "List dir: " + listDir);
+		logger.debug("List dir: {}", listDir);
 		if (!listDir.isDirectory()) {
-			Log.w(TAG, "Directory does not exists");
+			logger.warn("Directory «{}» does not exists", listFolder);
 			return false;
 		}
 
 		List<ImageFile> files = listDir.listFiles();
 		if (files.isEmpty()) {
-			Log.w(TAG, "Directory could not be listed");
+			logger.warn("Directory «{}» could not be listed", listFolder);
 			return false;
 		}
 

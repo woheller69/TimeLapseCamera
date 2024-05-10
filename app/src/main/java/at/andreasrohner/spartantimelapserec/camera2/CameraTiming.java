@@ -1,12 +1,12 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import at.andreasrohner.spartantimelapserec.R;
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
  * Camera timing values
@@ -14,9 +14,9 @@ import at.andreasrohner.spartantimelapserec.R;
 public class CameraTiming {
 
 	/**
-	 * Log Tag
+	 * Logger
 	 */
-	private static final String TAG = CameraTiming.class.getSimpleName();
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * Predefined time values, copied from a Canon EOS Camera (a little extended)
@@ -106,7 +106,7 @@ public class CameraTiming {
 			return 1000000000L * t1 + 1000000000L / t2;
 		}
 
-		Log.e(TAG, "Invalid predefined time value «" + t + "»");
+		logger.error("Invalid predefined time value «{}»", t);
 		return -1;
 	}
 

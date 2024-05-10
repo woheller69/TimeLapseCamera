@@ -54,20 +54,6 @@ public class StateLog implements ServiceStatusListener {
 	/**
 	 * Add a log entry
 	 *
-	 * @param header Log header
-	 * @param line   Log line
-	 */
-	public static void addEntry(String header, String line) {
-		StateLogEntry entry = new StateLogEntry();
-		entry.setHeader(header);
-		entry.setLine(line);
-
-		addEntry(entry);
-	}
-
-	/**
-	 * Add a log entry
-	 *
 	 * @param entry Log Entry
 	 */
 	public static void addEntry(StateLogEntry entry) {

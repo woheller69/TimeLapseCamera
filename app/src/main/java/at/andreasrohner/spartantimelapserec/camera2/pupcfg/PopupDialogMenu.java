@@ -7,7 +7,6 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.params.StreamConfigurationMap;
-import android.util.Log;
 import android.util.Size;
 import android.view.View;
 import android.widget.ImageButton;
@@ -21,6 +20,7 @@ import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.camera2.Camera2Wrapper;
 import at.andreasrohner.spartantimelapserec.camera2.PopupDialogBase;
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
  * Menu dialog with all settings which are not directly available
@@ -28,9 +28,9 @@ import at.andreasrohner.spartantimelapserec.camera2.PopupDialogBase;
 public class PopupDialogMenu extends PopupDialogBase {
 
 	/**
-	 * Log Tag
+	 * Logger
 	 */
-	private static final String TAG = PopupDialogMenu.class.getSimpleName();
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * White Balance Button
@@ -118,7 +118,7 @@ public class PopupDialogMenu extends PopupDialogBase {
 				cameras.add(new CameraModel(context, cameraId, manager.getCameraCharacteristics(cameraId)));
 			}
 		} catch (CameraAccessException e) {
-			Log.e(TAG, "Could not list cameras", e);
+			logger.error("Could not list cameras", e);
 		}
 
 		this.camCameraSelection = new SpinnerHelper<>((Spinner) view.findViewById(R.id.camCameraSelection), context);
@@ -176,10 +176,10 @@ public class PopupDialogMenu extends PopupDialogBase {
 			map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 
 			if (map == null) {
-				Log.e(TAG, "Could not get camera characteristics");
+				logger.error("Could not get camera characteristics");
 			}
 		} catch (CameraAccessException e) {
-			Log.e(TAG, "Error get camera resoltuions", e);
+			logger.error("Error get camera resolutions", e);
 			return;
 		}
 
@@ -206,7 +206,7 @@ public class PopupDialogMenu extends PopupDialogBase {
 			Boolean available = manager.getCameraCharacteristics(newSelectedCamera).get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
 			flashSupported = available == null ? false : available;
 		} catch (CameraAccessException e) {
-			Log.e(TAG, "Could not get camera information", e);
+			logger.error("Could not get camera information", e);
 		}
 
 		if (flashSupported) {

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.camera2.CameraManager;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,6 +12,7 @@ import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.camera2.CameraTiming;
 import at.andreasrohner.spartantimelapserec.camera2.pupcfg.CameraModel;
 import at.andreasrohner.spartantimelapserec.preference.CameraSettings;
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
  * Show a camera setting, read only
@@ -21,9 +21,9 @@ import at.andreasrohner.spartantimelapserec.preference.CameraSettings;
 public class ShowCameraInfoPreference extends DialogPreference {
 
 	/**
-	 * Log Tag
+	 * Logger
 	 */
-	private static final String TAG = ShowCameraInfoPreference.class.getSimpleName();
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * Camera timing values
@@ -157,7 +157,7 @@ public class ShowCameraInfoPreference extends DialogPreference {
 					CameraModel camera = new CameraModel(getContext(), cameraId, manager.getCameraCharacteristics(cameraId));
 					setSummary(camera.toString());
 				} catch (Exception e) {
-					Log.e(TAG, "Error loading camera details", e);
+					logger.error("Error loading camera details", e);
 					setSummary("Could not load Camera Details: " + e);
 				}
 			}

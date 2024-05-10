@@ -3,8 +3,9 @@ package at.andreasrohner.spartantimelapserec.camera2;
 import android.content.SharedPreferences;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.MeteringRectangle;
-import android.util.Log;
 import android.util.Size;
+
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
  * Configure camera from android preferences
@@ -12,9 +13,9 @@ import android.util.Size;
 public class ConfigureCamera2FromPrefs {
 
 	/**
-	 * Log Tag
+	 * Logger
 	 */
-	private static final String TAG = ConfigureCamera2FromPrefs.class.getSimpleName();
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * Preferences
@@ -76,7 +77,7 @@ public class ConfigureCamera2FromPrefs {
 		if ("field".equals(afMode)) {
 			String afField = prefs.getString("pref_camera_af_field", null);
 			if (afField == null) {
-				Log.e(TAG, "Missing AF Field!");
+				logger.error("Missing AF Field!");
 				return;
 			}
 
@@ -87,7 +88,7 @@ public class ConfigureCamera2FromPrefs {
 				px = Float.parseFloat(parts[0]);
 				py = Float.parseFloat(parts[1]);
 			} catch (Exception e) {
-				Log.e(TAG, "Invalid AF Value: «" + afField + "»");
+				logger.error("Invalid AF Value: «{}»", afField);
 				return;
 			}
 

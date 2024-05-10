@@ -1,10 +1,9 @@
 package at.andreasrohner.spartantimelapserec.rest;
 
-import android.util.Log;
-
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
  * HTTP REST API Service, TCP Listener Service
@@ -16,9 +15,9 @@ import java.net.Socket;
 public class TcpListener extends Thread {
 
 	/**
-	 * Log Tag
+	 * Logger
 	 */
-	private static final String TAG = TcpListener.class.getSimpleName();
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * Socket for incoming connections
@@ -49,7 +48,7 @@ public class TcpListener extends Thread {
 			listenSocket.close(); // if the TcpListener thread is blocked on accept,
 			// closing the socket will raise an exception
 		} catch (Exception e) {
-			Log.w(TAG, "Exception closing TcpListener listenSocket",e);
+			logger.warn("Exception closing TcpListener listenSocket", e);
 		}
 	}
 
@@ -58,13 +57,13 @@ public class TcpListener extends Thread {
 		try {
 			while (true) {
 				Socket clientSocket = listenSocket.accept();
-				Log.i(TAG, "New connection from "+ clientSocket.getRemoteSocketAddress());
+				logger.info("New connection from {}", clientSocket.getRemoteSocketAddress());
 				HttpThread newSession = new HttpThread(clientSocket, restService);
 				newSession.start();
 				restService.registerSessionThread(newSession);
 			}
 		} catch (Exception e) {
-			Log.d(TAG, "Exception in TcpListener", e);
+			logger.debug("Exception in TcpListener", e);
 		}
 	}
 }

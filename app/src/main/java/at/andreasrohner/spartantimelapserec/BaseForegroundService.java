@@ -19,7 +19,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
 import android.text.format.DateFormat;
-import android.util.Log;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -29,6 +28,7 @@ import java.util.List;
 import androidx.core.app.NotificationCompat;
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
 
@@ -38,9 +38,9 @@ import static android.os.Environment.DIRECTORY_PICTURES;
 public abstract class BaseForegroundService extends Service implements Handler.Callback {
 
 	/**
-	 * Log Tag
+	 * Logger
 	 */
-	private static final String TAG = BaseForegroundService.class.getSimpleName();
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * Action to stop the service
@@ -152,7 +152,7 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 			String projectName = prefs.getString("pref_project_title", "NO_NAME");
 			this.outputDir = new File(projectPath, projectName + "/" + DateFormat.format("yyyy-MM-dd", System.currentTimeMillis()) + "/");
-			Log.i(TAG, "Project Folder: «" + this.outputDir + "»");
+			logger.mark("Project Folder: «{}}»", this.outputDir);
 
 			startupService();
 			updateNotification();
@@ -189,7 +189,7 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 			java.text.DateFormat f = SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.MEDIUM, SimpleDateFormat.SHORT);
 
 			String startDate = f.format(settings.getSchedRecTime());
-			Log.i(TAG, "Start scheduled for " + startDate);
+			logger.mark("Start scheduled for {}", startDate);
 			fireStateChanged(new ServiceState(ServiceState.State.SCHEDULED, startDate));
 			return true;
 		}
@@ -308,14 +308,11 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 	@Override
 	public boolean handleMessage(Message m) {
 		String status = m.getData().getString("status");
-		String tag = m.getData().getString("tag");
 		String msg = m.getData().getString("msg");
 
 		if ("error".equals(status)) {
-			Log.e(tag, "Error: " + msg);
 			stop("Error: " + msg);
 		} else if ("success".equals(status)) {
-			Log.e(tag, "Success");
 			stop("Ended with success");
 		}
 

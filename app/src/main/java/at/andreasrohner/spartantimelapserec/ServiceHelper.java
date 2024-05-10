@@ -4,13 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.camera2.Camera2ForegroundService;
 import at.andreasrohner.spartantimelapserec.data.RecMode;
 import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
  * Helper class to start / stop picture service
@@ -18,9 +18,9 @@ import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
 public class ServiceHelper {
 
 	/**
-	 * Log Tag
+	 * Logger
 	 */
-	private static final String TAG = ServiceHelper.class.getSimpleName();
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * Context
@@ -42,7 +42,7 @@ public class ServiceHelper {
 	 * @param calledFromUi true if called from Activity, false if not
 	 */
 	public void start(boolean calledFromUi) {
-		Log.i(TAG, "Start Service");
+		logger.info("Start Service");
 
 		ImageRecorderState.resetImageCount();
 
@@ -72,7 +72,7 @@ public class ServiceHelper {
 	 * @param reason Stop Reason
 	 */
 	public void stop(String reason) {
-		Log.i(TAG, "Stop Service");
+		logger.info("Stop Service");
 
 		Intent intent;
 		if (getRecMode() == RecMode.CAMERA2_TIME_LAPSE) {
@@ -92,7 +92,7 @@ public class ServiceHelper {
 	private RecMode getRecMode() {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.context);
 		RecMode mode = RecSettingsLegacy.getRecMode(prefs);
-		Log.i(TAG, "Rec mode: " + mode);
+		logger.info("Rec mode: {}", mode);
 		return mode;
 	}
 

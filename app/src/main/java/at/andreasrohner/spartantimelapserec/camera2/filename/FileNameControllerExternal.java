@@ -3,14 +3,13 @@ package at.andreasrohner.spartantimelapserec.camera2.filename;
 import android.content.Context;
 import android.net.Uri;
 import android.text.format.DateFormat;
-import android.util.Log;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
 import androidx.documentfile.provider.DocumentFile;
 import at.andreasrohner.spartantimelapserec.ImageRecorderState;
-import at.andreasrohner.spartantimelapserec.state.StateLog;
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
  * Store the files on the external SD card
@@ -18,9 +17,9 @@ import at.andreasrohner.spartantimelapserec.state.StateLog;
 public class FileNameControllerExternal extends AbstractFileNameController {
 
 	/**
-	 * Log Tag
+	 * Logger
 	 */
-	private static final String TAG = FileNameControllerExternal.class.getSimpleName();
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * Output path
@@ -45,8 +44,7 @@ public class FileNameControllerExternal extends AbstractFileNameController {
 
 		if (dir1 == null) {
 			this.outputDir = null;
-			Log.e(TAG, "Error, could not write external path!");
-			StateLog.addEntry("Project Path", "Error, could not write external path!");
+			logger.error("Error, could not write external path! Select path again!");
 			return;
 		}
 
@@ -58,8 +56,7 @@ public class FileNameControllerExternal extends AbstractFileNameController {
 
 		this.outputDir = dir2;
 
-		Log.i(TAG, "Project Folder: «" + this.outputDir + "»");
-		StateLog.addEntry("Project Path", this.outputDir.toString());
+		logger.info("Project Folder: «{}»", this.outputDir);
 	}
 
 	/**

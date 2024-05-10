@@ -1,8 +1,9 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.graphics.Matrix;
-import android.util.Log;
 import android.view.Surface;
+
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
  * Calculate the scaling for the preview
@@ -10,9 +11,9 @@ import android.view.Surface;
 public class PreviewScaling {
 
 	/**
-	 * Log Tag
+	 * Logger
 	 */
-	private static final String TAG = PreviewScaling.class.getSimpleName();
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * Texture width
@@ -126,14 +127,14 @@ public class PreviewScaling {
 		scaleY = 1;
 		rotate = 0;
 
-		Log.d(TAG, "transformTexture: info tw=" + tw + ", th=" + th + ", r=" + (tw / th) + " | iw=" + iw + ", ih=" + ih + ", r=" + (iw / ih));
+		logger.debug("transformTexture: info tw={}, th={}, r={} | iw={}, ih={}, r={}", tw, th, (tw / th), iw, ih, (iw / ih));
 
 		if (rotationEnum == Surface.ROTATION_0) {
 			// *** Portrait ***
 
 			float factorX = ih / th;
 			float factorY = iw / tw;
-			Log.d(TAG, "transformTexture: 0° fx=" + factorX + ", fy=" + factorY);
+			logger.debug("transformTexture: 0° fx={}, fy={}", factorX, factorY);
 
 			if (factorX < factorY) {
 				scaleY = factorX / factorY;
@@ -141,7 +142,7 @@ public class PreviewScaling {
 				scaleX = factorY / factorX;
 			}
 
-			Log.d(TAG, "transformTexture: 0° sx=" + scaleX + ", sy=" + scaleY);
+			logger.debug("transformTexture: 0° sx={}, sy={}", scaleX, scaleY);
 		} else if (rotationEnum == Surface.ROTATION_90) {
 			// *** Landscape, left rotated ***
 			rotate = 270;

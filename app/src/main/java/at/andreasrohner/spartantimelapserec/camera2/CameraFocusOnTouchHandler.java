@@ -14,12 +14,12 @@ import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
  * Focus touch handler
@@ -27,9 +27,9 @@ import androidx.preference.PreferenceManager;
 public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 
 	/**
-	 * Log Tag
+	 * Logger
 	 */
-	private static final String TAG = CameraFocusOnTouchHandler.class.getSimpleName();
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * Tag used for feedback
@@ -115,7 +115,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 			try {
 				captureSession.setRepeatingRequest(previewRequestBuilder.build(), null, null);
 			} catch (CameraAccessException e) {
-				Log.e(TAG, "Error start repeating request after focus", e);
+				logger.error("Error start repeating request after focus", e);
 			}
 
 			if (focusChangeListener != null) {
@@ -126,7 +126,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		@Override
 		public void onCaptureFailed(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull CaptureFailure failure) {
 			super.onCaptureFailed(session, request, failure);
-			Log.e(TAG, "Manual AF failure: " + failure);
+			logger.error("Manual AF failure: «{}»", failure);
 			manualFocusStarted = false;
 		}
 	};
@@ -178,7 +178,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 			return false;
 		}
 		if (manualFocusStarted) {
-			Log.w(TAG, "Manual focus already started");
+			logger.warn("Manual focus already started");
 			return true;
 		}
 
@@ -217,7 +217,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		try {
 			captureSession.stopRepeating();
 		} catch (CameraAccessException e) {
-			Log.e(TAG, "Stop repeating for AF failed!", e);
+			logger.error("Stop repeating for AF failed!", e);
 		}
 
 		//cancel any existing AF trigger (repeated touches, etc.)
@@ -226,7 +226,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		try {
 			captureSession.capture(previewRequestBuilder.build(), captureCallbackHandler, backgroundHandler);
 		} catch (CameraAccessException e) {
-			Log.e(TAG, "Start capture / cancel session failed!", e);
+			logger.error("Start capture / cancel session failed!", e);
 		}
 
 		// Now add a new AF trigger with focus region
@@ -247,7 +247,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		try {
 			captureSession.capture(previewRequestBuilder.build(), captureCallbackHandler, backgroundHandler);
 		} catch (CameraAccessException e) {
-			Log.e(TAG, "Start capture session failed!", e);
+			logger.error("Start capture session failed!", e);
 		}
 		manualFocusStarted = true;
 
