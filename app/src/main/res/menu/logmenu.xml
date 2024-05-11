@@ -1,0 +1,20 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="at.andreasrohner.spartantimelapserec.MainActivity">
+
+    <item
+        android:onClick="actionViewLogLevel"
+        app:showAsAction="never"
+        android:title="@string/action_view_log_level" />
+
+    <item
+        android:onClick="actionLogToFile"
+        app:showAsAction="never"
+        android:title="@string/action_log_to_file" />
+
+    <item
+        android:onClick="actionLogLogLevel"
+        app:showAsAction="never"
+        android:title="@string/action_file_log_level" />
+</menu>

@@ -1,9 +1,13 @@
 package at.andreasrohner.spartantimelapserec.state;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.BaseForegroundService;
 import at.andreasrohner.spartantimelapserec.ServiceState;
 import at.andreasrohner.spartantimelapserec.ServiceStatusListener;
@@ -29,6 +33,11 @@ public class StateLog implements ServiceStatusListener {
 	private LinkedList<StateLogEntry> log = new LinkedList<>();
 
 	/**
+	 * Log Level
+	 */
+	private static int level = LogLevel.INFO.LEVEL;
+
+	/**
 	 * @return Singleton
 	 */
 	public static StateLog getInstance() {
@@ -40,6 +49,16 @@ public class StateLog implements ServiceStatusListener {
 	 */
 	private StateLog() {
 		BaseForegroundService.registerStatusListener(this);
+	}
+
+	/**
+	 * Load the log level
+	 *
+	 * @param context Context
+	 */
+	public static void loadLogLevel(Context context) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		level = prefs.getInt("log_display_level", LogLevel.INFO.LEVEL);
 	}
 
 	/**
@@ -58,6 +77,10 @@ public class StateLog implements ServiceStatusListener {
 	 */
 	public static void addEntry(StateLogEntry entry) {
 		synchronized (instance) {
+			if (entry.getLevel().LEVEL > level) {
+				return;
+			}
+
 			instance.log.add(entry);
 			while (instance.log.size() > MAX_LOG_LINES) {
 				instance.log.removeFirst();

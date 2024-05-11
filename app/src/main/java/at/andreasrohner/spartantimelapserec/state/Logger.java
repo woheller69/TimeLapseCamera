@@ -192,13 +192,13 @@ public class Logger {
 		sl.setLevel(logLevel);
 		StateLog.addEntry(sl);
 
-		// TODO !!!!!!!!!!!!!!
+		LogFileWriter.log(logLevel, e, name);
 	}
 
 	/**
 	 * Log entry with message and log line
 	 */
-	private static class LogEntry {
+	public static class LogEntry {
 
 		/**
 		 * Message
@@ -209,5 +209,25 @@ public class Logger {
 		 * Throwable
 		 */
 		private Throwable exception;
+
+		/**
+		 * Constructor
+		 */
+		public LogEntry() {
+		}
+
+		/**
+		 * @return Message
+		 */
+		public String getMessage() {
+			return message;
+		}
+
+		/**
+		 * @return Throwable
+		 */
+		public Throwable getException() {
+			return exception;
+		}
 	}
 }

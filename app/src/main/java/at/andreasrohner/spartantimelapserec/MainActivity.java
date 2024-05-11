@@ -44,7 +44,9 @@ import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
 import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
 import at.andreasrohner.spartantimelapserec.rest.RestControlUtil;
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
+import at.andreasrohner.spartantimelapserec.state.LogFileWriter;
 import at.andreasrohner.spartantimelapserec.state.Logger;
+import at.andreasrohner.spartantimelapserec.state.StateLog;
 
 /**
  * Main activity of the
@@ -77,7 +79,16 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 		super.onCreate(savedInstanceState);
 
 		// Make sure the state log is initialized
+		StateLog.loadLogLevel(this);
+		LogFileWriter.loadLogConfig(this);
 		logger.mark("Application startup");
+
+		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+			@Override
+			public void uncaughtException(Thread paramThread, Throwable paramThrowable) {
+				logger.error("Uncaught Exception in «{}»", paramThread.getName(), paramThrowable);
+			}
+		});
 
 		if (broadcastReceiver == null) {
 			broadcastReceiver = new DeviceStatusReceiver();

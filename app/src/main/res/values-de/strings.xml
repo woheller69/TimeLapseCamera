@@ -159,4 +159,10 @@
     <string name="external_storage_info_disabled">Externer Speicher deaktiviert</string>
     <string name="external_storage_info_enabled">Externer Speicher aktiviert</string>
     <string name="external_storage_info_not_possible_with_camera1">Externer Speicher nur im Erweiterten Kamerainterface verfügbar</string>
+    <string name="action_view_log_level">Angezeigtes Loglevel</string>
+    <string name="action_log_to_file">Logdatei erstellen</string>
+    <string name="action_file_log_level">Logdatei Loglevel</string>
+    <string name="log_dialog_info">Log Level Filter für Zukünftige Meldungen setzten</string>
+    <string name="log_file_dialog_enabled_info">Logdatei im internen Speicher im Ordner «TimeLapseCam-Logs» erstellen</string>
+    <string name="write_log_file">Logdatei erstellen</string>
 </resources>

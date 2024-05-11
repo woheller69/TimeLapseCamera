@@ -182,6 +182,7 @@ public class RestService extends Service implements Runnable {
 		logger.mark("REST API: Start server");
 
 		serverThread = new Thread(this);
+		serverThread.setName("REST");
 		serverThread.start();
 		return START_STICKY;
 	}
