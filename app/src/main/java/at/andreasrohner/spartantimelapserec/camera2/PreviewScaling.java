@@ -4,8 +4,6 @@ import android.graphics.Matrix;
 import android.util.Log;
 import android.view.Surface;
 
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
-
 /**
  * Calculate the scaling for the preview
  */
@@ -14,7 +12,7 @@ public class PreviewScaling {
 	/**
 	 * Log Tag
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+	private static final String TAG = PreviewScaling.class.getSimpleName();
 
 	/**
 	 * Texture width

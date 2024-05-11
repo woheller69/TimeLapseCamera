@@ -20,7 +20,6 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
  * Focus touch handler
@@ -30,7 +29,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 	/**
 	 * Log Tag
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+	private static final String TAG = CameraFocusOnTouchHandler.class.getSimpleName();
 
 	/**
 	 * Tag used for feedback

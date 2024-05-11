@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import androidx.preference.Preference;
 import at.andreasrohner.spartantimelapserec.BaseForegroundService;
 import at.andreasrohner.spartantimelapserec.ServiceState;
+import at.andreasrohner.spartantimelapserec.state.LogActivity;
 
 /**
  * Show status
@@ -22,7 +23,7 @@ public class StatusScreen implements MainSettingsMenu {
 
 	@Override
 	public Class<? extends Activity> getActivityClass(SharedPreferences prefs) {
-		return null;
+		return LogActivity.class;
 	}
 
 	@Override

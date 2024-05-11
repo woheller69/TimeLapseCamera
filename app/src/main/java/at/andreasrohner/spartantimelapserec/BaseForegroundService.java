@@ -29,7 +29,6 @@ import java.util.List;
 import androidx.core.app.NotificationCompat;
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
 
@@ -41,7 +40,7 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 	/**
 	 * Log Tag
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+	private static final String TAG = BaseForegroundService.class.getSimpleName();
 
 	/**
 	 * Action to stop the service
@@ -160,7 +159,11 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 			fireStateChanged(new ServiceState(ServiceState.State.RUNNING, "onStartCommand"));
 			return START_STICKY;
 		} else {
-			shutdownService();
+			String reason = intent.getStringExtra("reason");
+			if (reason == null) {
+				reason = "No reason received with intent";
+			}
+			shutdownService(reason);
 			return START_NOT_STICKY;
 		}
 	}
@@ -208,14 +211,16 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 
 	/**
 	 * Service shutdown
+	 *
+	 * @param reason Reason
 	 */
-	protected void shutdownService() {
+	protected void shutdownService(String reason) {
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		Intent intent = new Intent(this, ScheduleReceiver.class);
 		PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
 		alarmManager.cancel(alarmIntent);
 
-		stop("shutdownService");
+		stop(reason);
 	}
 
 	/**

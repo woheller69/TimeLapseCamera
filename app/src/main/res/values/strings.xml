@@ -26,6 +26,7 @@
     <string name="pref_frame_rate">Playback Frame Rate</string>
     <string name="pref_frame_size">Frame Size</string>
     <string name="pref_capture_rate">Camera Capture Interval</string>
+    <string name="pref_capture_rate_short">Interval</string>
     <string name="pref_capture_rate_summ">Select the capture interval</string>
     <string name="pref_initial_delay">Initial Delay</string>
     <string name="pref_initial_delay_summ">Select the delay before capturing starts</string>
@@ -148,4 +149,16 @@
     <string name="pref_jpeg_settings">JPEG Settings</string>
     <string name="pref_image_rotation">Image Rotation</string>
     <string name="camera_not_selected">Start preview to configure camera</string>
+    <string name="exposure_absolute">Absolute</string>
+    <string name="exposure_relative">Relative</string>
+    <string name="exposure_relative_text">Relative values are only applied if absolute value is set to \'Auto\'</string>
+    <string name="logs">Logs</string>
+    <string name="external_storage">External Storage setup</string>
+    <string name="external_storage_info">To store images on an SD Card (if available) or any other Storage (e.g. USB Stick) you can select the location.</string>
+    <string name="external_storage_bt_select">Select path</string>
+    <string name="external_storage_path_header">Selected path</string>
+    <string name="external_storage_enabled">Enable external storage</string>
+    <string name="external_storage_info_disabled">External storage disabled</string>
+    <string name="external_storage_info_enabled">External storage enabled</string>
+    <string name="external_storage_info_not_possible_with_camera1">External storage only available in Extended Camera Interface mode</string>
 </resources>

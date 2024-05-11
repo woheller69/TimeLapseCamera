@@ -1,6 +1,6 @@
 package at.andreasrohner.spartantimelapserec;
 
-import java.io.File;
+import at.andreasrohner.spartantimelapserec.camera2.filename.ImageFile;
 
 /**
  * State of the current image / video recording (count, Filename...)
@@ -10,7 +10,7 @@ public final class ImageRecorderState {
 	/**
 	 * Current / last recorded image
 	 */
-	private static File currentRecordedImage;
+	private static ImageFile currentRecordedImage;
 
 	/**
 	 * Count of recorded images within the whole app session
@@ -28,7 +28,7 @@ public final class ImageRecorderState {
 	 *
 	 * @param file File
 	 */
-	public static void setCurrentImage(File file) {
+	public static void setCurrentImage(ImageFile file) {
 		currentRecordedImage = file;
 		recordedImagesCount++;
 	}
@@ -43,7 +43,7 @@ public final class ImageRecorderState {
 	/**
 	 * @return Current / last recorded image
 	 */
-	public static File getCurrentRecordedImage() {
+	public static ImageFile getCurrentRecordedImage() {
 		return currentRecordedImage;
 	}
 

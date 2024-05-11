@@ -6,8 +6,6 @@ import android.hardware.camera2.params.MeteringRectangle;
 import android.util.Log;
 import android.util.Size;
 
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
-
 /**
  * Configure camera from android preferences
  */
@@ -16,7 +14,7 @@ public class ConfigureCamera2FromPrefs {
 	/**
 	 * Log Tag
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+	private static final String TAG = ConfigureCamera2FromPrefs.class.getSimpleName();
 
 	/**
 	 * Preferences
@@ -127,6 +125,10 @@ public class ConfigureCamera2FromPrefs {
 				captureBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
 			}
 
+			int relExposure = prefs.getInt("pref_camera_exposure_rel", 0);
+			if (relExposure != 0) {
+				captureBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, relExposure);
+			}
 			return;
 		}
 

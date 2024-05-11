@@ -11,7 +11,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import androidx.preference.PreferenceManager;
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
+import at.andreasrohner.spartantimelapserec.camera2.filename.AbstractFileNameController;
 
 /**
  * Wrapps the camera interface and configures the camera
@@ -21,7 +21,7 @@ public class Camera2Wrapper {
 	/**
 	 * Log Tag
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+	private static final String TAG = Camera2Wrapper.class.getSimpleName();
 
 	/**
 	 * Context
@@ -41,7 +41,7 @@ public class Camera2Wrapper {
 	/**
 	 * Controller for output filenames
 	 */
-	private final FileNameController fileNameController;
+	private final AbstractFileNameController fileNameController;
 
 	/**
 	 * Log / Show error in timelapse recording
@@ -105,7 +105,7 @@ public class Camera2Wrapper {
 	 * @param fileNameController Controller for output filenames
 	 * @param errorHandler       Log / Show error in timelapse recording
 	 */
-	public Camera2Wrapper(Context context, FileNameController fileNameController, ProcessErrorHandler errorHandler) {
+	public Camera2Wrapper(Context context, AbstractFileNameController fileNameController, ProcessErrorHandler errorHandler) {
 		this.fileNameController = fileNameController;
 		this.context = context;
 		this.errorHandler = errorHandler;
@@ -123,7 +123,7 @@ public class Camera2Wrapper {
 	/**
 	 * @return Controller for output filenames
 	 */
-	public FileNameController getFileNameController() {
+	public AbstractFileNameController getFileNameController() {
 		return fileNameController;
 	}
 

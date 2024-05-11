@@ -78,22 +78,22 @@ public class CameraControlButtonHandler implements PopupDialogBase.DialogResult 
 	public void cameraOpened(Camera2Wrapper camera) {
 		this.camera = camera;
 
-		this.afmfButton = ((ImageButton) activity.findViewById(R.id.bt_afmf));
+		this.afmfButton = (ImageButton) activity.findViewById(R.id.bt_afmf);
 		PopupDialogAfMf afMfDialog = new PopupDialogAfMf(activity, camera);
 		afMfDialog.setDialogResultListener(this);
 		this.afmfButton.setOnClickListener(afMfDialog);
 
-		this.isoButton = ((ImageButton) activity.findViewById(R.id.bt_iso));
+		this.isoButton = (ImageButton) activity.findViewById(R.id.bt_iso);
 		PopupDialogIso isoDialog = new PopupDialogIso(activity, camera);
 		isoDialog.setDialogResultListener(this);
 		this.isoButton.setOnClickListener(isoDialog);
 
-		this.exposureButton = ((ImageButton) activity.findViewById(R.id.bt_brightness));
+		this.exposureButton = (ImageButton) activity.findViewById(R.id.bt_brightness);
 		PopupDialogExposureTime exposureDialog = new PopupDialogExposureTime(activity, camera);
 		exposureDialog.setDialogResultListener(this);
 		this.exposureButton.setOnClickListener(exposureDialog);
 
-		this.menuButton = ((ImageButton) activity.findViewById(R.id.bt_menu));
+		this.menuButton = (ImageButton) activity.findViewById(R.id.bt_menu);
 		PopupDialogMenu menuDialog = new PopupDialogMenu(activity, camera);
 		menuDialog.setDialogResultListener(this);
 		this.menuButton.setOnClickListener(menuDialog);
@@ -113,7 +113,8 @@ public class CameraControlButtonHandler implements PopupDialogBase.DialogResult 
 		}
 
 		long exposure = prefs.getLong("pref_camera_exposure", -1);
-		if (exposure == -1) {
+		int relExposure = prefs.getInt("pref_camera_exposure_rel", 0);
+		if (exposure == -1 && relExposure == 0) {
 			this.exposureButton.setImageResource(R.drawable.ic_cam_bt_brightness);
 		} else {
 			this.exposureButton.setImageResource(R.drawable.ic_cam_bt_brightness_enabled);

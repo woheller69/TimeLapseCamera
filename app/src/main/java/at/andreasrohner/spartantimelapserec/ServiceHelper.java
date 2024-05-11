@@ -11,7 +11,6 @@ import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.camera2.Camera2ForegroundService;
 import at.andreasrohner.spartantimelapserec.data.RecMode;
 import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
  * Helper class to start / stop picture service
@@ -21,7 +20,7 @@ public class ServiceHelper {
 	/**
 	 * Log Tag
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+	private static final String TAG = ServiceHelper.class.getSimpleName();
 
 	/**
 	 * Context
@@ -69,8 +68,10 @@ public class ServiceHelper {
 
 	/**
 	 * Stop
+	 *
+	 * @param reason Stop Reason
 	 */
-	public void stop() {
+	public void stop(String reason) {
 		Log.i(TAG, "Stop Service");
 
 		Intent intent;
@@ -81,6 +82,7 @@ public class ServiceHelper {
 		}
 
 		intent.setAction(Camera1ForegroundService.ACTION_STOP_SERVICE);
+		intent.putExtra("reason", reason);
 		context.startService(intent);
 	}
 
@@ -102,7 +104,9 @@ public class ServiceHelper {
 		if (prefs.getBoolean("pref_schedule_recording_enabled", false)) {
 			start(true);
 		} else {
-			stop();
+			if (BaseForegroundService.getStatus().getState() == ServiceState.State.SCHEDULED) {
+				stop("Stop, scheduling stopped");
+			}
 		}
 	}
 }

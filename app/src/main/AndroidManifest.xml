@@ -31,6 +31,14 @@
         android:requestLegacyExternalStorage="true"
         android:theme="@style/Theme.TimeLapse">
         <activity
+            android:name=".camera2.SetupExternalStorageActivity"
+            android:exported="false"
+            android:label="@string/external_storage" />
+        <activity
+            android:name=".state.LogActivity"
+            android:exported="false"
+            android:label="@string/logs" />
+        <activity
             android:name=".OledScreensaverActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false"
@@ -39,8 +47,8 @@
         <activity
             android:name=".camera2.Preview2Activity"
             android:exported="false"
-            android:screenOrientation="portrait"
             android:label="@string/camera2_header"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Design.NoActionBar" />
         <activity
             android:name=".preference.activity.RestSettingsActivity"

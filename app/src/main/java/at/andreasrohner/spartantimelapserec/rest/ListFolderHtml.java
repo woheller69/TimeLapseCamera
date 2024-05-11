@@ -1,7 +1,8 @@
 package at.andreasrohner.spartantimelapserec.rest;
 
-import java.io.File;
 import java.io.IOException;
+
+import at.andreasrohner.spartantimelapserec.camera2.filename.ImageFile;
 
 /**
  * List Folder user clickable
@@ -19,7 +20,7 @@ public class ListFolderHtml extends ListFolderPlain {
 	 * @param out     Output
 	 * @param rootDir Root directory
 	 */
-	public ListFolderHtml(HttpOutput out, File rootDir) {
+	public ListFolderHtml(HttpOutput out, ImageFile rootDir) {
 		super(out, rootDir);
 	}
 
@@ -27,8 +28,9 @@ public class ListFolderHtml extends ListFolderPlain {
 	public boolean output(String listFolder) throws IOException {
 		this.listFolder = listFolder;
 		boolean result = super.output(listFolder);
-		out.sendLine("</body>");
-
+		if (result) {
+			out.sendLine("</body>");
+		}
 		return result;
 	}
 
@@ -40,11 +42,11 @@ public class ListFolderHtml extends ListFolderPlain {
 	}
 
 	@Override
-	protected void writeFile(File file) throws IOException {
+	protected void writeFile(ImageFile file) throws IOException {
 		// No escaping... The File should not contiain special chars, so keep it simple
 		if (file.isDirectory()) {
 			out.sendLine("<a href=\"/1/img" + listFolder + "/" + file.getName() + "/listhtml\">" + file.getName() + "</a><br>");
-		} else  {
+		} else {
 			out.sendLine("<a href=\"/1/img" + listFolder + "/" + file.getName() + "\">" + file.getName() + "</a><br>");
 		}
 	}

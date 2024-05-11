@@ -43,9 +43,9 @@ import at.andreasrohner.spartantimelapserec.camera2.Preview2Activity;
 import at.andreasrohner.spartantimelapserec.data.RecMode;
 import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
 import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 import at.andreasrohner.spartantimelapserec.rest.RestControlUtil;
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
+import at.andreasrohner.spartantimelapserec.state.StateLog;
 
 /**
  * Main activity of the
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 	/**
 	 * Log Tag
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+	private static final String TAG = MainActivity.class.getSimpleName();
 
 	/**
 	 * Settings menu
@@ -76,6 +76,9 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// Make sure the state log is initialized
+		StateLog.addEntry("Startup", "Application startup");
 
 		if (broadcastReceiver == null) {
 			broadcastReceiver = new DeviceStatusReceiver();
@@ -165,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 
 	public void actionStop(MenuItem item) {
 		ServiceHelper helper = new ServiceHelper(getApplicationContext());
-		helper.stop();
+		helper.stop("Stop button pressed");
 
 		invalidateOptionsMenu();
 	}

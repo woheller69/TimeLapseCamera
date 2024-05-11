@@ -26,6 +26,7 @@
     <string name="pref_frame_rate">Video Abspielrate</string>
     <string name="pref_frame_size">Auflösung</string>
     <string name="pref_capture_rate">Kamera Abtastintervall</string>
+    <string name="pref_capture_rate_short">Intervall</string>
     <string name="pref_capture_rate_summ">Das Intervall in dem Bilder aufgenommen werden</string>
     <string name="pref_initial_delay">Anfangsverzögerung</string>
     <string name="pref_initial_delay_summ">Auswahl einer Verzögerung bevor die Aufnahme beginnt</string>
@@ -146,4 +147,16 @@
     <string name="pref_jpeg_settings">JPEG Einstellungen</string>
     <string name="pref_image_rotation">Bild Ausrichtung</string>
     <string name="camera_not_selected">Vorschau starten um Kamera zu konfigurieren</string>
+    <string name="exposure_absolute">Absolut</string>
+    <string name="exposure_relative">Relativ</string>
+    <string name="exposure_relative_text">Der Relative Wert wird nur verwendet, wenn der Absolutwert auf \'Auto\' steht</string>
+    <string name="logs">Logs</string>
+    <string name="external_storage">Externen Speicher konfigurieren</string>
+    <string name="external_storage_info">Um die Bilder auf einer SD Karte (wenn verfügbar) oder auf einem anderen Datenträger (z.B. USB Stick). Wählen Sie den Pfad.</string>
+    <string name="external_storage_bt_select">Pfad wählen</string>
+    <string name="external_storage_path_header">Gewählter Pfad</string>
+    <string name="external_storage_enabled">Externen Speicher aktivieren</string>
+    <string name="external_storage_info_disabled">Externer Speicher deaktiviert</string>
+    <string name="external_storage_info_enabled">Externer Speicher aktiviert</string>
+    <string name="external_storage_info_not_possible_with_camera1">Externer Speicher nur im Erweiterten Kamerainterface verfügbar</string>
 </resources>

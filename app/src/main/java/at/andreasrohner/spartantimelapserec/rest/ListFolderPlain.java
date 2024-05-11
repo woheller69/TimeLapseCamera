@@ -2,8 +2,10 @@ package at.andreasrohner.spartantimelapserec.rest;
 
 import android.util.Log;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.List;
+
+import at.andreasrohner.spartantimelapserec.camera2.filename.ImageFile;
 
 /**
  * List Folder for REST API
@@ -23,7 +25,7 @@ public class ListFolderPlain {
 	/**
 	 * Root directory
 	 */
-	protected final File rootDir;
+	protected final ImageFile rootDir;
 
 	/**
 	 * Constructor
@@ -31,28 +33,35 @@ public class ListFolderPlain {
 	 * @param out     Output
 	 * @param rootDir Root directory
 	 */
-	public ListFolderPlain(HttpOutput out, File rootDir) {
+	public ListFolderPlain(HttpOutput out, ImageFile rootDir) {
 		this.out = out;
 		this.rootDir = rootDir;
 	}
 
+	/**
+	 * List the folder
+	 *
+	 * @param listFolder Folder
+	 * @return true on success
+	 * @throws IOException
+	 */
 	public boolean output(String listFolder) throws IOException {
-		File listDir = new File(rootDir, listFolder);
+		ImageFile listDir = rootDir.child(listFolder);
 		Log.d(TAG, "List dir: " + listDir);
 		if (!listDir.isDirectory()) {
 			Log.w(TAG, "Directory does not exists");
 			return false;
 		}
 
-		File[] files = listDir.listFiles();
-		if (files == null) {
+		List<ImageFile> files = listDir.listFiles();
+		if (files.isEmpty()) {
 			Log.w(TAG, "Directory could not be listed");
 			return false;
 		}
 
 		writeHeader();
 
-		for (File f : files) {
+		for (ImageFile f : files) {
 			if (f.getName().charAt(0) == '.') {
 				continue;
 			}
@@ -75,7 +84,7 @@ public class ListFolderPlain {
 	 *
 	 * @param file File
 	 */
-	protected void writeFile(File file) throws IOException {
+	protected void writeFile(ImageFile file) throws IOException {
 		out.sendLine(file.getName());
 	}
 }

@@ -89,7 +89,7 @@ public class PopupDialogIso extends PopupDialogBase {
 
 	@Override
 	public int getDialogId() {
-		return R.layout.dialog_cam_selnumber;
+		return R.layout.dialog_cam_iso;
 	}
 
 	@Override

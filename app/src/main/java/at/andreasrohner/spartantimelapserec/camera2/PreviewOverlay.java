@@ -10,7 +10,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import androidx.preference.PreferenceManager;
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
 
 /**
  * Overlay for AF Fields
@@ -20,7 +19,7 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 	/**
 	 * Log Tag
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+	private static final String TAG = PreviewOverlay.class.getSimpleName();
 
 	/**
 	 * Draw debug border

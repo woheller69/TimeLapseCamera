@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowInsets;
 import android.widget.FrameLayout;
@@ -107,6 +108,12 @@ public class OledScreensaverActivity extends AppCompatActivity {
 	 */
 	private FrameLayout mFullscreenContent;
 
+	/**
+	 * Constructor
+	 */
+	public OledScreensaverActivity() {
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -119,6 +126,11 @@ public class OledScreensaverActivity extends AppCompatActivity {
 		mContentView = binding.fullscreenContent;
 		mStatusLabel = binding.statusLabel;
 		mFullscreenContent = binding.fullscreenContent;
+
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setDisplayHomeAsUpEnabled(true);
+		}
 
 		// Set up the user interaction to manually show or hide the system UI.
 		mContentView.setOnClickListener(new View.OnClickListener() {
@@ -154,12 +166,12 @@ public class OledScreensaverActivity extends AppCompatActivity {
 			b.append("\n∑ ");
 			b.append(ImageRecorderState.getRecordedImagesCount());
 			b.append("\n");
-			b.append(ImageRecorderState.getCurrentRecordedImage());
+			b.append(ImageRecorderState.getCurrentRecordedImage().getRelativeUrl());
 		}
 
 		mStatusLabel.setText(b.toString());
 
-		int w = mFullscreenContent.getWidth() - mStatusLabel.getWidth();
+		int w = mFullscreenContent.getWidth() / 2;
 		int h = mFullscreenContent.getHeight() - mStatusLabel.getHeight();
 
 		int left = (int) (Math.random() * w);
@@ -177,6 +189,18 @@ public class OledScreensaverActivity extends AppCompatActivity {
 		delayedHide(100);
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		if (id == android.R.id.home) {
+			finish();
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	/**
+	 * Show / hide menu
+	 */
 	private void toggle() {
 		if (mVisible) {
 			hide();
@@ -185,6 +209,9 @@ public class OledScreensaverActivity extends AppCompatActivity {
 		}
 	}
 
+	/**
+	 * Hide menu
+	 */
 	private void hide() {
 		// Hide UI first
 		ActionBar actionBar = getSupportActionBar();
@@ -199,6 +226,9 @@ public class OledScreensaverActivity extends AppCompatActivity {
 		mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
 	}
 
+	/**
+	 * Show menu
+	 */
 	private void show() {
 		// Show the system bar
 		if (Build.VERSION.SDK_INT >= 30) {

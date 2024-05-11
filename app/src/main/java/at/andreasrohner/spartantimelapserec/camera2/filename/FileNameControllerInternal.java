@@ -1,32 +1,29 @@
-package at.andreasrohner.spartantimelapserec.camera2;
+package at.andreasrohner.spartantimelapserec.camera2.filename;
 
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.os.Environment;
 import android.text.format.DateFormat;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import at.andreasrohner.spartantimelapserec.ImageRecorderState;
-import at.andreasrohner.spartantimelapserec.rest.HttpThread;
+import at.andreasrohner.spartantimelapserec.state.StateLog;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
 
 /**
- * Controller for output filenames
+ * Store the files in the internal storage
  */
-public class FileNameController {
+public class FileNameControllerInternal extends AbstractFileNameController {
 
 	/**
 	 * Log Tag
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
-
-	/**
-	 * Project name
-	 */
-	private final String projectName;
+	private static final String TAG = FileNameControllerInternal.class.getSimpleName();
 
 	/**
 	 * Output path
@@ -34,30 +31,22 @@ public class FileNameController {
 	private File outputDir;
 
 	/**
-	 * File Numbering
-	 */
-	private int fileIndex = 0;
-
-	/**
 	 * Constructor
 	 *
-	 * @param prefs SharedPreferences
+	 * @param context Context
 	 */
-	public FileNameController(SharedPreferences prefs) {
+	public FileNameControllerInternal(Context context) {
+		super(context);
+
 		String projectPath = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).getPath();
-		this.projectName = prefs.getString("pref_project_title", "NO_NAME");
 		this.outputDir = new File(projectPath, projectName + "/" + DateFormat.format("yyyy-MM-dd", System.currentTimeMillis()) + "/");
+
 		Log.i(TAG, "Project Folder: «" + this.outputDir + "»");
+		StateLog.addEntry("Project Path", this.outputDir.toString());
 	}
 
-	/**
-	 * Get Next output filename
-	 *
-	 * @param ext Extension
-	 * @return File
-	 * @throws IOException
-	 */
-	protected File getOutputFile(String ext) throws IOException {
+	@Override
+	public OutputStream getOutputFile(String ext) throws IOException {
 		if (!outputDir.exists()) {
 			if (!outputDir.mkdirs()) {
 				throw new IOException("Could not create folder «" + outputDir + "»");
@@ -74,8 +63,8 @@ public class FileNameController {
 			throw new IOException("Could not open directory «" + outputDir + "»");
 		}
 
-		ImageRecorderState.setCurrentImage(outFile);
+		ImageRecorderState.setCurrentImage(new ImageFileFile(outFile));
 
-		return outFile;
+		return new FileOutputStream(outFile);
 	}
 }

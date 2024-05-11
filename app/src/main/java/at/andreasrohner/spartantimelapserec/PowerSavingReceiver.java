@@ -22,11 +22,20 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+/**
+ * Receive if battery is empty
+ */
 public class PowerSavingReceiver extends BroadcastReceiver {
+
+	/**
+	 * Constructor
+	 */
+	public PowerSavingReceiver() {
+	}
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		ServiceHelper serviceHelper = new ServiceHelper(context);
-		serviceHelper.stop();
+		serviceHelper.stop("PowerSavingReceiver");
 	}
 }
