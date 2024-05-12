@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 		// Make sure the state log is initialized
 		StateLog.loadLogLevel(this);
 		LogFileWriter.loadLogConfig(this);
-		logger.mark("Application startup");
+		logger.mark("Application startup, build: {}", BuildConfig.BUILD_TIME);
 
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override
@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 
 	public void actionStop(MenuItem item) {
 		ServiceHelper helper = new ServiceHelper(getApplicationContext());
-		helper.stop("Stop button pressed");
+		helper.stop("Stop button pressed", false);
 
 		invalidateOptionsMenu();
 	}

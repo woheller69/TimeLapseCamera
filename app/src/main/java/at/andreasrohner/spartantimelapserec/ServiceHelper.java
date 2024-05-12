@@ -69,9 +69,10 @@ public class ServiceHelper {
 	/**
 	 * Stop
 	 *
-	 * @param reason Stop Reason
+	 * @param reason    Stop Reason
+	 * @param errorStop Stopped because of error
 	 */
-	public void stop(String reason) {
+	public void stop(String reason, boolean errorStop) {
 		logger.info("Stop Service");
 
 		Intent intent;
@@ -83,6 +84,7 @@ public class ServiceHelper {
 
 		intent.setAction(Camera1ForegroundService.ACTION_STOP_SERVICE);
 		intent.putExtra("reason", reason);
+		intent.putExtra("errorStop", errorStop);
 		context.startService(intent);
 	}
 
@@ -105,7 +107,7 @@ public class ServiceHelper {
 			start(true);
 		} else {
 			if (BaseForegroundService.getStatus().getState() == ServiceState.State.SCHEDULED) {
-				stop("Stop, scheduling stopped");
+				stop("Stop, scheduling stopped", false);
 			}
 		}
 	}

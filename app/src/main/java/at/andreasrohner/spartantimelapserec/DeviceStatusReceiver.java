@@ -49,13 +49,15 @@ public class DeviceStatusReceiver extends BroadcastReceiver {
 		 * files get corrupted and are not playable any more
 		 */
 		if (stopOnLowBattery && intent.getAction().equals(Intent.ACTION_BATTERY_LOW)) {
-			serviceHelper.stop("Battery low");
+			// Mark this as error, battery empty is an error
+			serviceHelper.stop("Battery low", true);
 		}
 		if (stopOnLowStorage && intent.getAction().equals(Intent.ACTION_DEVICE_STORAGE_LOW)) {
-			serviceHelper.stop("Storage low");
+			// Mark this as error, storage full is an error
+			serviceHelper.stop("Storage low", true);
 		}
 		if (intent.getAction().equals(Intent.ACTION_SHUTDOWN)) {
-			serviceHelper.stop("ACTION_SHUTDOWN");
+			serviceHelper.stop("ACTION_SHUTDOWN", false);
 		}
 
 		// for testing: Activate filter in MainActivity

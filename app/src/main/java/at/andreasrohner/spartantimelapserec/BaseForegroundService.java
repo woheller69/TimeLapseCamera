@@ -65,7 +65,7 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 	/**
 	 * Current state of the service
 	 */
-	private static ServiceState status = new ServiceState(ServiceState.State.INIT, "Initialized");
+	private static ServiceState status = new ServiceState(ServiceState.State.INIT, "Initialized", false);
 
 	/**
 	 * Wake lock, make sure the application don't get killed while recording...
@@ -156,14 +156,16 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 
 			startupService();
 			updateNotification();
-			fireStateChanged(new ServiceState(ServiceState.State.RUNNING, "onStartCommand"));
+			fireStateChanged(new ServiceState(ServiceState.State.RUNNING, "onStartCommand", false));
 			return START_STICKY;
 		} else {
 			String reason = intent.getStringExtra("reason");
 			if (reason == null) {
 				reason = "No reason received with intent";
 			}
-			shutdownService(reason);
+			boolean errorStop = intent.getBooleanExtra("errorStop", true);
+
+			shutdownService(reason, errorStop);
 			return START_NOT_STICKY;
 		}
 	}
@@ -190,7 +192,7 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 
 			String startDate = f.format(settings.getSchedRecTime());
 			logger.mark("Start scheduled for {}", startDate);
-			fireStateChanged(new ServiceState(ServiceState.State.SCHEDULED, startDate));
+			fireStateChanged(new ServiceState(ServiceState.State.SCHEDULED, startDate, false));
 			return true;
 		}
 
@@ -212,15 +214,16 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 	/**
 	 * Service shutdown
 	 *
-	 * @param reason Reason
+	 * @param reason    Reason
+	 * @param errorStop Stopped because of error
 	 */
-	protected void shutdownService(String reason) {
+	protected void shutdownService(String reason, boolean errorStop) {
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		Intent intent = new Intent(this, ScheduleReceiver.class);
 		PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
 		alarmManager.cancel(alarmIntent);
 
-		stop(reason);
+		stop(reason, errorStop);
 	}
 
 	/**
@@ -282,9 +285,10 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 	/**
 	 * Stop recording
 	 *
-	 * @param reason Reason to stop
+	 * @param reason    Reason to stop
+	 * @param errorStop Stopped because of error
 	 */
-	protected void stop(String reason) {
+	protected void stop(String reason, boolean errorStop) {
 		stopRecording();
 
 		if (wakeLock != null && wakeLock.isHeld()) {
@@ -295,7 +299,7 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 			sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(outputDir)));
 		}
 
-		fireStateChanged(new ServiceState(ServiceState.State.STOPPED, reason));
+		fireStateChanged(new ServiceState(ServiceState.State.STOPPED, reason, errorStop));
 		stopForeground(true);
 		stopSelf();
 	}
@@ -311,9 +315,9 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 		String msg = m.getData().getString("msg");
 
 		if ("error".equals(status)) {
-			stop("Error: " + msg);
+			stop("Error: " + msg, true);
 		} else if ("success".equals(status)) {
-			stop("Ended with success");
+			stop("Ended with success", false);
 		}
 
 		return true;

@@ -11,7 +11,8 @@ android {
         targetSdk 34
         versionCode 17
         versionName "1.7"
-
+        def buildTime = new Date()
+        buildConfigField "String", "BUILD_TIME", "\"${buildTime.format('yyyy-MM-dd HH:mm:ss')}\""
     }
 
     buildTypes {

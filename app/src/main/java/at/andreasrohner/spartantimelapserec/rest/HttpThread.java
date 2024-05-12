@@ -405,7 +405,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 			result = "ok";
 		} else if ("stop".equals(command)) {
 			ServiceHelper helper = new ServiceHelper(restService.getApplicationContext());
-			helper.stop("Stopped over REST API by " + remote);
+			helper.stop("Stopped over REST API by " + remote, false);
 			result = "ok";
 		} else if ("param".equals(command)) {
 			StringBuilder b = new StringBuilder();

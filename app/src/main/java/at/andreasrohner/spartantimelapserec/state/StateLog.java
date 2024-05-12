@@ -93,6 +93,11 @@ public class StateLog implements ServiceStatusListener {
 		StateLogEntry entry = new StateLogEntry();
 		entry.setHeader(String.valueOf(status.getState()));
 		entry.setLine(status.getReason());
+		if (status.isErrorStop()) {
+			entry.setLevel(LogLevel.ERROR);
+		} else {
+			entry.setLevel(LogLevel.INFO);
+		}
 
 		addEntry(entry);
 	}

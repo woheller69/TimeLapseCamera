@@ -36,6 +36,8 @@ public class PowerSavingReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		ServiceHelper serviceHelper = new ServiceHelper(context);
-		serviceHelper.stop("PowerSavingReceiver");
+		
+		// Mark this as error, even if it's not an application error
+		serviceHelper.stop("PowerSavingReceiver", true);
 	}
 }
