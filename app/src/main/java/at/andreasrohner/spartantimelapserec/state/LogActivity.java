@@ -82,14 +82,14 @@ public class LogActivity extends AppCompatActivity {
 		builder.setTitle(R.string.action_log_to_file);
 		builder.setMessage(R.string.log_file_dialog_enabled_info);
 
-		CheckBox checkbox = new CheckBox(this);
-		checkbox.setText(R.string.write_log_file);
+		View view = View.inflate(this, R.layout.dialog_logfile, null);
+		builder.setView(view);
+		CheckBox checkbox = (CheckBox) view.findViewById(R.id.log_enabled);
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		boolean enabled = prefs.getBoolean("log_file_enabled", false);
 		checkbox.setChecked(enabled);
 
-		builder.setView(checkbox);
 		builder.setPositiveButton(this.getString(R.string.dialog_OK_button), (dialog, which) -> {
 			boolean newEnabled = checkbox.isChecked();
 			SharedPreferences.Editor editor = prefs.edit();
