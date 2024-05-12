@@ -35,7 +35,7 @@ public class PopupDialogAfMf extends PopupDialogBase {
 	 */
 	private void updateSelectedCheckbox() {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		String afMode = prefs.getString("pref_camera_af_mode", null);
+		String afMode = prefs.getString("pref_camera_af_mode", "auto");
 
 		if ("field".equals(afMode)) {
 			this.group.check(R.id.bt_afmf_af_field);
@@ -62,7 +62,7 @@ public class PopupDialogAfMf extends PopupDialogBase {
 			mode = "auto";
 		}
 
-		editor.putString("pref_camera_af_mode", mode);
+		editor.putString("pref_camera_af_mode", "auto");
 		editor.apply();
 
 		return 0;

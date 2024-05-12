@@ -99,7 +99,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 				return;
 			}
 
-			String afMode = prefs.getString("pref_camera_af_mode", null);
+			String afMode = prefs.getString("pref_camera_af_mode", "auto");
 
 			if ("manual".equals(afMode)) {
 				float focusDistance = result.get(CaptureResult.LENS_FOCUS_DISTANCE);

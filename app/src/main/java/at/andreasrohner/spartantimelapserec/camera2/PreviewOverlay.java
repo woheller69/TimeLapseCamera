@@ -93,7 +93,7 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 		if (afField == null) {
 			return;
 		}
-		String afMode = prefs.getString("pref_camera_af_mode", null);
+		String afMode = prefs.getString("pref_camera_af_mode", "auto");
 		if ("auto".equals(afMode)) {
 			return;
 		}

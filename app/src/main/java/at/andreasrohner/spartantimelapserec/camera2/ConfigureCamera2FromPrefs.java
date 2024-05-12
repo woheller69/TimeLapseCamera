@@ -72,7 +72,7 @@ public class ConfigureCamera2FromPrefs {
 	 * @param captureBuilder Camera Configuration
 	 */
 	private void configureFocus(CaptureRequest.Builder captureBuilder) {
-		String afMode = prefs.getString("pref_camera_af_mode", null);
+		String afMode = prefs.getString("pref_camera_af_mode", "auto");
 
 		if ("field".equals(afMode)) {
 			String afField = prefs.getString("pref_camera_af_field", null);
