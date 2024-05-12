@@ -152,7 +152,7 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 			String projectName = prefs.getString("pref_project_title", "NO_NAME");
 			this.outputDir = new File(projectPath, projectName + "/" + DateFormat.format("yyyy-MM-dd", System.currentTimeMillis()) + "/");
-			logger.mark("Project Folder: «{}}»", this.outputDir);
+			logger.mark("Project Folder: «{}»", this.outputDir);
 
 			startupService();
 			updateNotification();

@@ -56,7 +56,7 @@ public class FileNameControllerExternal extends AbstractFileNameController {
 
 		this.outputDir = dir2;
 
-		logger.info("Project Folder: «{}»", this.outputDir);
+		logger.info("Project Folder: «{}»", this.outputDir.getUri());
 	}
 
 	/**
