@@ -8,10 +8,10 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.os.Handler;
-import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.camera2.filename.AbstractFileNameController;
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
  * Wrapps the camera interface and configures the camera
@@ -19,9 +19,9 @@ import at.andreasrohner.spartantimelapserec.camera2.filename.AbstractFileNameCon
 public class Camera2Wrapper {
 
 	/**
-	 * Log Tag
+	 * Logger
 	 */
-	private static final String TAG = Camera2Wrapper.class.getSimpleName();
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * Context
@@ -74,7 +74,7 @@ public class Camera2Wrapper {
 	private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
 		@Override
 		public void onOpened(CameraDevice camera) {
-			Log.i(TAG, "Camera Ready");
+			logger.info("Camera Ready");
 			cameraDevice = camera;
 			if (openCallback != null) {
 				openCallback.cameraOpened(true);
@@ -146,7 +146,7 @@ public class Camera2Wrapper {
 	 */
 	@SuppressLint("MissingPermission") // permission is request in Main Activity
 	public void open() {
-		Log.i(TAG, "Open camera");
+		logger.info("Open camera");
 		try {
 			cameraId = prefs.getString("pref_camera", cameraManager.getCameraIdList()[0]);
 

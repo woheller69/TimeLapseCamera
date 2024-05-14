@@ -4,12 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.StatusSenderUtil;
 import at.andreasrohner.spartantimelapserec.camera2.filename.AbstractFileNameController;
 import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
  * Handle Recording
@@ -17,9 +17,9 @@ import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
 public class Camera2Recorder implements Runnable, TakePicture.ImageTakenListener, ProcessErrorHandler {
 
 	/**
-	 * Log Tag
+	 * Logger
 	 */
-	private static final String TAG = Camera2Recorder.class.getSimpleName();
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * Context
@@ -118,7 +118,7 @@ public class Camera2Recorder implements Runnable, TakePicture.ImageTakenListener
 		try {
 			backgroundThread.join();
 		} catch (InterruptedException e) {
-			Log.e(TAG, "Error joining background Thread", e);
+			logger.error("Error joining background Thread", e);
 		}
 
 		backgroundThread = null;
@@ -131,16 +131,16 @@ public class Camera2Recorder implements Runnable, TakePicture.ImageTakenListener
 	@Override
 	public void run() {
 		if (!running) {
-			Log.i(TAG, "Stop now because of running flag");
+			logger.info("Stop now because of running flag");
 			return;
 		}
 		// Schedule next image
 		handler.postDelayed(this, captureIntervalTime);
 
-		Log.i(TAG, "Take Image");
+		logger.debug("Take Image");
 
 		if (waitForImage) {
-			Log.e(TAG, "Still waiting for the last image! missed count: " + missedImages);
+			logger.warn("Still waiting for the last image! missed count: {}", missedImages);
 			missedImages++;
 			if (missedImages >= 3) {
 				error("Could not create the last 3 images!", null);
@@ -164,7 +164,7 @@ public class Camera2Recorder implements Runnable, TakePicture.ImageTakenListener
 
 	@Override
 	public void error(String msg, Exception e) {
-		Log.e(TAG, msg, e);
+		logger.error(msg, e);
 		StringBuilder b = new StringBuilder();
 		b.append(msg);
 		if (e != null) {
@@ -175,6 +175,6 @@ public class Camera2Recorder implements Runnable, TakePicture.ImageTakenListener
 				b.append(e.getMessage());
 			}
 		}
-		StatusSenderUtil.sendError(handler, TAG, b.toString());
+		StatusSenderUtil.sendError(handler, b.toString());
 	}
 }

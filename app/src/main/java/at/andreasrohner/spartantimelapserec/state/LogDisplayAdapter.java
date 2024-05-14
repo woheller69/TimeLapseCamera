@@ -53,6 +53,29 @@ public class LogDisplayAdapter extends ArrayAdapter<StateLogEntry> {
 		TextView logLine = (TextView) rowView.findViewById(R.id.log_line);
 		logLine.setText(entry.getLine());
 
+		logHeader.setTextColor(0xFF000000);
+		logTimestamp.setTextColor(0xFF000000);
+		logLine.setTextColor(0xFF000000);
+
+		rowView.setBackgroundColor(0xFFffffff);
+
+		switch (entry.getLevel()) {
+			case ERROR:
+				rowView.setBackgroundColor(0xFFffcccc);
+				break;
+			case WARN:
+				rowView.setBackgroundColor(0xFFffe6cc);
+				break;
+			case MARK:
+				rowView.setBackgroundColor(0xFF99ccff);
+				break;
+			case DEBUG:
+				logHeader.setTextColor(0xFF999999);
+				logTimestamp.setTextColor(0xFF999999);
+				logLine.setTextColor(0xFF999999);
+				break;
+		}
+
 		return rowView;
 	}
 }

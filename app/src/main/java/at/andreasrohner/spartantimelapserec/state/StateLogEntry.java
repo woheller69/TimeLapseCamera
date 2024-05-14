@@ -21,6 +21,11 @@ public class StateLogEntry {
 	private String line;
 
 	/**
+	 * Log level
+	 */
+	private LogLevel level;
+
+	/**
 	 * Constructor
 	 */
 	public StateLogEntry() {
@@ -59,5 +64,19 @@ public class StateLogEntry {
 	 */
 	public String getLine() {
 		return line;
+	}
+
+	/**
+	 * @param level Log level
+	 */
+	public void setLevel(LogLevel level) {
+		this.level = level;
+	}
+
+	/**
+	 * @return Log level
+	 */
+	public LogLevel getLevel() {
+		return level;
 	}
 }

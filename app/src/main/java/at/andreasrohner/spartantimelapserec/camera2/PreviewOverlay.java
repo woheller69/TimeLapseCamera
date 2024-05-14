@@ -7,9 +7,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import androidx.preference.PreferenceManager;
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
  * Overlay for AF Fields
@@ -17,9 +17,9 @@ import androidx.preference.PreferenceManager;
 public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView {
 
 	/**
-	 * Log Tag
+	 * Logger
 	 */
-	private static final String TAG = PreviewOverlay.class.getSimpleName();
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * Draw debug border
@@ -93,7 +93,7 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 		if (afField == null) {
 			return;
 		}
-		String afMode = prefs.getString("pref_camera_af_mode", null);
+		String afMode = prefs.getString("pref_camera_af_mode", "auto");
 		if ("auto".equals(afMode)) {
 			return;
 		}
@@ -105,7 +105,7 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 			px = Float.parseFloat(parts[0]);
 			py = Float.parseFloat(parts[1]);
 		} catch (Exception e) {
-			Log.e(TAG, "Invalid AF Value: «" + afField + "»");
+			logger.error("Invalid AF Value: «{}»", afField, e);
 			return;
 		}
 		int x = (int) (iw * px) + left;

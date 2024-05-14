@@ -44,14 +44,21 @@ public class ServiceState {
 	private final String reason;
 
 	/**
+	 * Stopped because of error
+	 */
+	private final boolean errorStop;
+
+	/**
 	 * Constructor
 	 *
-	 * @param state  Current state
-	 * @param reason Reason why the current state was set
+	 * @param state     Current state
+	 * @param reason    Reason why the current state was set
+	 * @param errorStop Stopped because of error
 	 */
-	public ServiceState(State state, String reason) {
+	public ServiceState(State state, String reason, boolean errorStop) {
 		this.state = state;
 		this.reason = reason;
+		this.errorStop = errorStop;
 	}
 
 	/**
@@ -66,6 +73,13 @@ public class ServiceState {
 	 */
 	public String getReason() {
 		return reason;
+	}
+
+	/**
+	 * @return Stopped because of error
+	 */
+	public boolean isErrorStop() {
+		return errorStop;
 	}
 
 	@NonNull

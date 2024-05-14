@@ -19,7 +19,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
 import android.text.format.DateFormat;
-import android.util.Log;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -29,6 +28,7 @@ import java.util.List;
 import androidx.core.app.NotificationCompat;
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
 
@@ -38,9 +38,9 @@ import static android.os.Environment.DIRECTORY_PICTURES;
 public abstract class BaseForegroundService extends Service implements Handler.Callback {
 
 	/**
-	 * Log Tag
+	 * Logger
 	 */
-	private static final String TAG = BaseForegroundService.class.getSimpleName();
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * Action to stop the service
@@ -65,7 +65,7 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 	/**
 	 * Current state of the service
 	 */
-	private static ServiceState status = new ServiceState(ServiceState.State.INIT, "Initialized");
+	private static ServiceState status = new ServiceState(ServiceState.State.INIT, "Initialized", false);
 
 	/**
 	 * Wake lock, make sure the application don't get killed while recording...
@@ -152,18 +152,20 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 			String projectName = prefs.getString("pref_project_title", "NO_NAME");
 			this.outputDir = new File(projectPath, projectName + "/" + DateFormat.format("yyyy-MM-dd", System.currentTimeMillis()) + "/");
-			Log.i(TAG, "Project Folder: «" + this.outputDir + "»");
+			logger.mark("Project Folder: «{}»", this.outputDir);
 
 			startupService();
 			updateNotification();
-			fireStateChanged(new ServiceState(ServiceState.State.RUNNING, "onStartCommand"));
+			fireStateChanged(new ServiceState(ServiceState.State.RUNNING, "onStartCommand", false));
 			return START_STICKY;
 		} else {
 			String reason = intent.getStringExtra("reason");
 			if (reason == null) {
 				reason = "No reason received with intent";
 			}
-			shutdownService(reason);
+			boolean errorStop = intent.getBooleanExtra("errorStop", true);
+
+			shutdownService(reason, errorStop);
 			return START_NOT_STICKY;
 		}
 	}
@@ -189,8 +191,8 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 			java.text.DateFormat f = SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.MEDIUM, SimpleDateFormat.SHORT);
 
 			String startDate = f.format(settings.getSchedRecTime());
-			Log.i(TAG, "Start scheduled for " + startDate);
-			fireStateChanged(new ServiceState(ServiceState.State.SCHEDULED, startDate));
+			logger.mark("Start scheduled for {}", startDate);
+			fireStateChanged(new ServiceState(ServiceState.State.SCHEDULED, startDate, false));
 			return true;
 		}
 
@@ -212,15 +214,16 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 	/**
 	 * Service shutdown
 	 *
-	 * @param reason Reason
+	 * @param reason    Reason
+	 * @param errorStop Stopped because of error
 	 */
-	protected void shutdownService(String reason) {
+	protected void shutdownService(String reason, boolean errorStop) {
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		Intent intent = new Intent(this, ScheduleReceiver.class);
 		PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
 		alarmManager.cancel(alarmIntent);
 
-		stop(reason);
+		stop(reason, errorStop);
 	}
 
 	/**
@@ -282,9 +285,10 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 	/**
 	 * Stop recording
 	 *
-	 * @param reason Reason to stop
+	 * @param reason    Reason to stop
+	 * @param errorStop Stopped because of error
 	 */
-	protected void stop(String reason) {
+	protected void stop(String reason, boolean errorStop) {
 		stopRecording();
 
 		if (wakeLock != null && wakeLock.isHeld()) {
@@ -295,7 +299,7 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 			sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(outputDir)));
 		}
 
-		fireStateChanged(new ServiceState(ServiceState.State.STOPPED, reason));
+		fireStateChanged(new ServiceState(ServiceState.State.STOPPED, reason, errorStop));
 		stopForeground(true);
 		stopSelf();
 	}
@@ -308,15 +312,12 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 	@Override
 	public boolean handleMessage(Message m) {
 		String status = m.getData().getString("status");
-		String tag = m.getData().getString("tag");
 		String msg = m.getData().getString("msg");
 
 		if ("error".equals(status)) {
-			Log.e(tag, "Error: " + msg);
-			stop("Error: " + msg);
+			stop("Error: " + msg, true);
 		} else if ("success".equals(status)) {
-			Log.e(tag, "Success");
-			stop("Ended with success");
+			stop("Ended with success", false);
 		}
 
 		return true;

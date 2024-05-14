@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 
 import androidx.preference.Preference;
 import at.andreasrohner.spartantimelapserec.BaseForegroundService;
+import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.ServiceState;
 import at.andreasrohner.spartantimelapserec.state.LogActivity;
 
@@ -29,6 +30,11 @@ public class StatusScreen implements MainSettingsMenu {
 	@Override
 	public void updateSummary(Preference pref, Context ctx, SharedPreferences prefs) {
 		ServiceState status = BaseForegroundService.getStatus();
+		if (status.isErrorStop()) {
+			pref.setIcon(R.drawable.ic_warn);
+		} else {
+			pref.setIcon(R.drawable.ic_state);
+		}
 		pref.setSummary(status.toString());
 	}
 }

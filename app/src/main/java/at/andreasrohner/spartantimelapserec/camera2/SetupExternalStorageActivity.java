@@ -1,6 +1,7 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -99,6 +100,7 @@ public class SetupExternalStorageActivity extends AppCompatActivity {
 	 */
 	private void selectPath() {
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION | Intent.FLAG_GRANT_PREFIX_URI_PERMISSION);
 		selectPathResultLauncher.launch(intent);
 	}
 
@@ -111,7 +113,11 @@ public class SetupExternalStorageActivity extends AppCompatActivity {
 			if (result.getResultCode() != Activity.RESULT_OK || result.getData() == null) {
 				return;
 			}
+
 			Uri currentUri = result.getData().getData();
+
+			ContentResolver cr = getContentResolver();
+			cr.takePersistableUriPermission(currentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
 			SharedPreferences.Editor editor = prefs.edit();
 			editor.putString("external_storage_path", String.valueOf(currentUri));

@@ -5,13 +5,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.DialogPreference;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.preference.update.SummaryPreference;
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
  * Show an activity, more like a 'submenu' than a real setting
@@ -19,9 +19,9 @@ import at.andreasrohner.spartantimelapserec.preference.update.SummaryPreference;
 public class ShowActivityPreference extends DialogPreference implements SummaryPreference {
 
 	/**
-	 * Log Tag
+	 * Logger
 	 */
-	private static final String TAG = ShowActivityPreference.class.getSimpleName();
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * Settings implementation for this menu entry
@@ -76,14 +76,14 @@ public class ShowActivityPreference extends DialogPreference implements SummaryP
 		a.recycle();
 
 		if (settingsClass == null) {
-			Log.e(TAG, "Missing settings class for «" + getKey() + "»");
+			logger.error("Missing settings class for «{}»", getKey());
 			return;
 		}
 
 		try {
 			settings = (MainSettingsMenu) Class.forName(settingsClass).newInstance();
 		} catch (Exception e) {
-			Log.e(TAG, "Could not instance Settings implementation «" + settingsClass + "» for «" + getKey() + "»", e);
+			logger.error("Could not instance Settings implementation «{}» for «{}»", settingsClass, getKey(), e);
 		}
 	}
 

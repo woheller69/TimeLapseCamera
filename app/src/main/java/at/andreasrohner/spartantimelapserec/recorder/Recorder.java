@@ -21,9 +21,7 @@ package at.andreasrohner.spartantimelapserec.recorder;
 import android.content.Context;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
-import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.os.PowerManager.WakeLock;
 import android.os.SystemClock;
 import android.util.Log;
@@ -35,8 +33,14 @@ import at.andreasrohner.spartantimelapserec.StatusSenderUtil;
 import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
 import at.andreasrohner.spartantimelapserec.sensor.OrientationSensor;
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
 public abstract class Recorder {
+
+	/**
+	 * Logger
+	 */
+	private Logger logger = new Logger(getClass());
 
 	protected Context mContext;
 
@@ -105,8 +109,9 @@ public abstract class Recorder {
 	}
 
 	protected void releaseCamera() {
-		if (mCamera == null)
+		if (mCamera == null) {
 			return;
+		}
 
 		try {
 			mCamera.reconnect();
@@ -118,7 +123,8 @@ public abstract class Recorder {
 	}
 
 	protected void handleError(String tag, String msg) {
-		StatusSenderUtil.sendError(mHandler, tag, msg);
+		logger.error("{}", msg);
+		StatusSenderUtil.sendError(mHandler, msg);
 		mHandler = null;
 	}
 
@@ -127,13 +133,15 @@ public abstract class Recorder {
 	}
 
 	protected void disableOrientationSensor() {
-		if (mOrientation != null)
+		if (mOrientation != null) {
 			mOrientation.disable();
+		}
 	}
 
 	protected void enableOrientationSensor() {
-		if (mOrientation != null)
+		if (mOrientation != null) {
 			mOrientation.enable();
+		}
 	}
 
 	public void stop() {
@@ -166,8 +174,9 @@ public abstract class Recorder {
 			}
 		};
 
-		if (mHandler == null || mContext == null)
+		if (mHandler == null || mContext == null) {
 			return;
+		}
 
 		enableOrientationSensor();
 
@@ -181,10 +190,11 @@ public abstract class Recorder {
 
 		timeDiff = SystemClock.elapsedRealtime() - timeDiff;
 		timeDiff = mInitDelay - timeDiff;
-		if (timeDiff <= 0)
+		if (timeDiff <= 0) {
 			mHandler.post(r);
-		else
+		} else {
 			mHandler.postDelayed(r, timeDiff);
+		}
 
 		mInitDelay = 0;
 	}
@@ -200,15 +210,17 @@ public abstract class Recorder {
 			mFileIndex++;
 		} while (outFile.isFile());
 
-		if (!mOutputDir.isDirectory())
+		if (!mOutputDir.isDirectory()) {
 			throw new IOException("Could not open directory");
+		}
 
 		return outFile;
 	}
 
 	protected int getCameraRotation(int cameraId) {
-		if (mOrientation != null)
+		if (mOrientation != null) {
 			return mOrientation.getCameraRotation(cameraId);
+		}
 		return 0;
 	}
 
@@ -217,8 +229,9 @@ public abstract class Recorder {
 			if (mCanDisableShutterSound) {
 				// don't merge with upper if (to prevent elseif-branch if
 				// mCamera == null)
-				if (mCamera != null)
+				if (mCamera != null) {
 					mCamera.enableShutterSound(false);
+				}
 			} else if (mMute != null) {
 				mMute.muteShutter();
 			}
@@ -231,8 +244,9 @@ public abstract class Recorder {
 			if (mCanDisableShutterSound) {
 				// don't merge with upper if (to prevent elseif-branch if
 				// mCamera == null)
-				if (mCamera != null)
+				if (mCamera != null) {
 					mCamera.enableShutterSound(true);
+				}
 			} else if (mMute != null) {
 				mMute.unmuteShutter();
 			}

@@ -19,10 +19,9 @@ public final class StatusSenderUtil {
 	 * Send Error
 	 *
 	 * @param handler Handler
-	 * @param tag     Tag
 	 * @param msg     Message
 	 */
-	public static void sendError(Handler handler, String tag, String msg) {
+	public static void sendError(Handler handler, String msg) {
 		if (handler == null) {
 			return;
 		}
@@ -30,7 +29,6 @@ public final class StatusSenderUtil {
 		Message m = new Message();
 		Bundle b = new Bundle();
 		b.putString("status", "error");
-		b.putString("tag", tag);
 		b.putString("msg", msg);
 		m.setData(b);
 		m.setTarget(handler);

@@ -30,7 +30,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -45,6 +44,8 @@ import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
 import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
 import at.andreasrohner.spartantimelapserec.rest.RestControlUtil;
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
+import at.andreasrohner.spartantimelapserec.state.LogFileWriter;
+import at.andreasrohner.spartantimelapserec.state.Logger;
 import at.andreasrohner.spartantimelapserec.state.StateLog;
 
 /**
@@ -53,9 +54,9 @@ import at.andreasrohner.spartantimelapserec.state.StateLog;
 public class MainActivity extends AppCompatActivity implements ServiceStatusListener {
 
 	/**
-	 * Log Tag
+	 * Logger
 	 */
-	private static final String TAG = MainActivity.class.getSimpleName();
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * Settings menu
@@ -78,7 +79,16 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 		super.onCreate(savedInstanceState);
 
 		// Make sure the state log is initialized
-		StateLog.addEntry("Startup", "Application startup");
+		StateLog.loadLogLevel(this);
+		LogFileWriter.loadLogConfig(this);
+		logger.mark("Application startup, build: {}", BuildConfig.BUILD_TIME);
+
+		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+			@Override
+			public void uncaughtException(Thread paramThread, Throwable paramThrowable) {
+				logger.error("Uncaught Exception in «{}»", paramThread.getName(), paramThrowable);
+			}
+		});
 
 		if (broadcastReceiver == null) {
 			broadcastReceiver = new DeviceStatusReceiver();
@@ -123,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 			ServiceHelper h = new ServiceHelper(context);
 			h.startStopIfSchedulingIsActive();
 		} catch (Exception e) {
-			Log.e(TAG, "Start/Stop scheduling failed!", e);
+			logger.error("Start/Stop scheduling failed!", e);
 		}
 	}
 
@@ -168,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 
 	public void actionStop(MenuItem item) {
 		ServiceHelper helper = new ServiceHelper(getApplicationContext());
-		helper.stop("Stop button pressed");
+		helper.stop("Stop button pressed", false);
 
 		invalidateOptionsMenu();
 	}

@@ -37,7 +37,8 @@ public class ExternalStorageSetupSettings implements MainSettingsMenu {
 	@Override
 	public void updateSummary(Preference pref, Context ctx, SharedPreferences prefs) {
 		boolean enabled = prefs.getBoolean("external_storage_enabled", false);
-		if (!enabled) {
+		String externalStoragePath = prefs.getString("external_storage_path", null);
+		if (!enabled || externalStoragePath == null) {
 			pref.setSummary(ctx.getString(R.string.external_storage_info_disabled));
 			return;
 		}

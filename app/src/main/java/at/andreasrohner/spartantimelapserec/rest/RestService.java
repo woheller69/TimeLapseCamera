@@ -19,7 +19,6 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.SystemClock;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -39,7 +38,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.MainActivity;
 import at.andreasrohner.spartantimelapserec.R;
-import at.andreasrohner.spartantimelapserec.state.StateLog;
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
  * HTTP REST API Service, for remote Control
@@ -49,6 +48,11 @@ import at.andreasrohner.spartantimelapserec.state.StateLog;
  * (c) Andreas Butti, 2024
  */
 public class RestService extends Service implements Runnable {
+
+	/**
+	 * Logger
+	 */
+	private static Logger logger = new Logger(RestService.class);
 
 	/**
 	 * Log Tag
@@ -137,13 +141,13 @@ public class RestService extends Service implements Runnable {
 	public static boolean isRunning() {
 		// return true if and only if a server Thread is running
 		if (serverThread == null) {
-			Log.d(TAG, "Server is not running (null serverThread)");
+			logger.debug("Server is not running (null serverThread)");
 			return false;
 		}
 		if (!serverThread.isAlive()) {
-			Log.d(TAG, "serverThread non-null but !isAlive()");
+			logger.debug("serverThread non-null but !isAlive()");
 		} else {
-			Log.d(TAG, "Server is alive");
+			logger.debug("Server is alive");
 		}
 		return true;
 	}
@@ -155,14 +159,14 @@ public class RestService extends Service implements Runnable {
 		//https://developer.android.com/reference/android/app/Service.html
 		// if there are not any pending start commands to be delivered to the service, it will be called with a null intent object,
 		if (intent != null && intent.getAction() != null) {
-			Log.d(TAG, "onStartCommand called with action: " + intent.getAction());
+			logger.debug("onStartCommand called with action: «{}»", intent.getAction());
 		}
 
 		shouldExit = false;
 		int attempts = 10;
 		// The previous server thread may still be cleaning up, wait for it to finish.
 		while (serverThread != null) {
-			Log.w(TAG, "Won't start, server thread exists");
+			logger.warn("Won't start, server thread exists");
 			if (attempts > 0) {
 				attempts--;
 				try {
@@ -171,14 +175,14 @@ public class RestService extends Service implements Runnable {
 					// Ignore
 				}
 			} else {
-				Log.w(TAG, "Server thread already exists");
+				logger.warn("Server thread already exists");
 				return START_STICKY;
 			}
 		}
-		Log.d(TAG, "Creating server thread");
-		StateLog.addEntry("REST API", "Start server");
+		logger.mark("REST API: Start server");
 
 		serverThread = new Thread(this);
+		serverThread.setName("REST");
 		serverThread.start();
 		return START_STICKY;
 	}
@@ -187,7 +191,7 @@ public class RestService extends Service implements Runnable {
 	 * Setup the Notification
 	 */
 	private void setupNotification() {
-		Log.d(TAG, "Setting up the notification");
+		logger.debug("Setting up the notification");
 
 		NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -211,12 +215,11 @@ public class RestService extends Service implements Runnable {
 
 	@Override
 	public void onDestroy() {
-		Log.i(TAG, "onDestroy() Stopping server");
-		StateLog.addEntry("REST API", "Stop server");
+		logger.mark("REST API: Stop server");
 		shouldExit = true;
 
 		if (serverThread == null) {
-			Log.w(TAG, "Stopping with null serverThread");
+			logger.warn("Stopping with null serverThread");
 			return;
 		}
 
@@ -229,16 +232,16 @@ public class RestService extends Service implements Runnable {
 		}
 
 		if (serverThread.isAlive()) {
-			Log.w(TAG, "Server thread failed to exit");
+			logger.warn("Server thread failed to exit");
 			// it may still exit eventually if we just leave the shouldExit flag set
 		} else {
-			Log.d(TAG, "serverThread join()ed ok");
+			logger.debug("serverThread join()ed ok");
 			serverThread = null;
 		}
 
 		try {
 			if (listenSocket != null) {
-				Log.i(TAG, "Closing listenSocket");
+				logger.info("Closing listenSocket");
 				listenSocket.close();
 				listenSocket = null;
 			}
@@ -247,26 +250,26 @@ public class RestService extends Service implements Runnable {
 		}
 
 		if (wifiLock != null) {
-			Log.d(TAG, "onDestroy: Releasing wifi lock");
+			logger.debug("onDestroy: Releasing wifi lock");
 			wifiLock.release();
 			wifiLock = null;
 		}
 
 		if (wakeLock != null) {
-			Log.d(TAG, "onDestroy: Releasing wake lock");
+			logger.debug("onDestroy: Releasing wake lock");
 			wakeLock.release();
 			wakeLock = null;
 		}
 
-		Log.d(TAG, "RestService.onDestroy() finished");
+		logger.debug("RestService.onDestroy() finished");
 	}
 
 	@Override
 	public void run() {
-		Log.d(TAG, "Server thread running");
+		logger.debug("Server thread running");
 
 		if (!isConnectedToLocalNetwork(getApplicationContext())) {
-			Log.w(TAG, "run: There is no local network, bailing out");
+			logger.warn("run: There is no local network, bailing out");
 			stopSelf();
 			sendBroadcast(new Intent(ACTION_FAILEDTOSTART));
 			return;
@@ -276,7 +279,7 @@ public class RestService extends Service implements Runnable {
 		try {
 			setupListener();
 		} catch (IOException e) {
-			Log.w(TAG, "run: Unable to open port, bailing out.", e);
+			logger.warn("run: Unable to open port, bailing out.", e);
 			stopSelf();
 			sendBroadcast(new Intent(ACTION_FAILEDTOSTART));
 			return;
@@ -286,13 +289,13 @@ public class RestService extends Service implements Runnable {
 		takeWakeLock();
 
 		// A socket is open now, so the FTP server is started, notify rest of world
-		Log.i(TAG, "HTTP Server up and running, broadcasting ACTION_STARTED");
+		logger.info("HTTP Server up and running, broadcasting ACTION_STARTED");
 		sendBroadcast(new Intent(ACTION_STARTED));
 
 		while (!shouldExit) {
 			if (wifiListener != null) {
 				if (!wifiListener.isAlive()) {
-					Log.d(TAG, "Joining crashed wifiListener thread");
+					logger.debug("Joining crashed wifiListener thread");
 					try {
 						wifiListener.join();
 					} catch (InterruptedException ignored) {
@@ -311,7 +314,7 @@ public class RestService extends Service implements Runnable {
 				// the main socket to send an exit signal
 				Thread.sleep(WAKE_INTERVAL_MS);
 			} catch (InterruptedException e) {
-				Log.d(TAG, "Thread interrupted");
+				logger.debug("Thread interrupted");
 			}
 		}
 
@@ -322,7 +325,7 @@ public class RestService extends Service implements Runnable {
 			wifiListener = null;
 		}
 		shouldExit = false; // we handled the exit flag, so reset it to acknowledge
-		Log.d(TAG, "Exiting cleanly, returning from run()");
+		logger.debug("Exiting cleanly, returning from run()");
 
 		stopSelf();
 		sendBroadcast(new Intent(ACTION_STOPPED));
@@ -339,10 +342,10 @@ public class RestService extends Service implements Runnable {
 		if (wakeLock == null) {
 			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 			if (true /* currently not configurable FsSettings.shouldTakeFullWakeLock() */) {
-				Log.d(TAG, "takeWakeLock: Taking full wake lock");
+				logger.debug("takeWakeLock: Taking full wake lock");
 				wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, TAG);
 			} else {
-				Log.d(TAG, "maybeTakeWakeLock: Taking partial wake lock");
+				logger.debug("maybeTakeWakeLock: Taking partial wake lock");
 				wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
 			}
 			wakeLock.setReferenceCounted(false);
@@ -354,7 +357,7 @@ public class RestService extends Service implements Runnable {
 	 * Make sure WiFi will be enabled all the time
 	 */
 	private void takeWifiLock() {
-		Log.d(TAG, "takeWifiLock: Taking wifi lock");
+		logger.debug("takeWifiLock: Taking wifi lock");
 		if (wifiLock == null) {
 			WifiManager manager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 			wifiLock = manager.createWifiLock(TAG);
@@ -384,14 +387,16 @@ public class RestService extends Service implements Runnable {
 	public static int getPort(Context ctx) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
 		int port = 8085;
+		String portString = null;
 		try {
-			port = Integer.parseInt(prefs.getString("pref_restapi_port", "8085"));
+			portString = prefs.getString("pref_restapi_port", "8085");
+			port = Integer.parseInt(portString);
 		} catch (Exception e) {
 			// Ignore invalid value
-			Log.d(TAG, "Invalid port", e);
+			logger.debug("Invalid port «{}»", portString, e);
 		}
 		if (port < 1024 || port > 65535) {
-			Log.w(TAG, "Port invalid: " + port);
+			logger.warn("Port invalid: {}", port);
 			Toast.makeText(ctx, ctx.getString(R.string.error_port_invalid), Toast.LENGTH_SHORT).show();
 			port = 8085;
 		}
@@ -415,14 +420,15 @@ public class RestService extends Service implements Runnable {
 				HttpThread sessionThread = it.next();
 
 				if (!sessionThread.isAlive()) {
-					Log.d(TAG, "Cleaning up finished session...");
+					logger.debug("Cleaning up finished session...");
 					try {
 						sessionThread.join();
-						Log.d(TAG, "Thread joined");
+						logger.debug("Thread joined");
 						it.remove();
 						sessionThread.close(); // make sure socket closed
 					} catch (InterruptedException e) {
-						Log.d(TAG, "Interrupted while joining");
+						// Exception not logged
+						logger.debug("Interrupted while joining");
 						// We will try again in the next loop iteration
 					}
 				}
@@ -431,14 +437,14 @@ public class RestService extends Service implements Runnable {
 			// Cleanup is complete. Now actually add the new thread to the list.
 			sessionThreads.add(newSession);
 		}
-		Log.d(TAG, "Registered session thread");
+		logger.debug("Registered session thread");
 	}
 
 	/**
 	 * Terminate all running HTTP Sessions
 	 */
 	private void terminateAllSessions() {
-		Log.i(TAG, "Terminating " + sessionThreads.size() + " session thread(s)");
+		logger.info("Terminating {} session thread(s)", sessionThreads.size());
 		synchronized (this) {
 			for (HttpThread sessionThread : sessionThreads) {
 				if (sessionThread != null) {
@@ -457,13 +463,13 @@ public class RestService extends Service implements Runnable {
 	public static InetAddress getLocalInetAddress(Context context) {
 		InetAddress returnAddress = null;
 		if (!isConnectedToLocalNetwork(context)) {
-			Log.e(TAG, "getLocalInetAddress called and no connection");
+			logger.error("getLocalInetAddress called and no connection");
 			return null;
 		}
 		try {
 			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
 			if (interfaces == null) {
-				Log.e(TAG, "Could not get Network interfaces!");
+				logger.error("Could not get Network interfaces!");
 				return null;
 			}
 			List<NetworkInterface> networkInterfaces = Collections.list(interfaces);
@@ -475,14 +481,14 @@ public class RestService extends Service implements Runnable {
 				for (InetAddress address : Collections.list(networkInterface.getInetAddresses())) {
 					if (!address.isLoopbackAddress() && !address.isLinkLocalAddress() && address instanceof Inet4Address) {
 						if (returnAddress != null) {
-							Log.w(TAG, "Found more than one valid address local inet address, why???");
+							logger.warn("Found more than one valid address local inet address, why???");
 						}
 						returnAddress = address;
 					}
 				}
 			}
 		} catch (Exception e) {
-			Log.e(TAG, "Failed to get local IP", e);
+			logger.error("Failed to get local IP", e);
 		}
 		return returnAddress;
 	}
@@ -499,17 +505,17 @@ public class RestService extends Service implements Runnable {
 		NetworkInfo ni = cm.getActiveNetworkInfo();
 		connected = ni != null && ni.isConnected() && (ni.getType() & (ConnectivityManager.TYPE_WIFI | ConnectivityManager.TYPE_ETHERNET)) != 0;
 		if (!connected) {
-			Log.d(TAG, "isConnectedToLocalNetwork: see if it is an WIFI AP");
+			logger.debug("isConnectedToLocalNetwork: see if it is an WIFI AP");
 			WifiManager wm = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 			try {
 				Method method = wm.getClass().getDeclaredMethod("isWifiApEnabled");
 				connected = (Boolean) method.invoke(wm);
 			} catch (Exception e) {
-				Log.e(TAG, "Failed to check WiFi connection", e);
+				logger.error("Failed to check WiFi connection", e);
 			}
 		}
 		if (!connected) {
-			Log.d(TAG, "isConnectedToLocalNetwork: see if it is an USB AP");
+			logger.debug("isConnectedToLocalNetwork: see if it is an USB AP");
 			try {
 				ArrayList<NetworkInterface> networkInterfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
 				for (NetworkInterface netInterface : networkInterfaces) {
@@ -518,7 +524,7 @@ public class RestService extends Service implements Runnable {
 					}
 				}
 			} catch (Exception e) {
-				Log.e(TAG, "Failed to check Ethernet connection", e);
+				logger.error("Failed to check Ethernet connection", e);
 			}
 		}
 		return connected;
@@ -532,7 +538,7 @@ public class RestService extends Service implements Runnable {
 	@Override
 	public void onTaskRemoved(Intent rootIntent) {
 		super.onTaskRemoved(rootIntent);
-		Log.d(TAG, "user has removed my activity, we got killed! restarting...");
+		logger.debug("user has removed my activity, we got killed! restarting...");
 		Intent restartService = new Intent(getApplicationContext(), this.getClass());
 		restartService.setPackage(getPackageName());
 		PendingIntent restartServicePI = PendingIntent.getService(getApplicationContext(), 1, restartService, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);

@@ -5,7 +5,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.BatteryManager;
-import android.util.Log;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -35,6 +34,7 @@ import at.andreasrohner.spartantimelapserec.camera2.filename.ImageFileDocumentFi
 import at.andreasrohner.spartantimelapserec.camera2.filename.ImageFileFile;
 import at.andreasrohner.spartantimelapserec.data.RecMode;
 import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
 import static at.andreasrohner.spartantimelapserec.R.raw;
 
@@ -51,9 +51,9 @@ import static at.andreasrohner.spartantimelapserec.R.raw;
 public class HttpThread extends Thread implements HttpOutput, Closeable {
 
 	/**
-	 * Log Tag
+	 * Logger
 	 */
-	private static final String TAG = HttpThread.class.getSimpleName();
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * Pattern for Header Date / Time
@@ -93,7 +93,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 			processRequest();
 			this.out.flush();
 		} catch (IOException e) {
-			Log.e(TAG, "Error parsing HTTP Request", e);
+			logger.error("Error parsing HTTP Request", e);
 		} finally {
 			close();
 		}
@@ -109,17 +109,17 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 		String request = reader.readLine();
 		int pos = request.indexOf(' ');
 		if (pos == -1) {
-			Log.e(TAG, "Invalid Request: «" + request + "»");
+			logger.error("Invalid Request: «{}»", request);
 		}
 		String method = request.substring(0, pos);
 		int pos2 = request.indexOf(' ', pos + 1);
 		if (pos2 == -1) {
-			Log.e(TAG, "Invalid Request: «" + request + "»");
+			logger.error("Invalid Request: «{}»", request);
 		}
 		String url = request.substring(pos + 1, pos2);
 		String protocol = request.substring(pos2);
 
-		Log.d(TAG, "Request: «" + method + "» «" + url + "» «" + protocol + "»");
+		logger.error("Request: «{}» «{}» «{}}»", method, url, protocol);
 
 		String line = reader.readLine();
 		Map<String, String> header = new HashMap<>();
@@ -288,7 +288,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 	 * @return true on success, false if not a valid command
 	 */
 	private boolean processImageRequest(String req) throws IOException {
-		Log.d(TAG, "Request image: " + req);
+		logger.debug("Request image: «{}»", req);
 
 		// No file access to parent directory
 		if (req.contains("..")) {
@@ -405,7 +405,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 			result = "ok";
 		} else if ("stop".equals(command)) {
 			ServiceHelper helper = new ServiceHelper(restService.getApplicationContext());
-			helper.stop("Stopped over REST API by " + remote);
+			helper.stop("Stopped over REST API by " + remote, false);
 			result = "ok";
 		} else if ("param".equals(command)) {
 			StringBuilder b = new StringBuilder();
@@ -479,7 +479,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 		try {
 			socket.close();
 		} catch (Exception e) {
-			Log.w(TAG, "Error closing socket", e);
+			logger.warn("Error closing socket", e);
 		}
 	}
 }

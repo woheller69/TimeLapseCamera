@@ -1,12 +1,12 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import at.andreasrohner.spartantimelapserec.R;
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
  * Camera timing values
@@ -14,14 +14,14 @@ import at.andreasrohner.spartantimelapserec.R;
 public class CameraTiming {
 
 	/**
-	 * Log Tag
+	 * Logger
 	 */
-	private static final String TAG = CameraTiming.class.getSimpleName();
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * Predefined time values, copied from a Canon EOS Camera (a little extended)
 	 */
-	private static final String TIMES = "1/16000 1/8000 1/4000 1/3200 1/2500 1/2000 1/1600 1/1250 1/1000 1/800 1/640 1/500 1400 1/320 1/250 1/200 1/160 1/125 1/100 1/80 1/60 1/50 1/40 1/30 1/25 1/20 1/15 1/13 1/10 1/8 1/6 1/5 1/4 0\"3 0\"4 0\"5 0\"6 0\"8 1\" 1\"3 1\"6 2\" 2\"5 3\"2 4\" 5\" 6\" 8\" 10\" 13\" 15\" 20\" 25\" 30\"";
+	private static final String TIMES = "1/16000 1/8000 1/4000 1/3200 1/2500 1/2000 1/1600 1/1250 1/1000 1/800 1/640 1/500 1/400 1/320 1/250 1/200 1/160 1/125 1/100 1/80 1/60 1/50 1/40 1/30 1/25 1/20 1/15 1/13 1/10 1/8 1/6 1/5 1/4 0\"3 0\"4 0\"5 0\"6 0\"8 1\" 1\"3 1\"6 2\" 2\"5 3\"2 4\" 5\" 6\" 8\" 10\" 13\" 15\" 20\" 25\" 30\"";
 
 	/**
 	 * Display values
@@ -106,7 +106,7 @@ public class CameraTiming {
 			return 1000000000L * t1 + 1000000000L / t2;
 		}
 
-		Log.e(TAG, "Invalid predefined time value «" + t + "»");
+		logger.error("Invalid predefined time value «{}»", t);
 		return -1;
 	}
 
