@@ -21,8 +21,17 @@ import java.util.List;
 
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.camera2.filename.AbstractFileNameController;
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
+/**
+ * Implementation to take a single picture
+ */
 public class TakePicture implements ImageReader.OnImageAvailableListener {
+
+	/**
+	 * Logger
+	 */
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * Camera implementation
@@ -76,6 +85,10 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 	public void create() {
 		try {
 			CameraDevice cameraDevice = camera.getCameraDevice();
+			if (cameraDevice == null) {
+				logger.warn("Cannot take image, camera not open (yet)!");
+				return;
+			}
 
 			Size size = cameraConfig.prepareSize();
 			ImageReader reader = ImageReader.newInstance(size.getWidth(), size.getHeight(), ImageFormat.JPEG, 1);
