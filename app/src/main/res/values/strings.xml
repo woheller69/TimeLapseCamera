@@ -165,6 +165,6 @@
     <string name="action_log_to_file">Create Logfile</string>
     <string name="action_file_log_level">File Log Level</string>
     <string name="log_dialog_info">Set the log level filter for future log messages</string>
-    <string name="log_file_dialog_enabled_info">Write Logfile to internal storage in the folder «TimeLapseCam-Logs»</string>
+    <string name="log_file_dialog_enabled_info">Write Logfile to internal storage in the folder «{}»</string>
     <string name="write_log_file">Write Logfile</string>
 </resources>

@@ -44,6 +44,11 @@ public class LogFileWriter {
 	private static DateFormat TIME_FORMAT = SimpleDateFormat.getTimeInstance(SimpleDateFormat.MEDIUM);
 
 	/**
+	 * Preferences
+	 */
+	private static SharedPreferences prefs;
+
+	/**
 	 * Utility class
 	 */
 	private LogFileWriter() {
@@ -55,7 +60,7 @@ public class LogFileWriter {
 	 * @param context Context
 	 */
 	public static void loadLogConfig(Context context) {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		level = prefs.getInt("log_file_level", LogLevel.INFO.LEVEL);
 		setEnabled(prefs.getBoolean("log_file_enabled", false));
 	}
@@ -72,6 +77,15 @@ public class LogFileWriter {
 	 */
 	public static synchronized void setEnabled(boolean enabled) {
 		LogFileWriter.enabled = enabled;
+	}
+
+	/**
+	 * @return The Logfolder path
+	 */
+	public static File getLogFolder() {
+		String projectPath = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).getPath();
+		String projectName = prefs.getString("pref_project_title", "NO_NAME");
+		return new File(projectPath, projectName + "/Logs");
 	}
 
 	/**
@@ -92,8 +106,7 @@ public class LogFileWriter {
 
 		String dateNow = FILE_DATE_FORMAT.format(System.currentTimeMillis());
 
-		String projectPath = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).getPath();
-		File folder = new File(projectPath, "TimeLapseCam-Logs");
+		File folder = getLogFolder();
 		File outputFile = new File(folder, dateNow + ".log");
 		if (!folder.exists()) {
 			// If it failes, it will catch the exception later, cannot not do anything...

@@ -163,6 +163,6 @@
     <string name="action_log_to_file">Logdatei erstellen</string>
     <string name="action_file_log_level">Logdatei Loglevel</string>
     <string name="log_dialog_info">Log Level Filter für Zukünftige Meldungen setzten</string>
-    <string name="log_file_dialog_enabled_info">Logdatei im internen Speicher im Ordner «TimeLapseCam-Logs» erstellen</string>
+    <string name="log_file_dialog_enabled_info">Logdatei im internen Speicher im Ordner «{}» erstellen</string>
     <string name="write_log_file">Logdatei erstellen</string>
 </resources>
