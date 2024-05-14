@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
-import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraMetadata;
@@ -114,7 +113,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 
 			try {
 				captureSession.setRepeatingRequest(previewRequestBuilder.build(), null, null);
-			} catch (CameraAccessException e) {
+			} catch (Exception e) {
 				logger.error("Error start repeating request after focus", e);
 			}
 
@@ -216,7 +215,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		// first stop the existing repeating request
 		try {
 			captureSession.stopRepeating();
-		} catch (CameraAccessException e) {
+		} catch (Exception e) {
 			logger.error("Stop repeating for AF failed!", e);
 		}
 
@@ -225,7 +224,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
 		try {
 			captureSession.capture(previewRequestBuilder.build(), captureCallbackHandler, backgroundHandler);
-		} catch (CameraAccessException e) {
+		} catch (Exception e) {
 			logger.error("Start capture / cancel session failed!", e);
 		}
 
@@ -246,7 +245,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		// then we ask for a single request (not repeating!)
 		try {
 			captureSession.capture(previewRequestBuilder.build(), captureCallbackHandler, backgroundHandler);
-		} catch (CameraAccessException e) {
+		} catch (Exception e) {
 			logger.error("Start capture session failed!", e);
 		}
 		manualFocusStarted = true;

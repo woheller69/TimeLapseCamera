@@ -8,7 +8,6 @@ import android.util.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
@@ -133,8 +132,8 @@ public class LogFileWriter {
 			try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(); PrintStream printStream = new PrintStream(outputStream)) {
 				exception.printStackTrace(printStream);
 				b.append(outputStream.toString());
-			} catch (IOException e) {
-				Log.e("Log", "Could not prepare exception for log");
+			} catch (Exception e) {
+				Log.e("Log", "Could not prepare exception for log", e);
 				b.append("ERROR: Could not prepare StackTrace!\n");
 				b.append(e);
 			}

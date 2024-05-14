@@ -3,7 +3,6 @@ package at.andreasrohner.spartantimelapserec.camera2;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
@@ -152,7 +151,7 @@ public class Camera2Wrapper {
 
 			this.characteristics = cameraManager.getCameraCharacteristics(cameraId);
 			cameraManager.openCamera(cameraId, stateCallback, null);
-		} catch (CameraAccessException e) {
+		} catch (Exception e) {
 			errorHandler.error("Could not open Camera", e);
 		}
 	}

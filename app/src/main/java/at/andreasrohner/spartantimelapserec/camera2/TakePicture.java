@@ -3,7 +3,6 @@ package at.andreasrohner.spartantimelapserec.camera2;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
-import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraMetadata;
@@ -15,7 +14,6 @@ import android.os.Handler;
 import android.util.Size;
 import android.view.Surface;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -131,7 +129,7 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 				public void onConfigured(CameraCaptureSession session) {
 					try {
 						session.capture(captureBuilder.build(), captureListener, backgroundHandler);
-					} catch (CameraAccessException e) {
+					} catch (Exception e) {
 						camera.getErrorHandler().error("Failed to configure camera", e);
 					}
 				}
@@ -141,7 +139,7 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 					camera.getErrorHandler().error("Camera configuration failed", null);
 				}
 			}, backgroundHandler);
-		} catch (CameraAccessException e) {
+		} catch (Exception e) {
 			camera.getErrorHandler().error("Failed to create picture", e);
 		}
 	}
@@ -158,7 +156,7 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 			try (OutputStream output = fileNameController.getOutputFile("jpg")) {
 				output.write(bytes);
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			camera.getErrorHandler().error("Error saving image", e);
 		}
 	}
