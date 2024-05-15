@@ -92,7 +92,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 		try {
 			processRequest();
 			this.out.flush();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.error("Error parsing HTTP Request", e);
 		} finally {
 			close();

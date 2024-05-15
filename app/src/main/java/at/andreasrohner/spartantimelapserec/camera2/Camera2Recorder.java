@@ -117,7 +117,7 @@ public class Camera2Recorder implements Runnable, TakePicture.ImageTakenListener
 		backgroundThread.quitSafely();
 		try {
 			backgroundThread.join();
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			logger.error("Error joining background Thread", e);
 		}
 

@@ -45,8 +45,10 @@ import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
 import at.andreasrohner.spartantimelapserec.rest.RestControlUtil;
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
 import at.andreasrohner.spartantimelapserec.state.LogFileWriter;
+import at.andreasrohner.spartantimelapserec.state.LogLevel;
 import at.andreasrohner.spartantimelapserec.state.Logger;
 import at.andreasrohner.spartantimelapserec.state.StateLog;
+import at.andreasrohner.spartantimelapserec.state.StateLogEntry;
 
 /**
  * Main activity of the
@@ -82,6 +84,11 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 		StateLog.loadLogLevel(this);
 		LogFileWriter.loadLogConfig(this);
 		logger.mark("Application startup, build: {}", BuildConfig.BUILD_TIME);
+		StateLogEntry logPathInfo = new StateLogEntry();
+		logPathInfo.setLevel(LogLevel.INFO);
+		logPathInfo.setHeader("Log path");
+		logPathInfo.setLine(LogFileWriter.getLogFolder().getAbsolutePath());
+		StateLog.addEntry(logPathInfo);
 
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override

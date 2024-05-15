@@ -2,7 +2,6 @@ package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
-import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
@@ -142,7 +141,7 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 		backgroundThread.quitSafely();
 		try {
 			backgroundThread.join();
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			Log.w(TAG, "Error stopping background Thread");
 		}
 		backgroundThread = null;
@@ -216,7 +215,7 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 					Toast.makeText(Preview2Activity.this, "Configuration failed", Toast.LENGTH_SHORT).show();
 				}
 			}, null);
-		} catch (CameraAccessException e) {
+		} catch (Exception e) {
 			error("Create Preview failed", e);
 		}
 	}
@@ -301,7 +300,7 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 
 		try {
 			cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(), null, backgroundHandler);
-		} catch (CameraAccessException e) {
+		} catch (Exception e) {
 			error("Error configure camera", e);
 		}
 	}

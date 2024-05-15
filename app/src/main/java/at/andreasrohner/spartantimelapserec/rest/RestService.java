@@ -278,7 +278,7 @@ public class RestService extends Service implements Runnable {
 		// Initialization of wifi, set up the socket
 		try {
 			setupListener();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.warn("run: Unable to open port, bailing out.", e);
 			stopSelf();
 			sendBroadcast(new Intent(ACTION_FAILEDTOSTART));

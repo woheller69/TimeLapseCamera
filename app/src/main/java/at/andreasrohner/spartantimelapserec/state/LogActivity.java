@@ -80,7 +80,7 @@ public class LogActivity extends AppCompatActivity {
 	public void actionLogToFile(MenuItem item) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(R.string.action_log_to_file);
-		builder.setMessage(R.string.log_file_dialog_enabled_info);
+		builder.setMessage(getText(R.string.log_file_dialog_enabled_info).toString().replace("{}", LogFileWriter.getLogFolder().getAbsolutePath()));
 
 		View view = View.inflate(this, R.layout.dialog_logfile, null);
 		builder.setView(view);

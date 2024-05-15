@@ -3,7 +3,6 @@ package at.andreasrohner.spartantimelapserec.camera2.pupcfg;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
-import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.params.StreamConfigurationMap;
@@ -117,7 +116,7 @@ public class PopupDialogMenu extends PopupDialogBase {
 			for (String cameraId : manager.getCameraIdList()) {
 				cameras.add(new CameraModel(context, cameraId, manager.getCameraCharacteristics(cameraId)));
 			}
-		} catch (CameraAccessException e) {
+		} catch (Exception e) {
 			logger.error("Could not list cameras", e);
 		}
 
@@ -178,7 +177,7 @@ public class PopupDialogMenu extends PopupDialogBase {
 			if (map == null) {
 				logger.error("Could not get camera characteristics");
 			}
-		} catch (CameraAccessException e) {
+		} catch (Exception e) {
 			logger.error("Error get camera resolutions", e);
 			return;
 		}
@@ -205,7 +204,7 @@ public class PopupDialogMenu extends PopupDialogBase {
 		try {
 			Boolean available = manager.getCameraCharacteristics(newSelectedCamera).get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
 			flashSupported = available == null ? false : available;
-		} catch (CameraAccessException e) {
+		} catch (Exception e) {
 			logger.error("Could not get camera information", e);
 		}
 

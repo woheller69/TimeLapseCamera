@@ -3,7 +3,6 @@ package at.andreasrohner.spartantimelapserec.camera2;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
-import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraMetadata;
@@ -15,7 +14,6 @@ import android.os.Handler;
 import android.util.Size;
 import android.view.Surface;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -23,8 +21,17 @@ import java.util.List;
 
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.camera2.filename.AbstractFileNameController;
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
+/**
+ * Implementation to take a single picture
+ */
 public class TakePicture implements ImageReader.OnImageAvailableListener {
+
+	/**
+	 * Logger
+	 */
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * Camera implementation
@@ -78,6 +85,10 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 	public void create() {
 		try {
 			CameraDevice cameraDevice = camera.getCameraDevice();
+			if (cameraDevice == null) {
+				logger.warn("Cannot take image, camera not open (yet)!");
+				return;
+			}
 
 			Size size = cameraConfig.prepareSize();
 			ImageReader reader = ImageReader.newInstance(size.getWidth(), size.getHeight(), ImageFormat.JPEG, 1);
@@ -131,7 +142,7 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 				public void onConfigured(CameraCaptureSession session) {
 					try {
 						session.capture(captureBuilder.build(), captureListener, backgroundHandler);
-					} catch (CameraAccessException e) {
+					} catch (Exception e) {
 						camera.getErrorHandler().error("Failed to configure camera", e);
 					}
 				}
@@ -141,7 +152,7 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 					camera.getErrorHandler().error("Camera configuration failed", null);
 				}
 			}, backgroundHandler);
-		} catch (CameraAccessException e) {
+		} catch (Exception e) {
 			camera.getErrorHandler().error("Failed to create picture", e);
 		}
 	}
@@ -158,7 +169,7 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 			try (OutputStream output = fileNameController.getOutputFile("jpg")) {
 				output.write(bytes);
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			camera.getErrorHandler().error("Error saving image", e);
 		}
 	}
