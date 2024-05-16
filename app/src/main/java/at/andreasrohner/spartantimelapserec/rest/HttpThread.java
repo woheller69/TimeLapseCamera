@@ -207,6 +207,13 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 			sendLine(String.valueOf(getBatteryLevel()));
 			return true;
 		}
+		
+		if (url.startsWith("/1/device/storage")) {
+			sendReplyHeader(ReplyCode.FOUND, "text/plain");
+			ImageFile rootDir = initRootDir();
+			sendLine("imagestorage=" + rootDir.getFreeSpace(restService.getApplicationContext()));
+			return true;
+		}
 
 		if (url.startsWith("/1/current/")) {
 			if (processCurrentRequest(url.substring(11))) {

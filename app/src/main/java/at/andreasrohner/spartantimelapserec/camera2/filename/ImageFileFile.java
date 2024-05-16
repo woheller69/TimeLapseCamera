@@ -93,4 +93,10 @@ public class ImageFileFile implements ImageFile {
 
 		return list;
 	}
+
+	@Override
+	public long getFreeSpace(Context context) {
+		File rootDir = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).getPath());
+		return rootDir.getFreeSpace();
+	}
 }
