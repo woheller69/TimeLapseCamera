@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.DialogPreference;
 import at.andreasrohner.spartantimelapserec.R;
+import at.andreasrohner.spartantimelapserec.camera2.AfPos;
 import at.andreasrohner.spartantimelapserec.camera2.CameraTiming;
 import at.andreasrohner.spartantimelapserec.camera2.pupcfg.CameraModel;
 import at.andreasrohner.spartantimelapserec.preference.CameraSettings;
@@ -133,7 +134,12 @@ public class ShowCameraInfoPreference extends DialogPreference {
 			String afMode = prefs.getString("pref_camera_af_mode", null);
 
 			if ("field".equals(afMode)) {
-				setSummary("F: " + prefs.getString("pref_camera_af_field", null));
+				AfPos pos = AfPos.fromString(prefs.getString("pref_camera_af_field", null));
+				if (pos == null) {
+					setSummary("ERROR");
+				} else {
+					setSummary("F: " + String.format("%.02f", pos.getFocusRelX()) + " / " + String.format("%.02f", pos.getFocusRelY()));
+				}
 			} else if ("manual".equals(afMode)) {
 				float focusDistance = prefs.getFloat("pref_camera_af_manual", 0);
 				String m;

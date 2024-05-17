@@ -104,7 +104,6 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 				float focusDistance = result.get(CaptureResult.LENS_FOCUS_DISTANCE);
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putFloat("pref_camera_af_manual", focusDistance);
-				editor.putString("pref_camera_af_field", relX + "/" + relY);
 				editor.apply();
 			}
 
@@ -233,7 +232,9 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, new MeteringRectangle[] {focusArea});
 			if ("field".equals(afMode)) {
 				SharedPreferences.Editor editor = prefs.edit();
-				editor.putString("pref_camera_af_field", relX + "/" + relY);
+				// Resolution / Position
+				editor.putString("pref_camera_af_field", "Res:" + sensorArraySize.width() + "/" + sensorArraySize.height() + " Pos:" + focusArea.getX() + "," + focusArea.getY() + "," + focusArea.getWidth() + "," + focusArea.getHeight());
+				logger.debug("Preview focus at {}", focusArea);
 				editor.apply();
 			}
 		}

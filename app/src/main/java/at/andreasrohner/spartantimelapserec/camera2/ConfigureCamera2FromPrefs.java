@@ -75,29 +75,7 @@ public class ConfigureCamera2FromPrefs {
 		String afMode = prefs.getString("pref_camera_af_mode", "auto");
 
 		if ("field".equals(afMode)) {
-			String afField = prefs.getString("pref_camera_af_field", null);
-			if (afField == null) {
-				logger.error("Missing AF Field!");
-				return;
-			}
-
-			float px;
-			float py;
-			try {
-				String[] parts = afField.split("/");
-				px = Float.parseFloat(parts[0]);
-				py = Float.parseFloat(parts[1]);
-			} catch (Exception e) {
-				logger.error("Invalid AF Value: «{}»", afField);
-				return;
-			}
-
-			int x = (int) (sizeW * px);
-			int y = (int) (sizeH * py);
-
-			int focusSize = 50;
-			MeteringRectangle focusArea = new MeteringRectangle(Math.max(x - focusSize, 0), Math.max(y - focusSize, 0), focusSize * 2, focusSize * 2, MeteringRectangle.METERING_WEIGHT_MAX - 1);
-			captureBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, new MeteringRectangle[] {focusArea});
+			applyAfField(captureBuilder);
 		} else if ("manual".equals(afMode)) {
 			captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
 			float focusDistance = prefs.getFloat("pref_camera_af_manual", 0);
@@ -105,6 +83,30 @@ public class ConfigureCamera2FromPrefs {
 		} else {
 			captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO);
 		}
+	}
+
+	/**
+	 * Apply an AF Field
+	 *
+	 * @param captureBuilder Camera Configuration
+	 */
+	private void applyAfField(CaptureRequest.Builder captureBuilder) {
+		AfPos pos = AfPos.fromString(prefs.getString("pref_camera_af_field", null));
+		if (pos == null) {
+			// Error already logged
+			return;
+		}
+
+		prepareSize();
+		if (pos.getWidth() != sizeW || pos.getHeigth() != sizeH) {
+			logger.warn("Focus set at another resolution, currently not implemented, re-focus manually: {}!={} || {}!={}", pos.getWidth(), sizeW, pos.getHeigth(), sizeH);
+			return;
+		}
+
+		MeteringRectangle focusArea = new MeteringRectangle(pos.getFocusX(), pos.getFocusY(), pos.getFocusWidth(), pos.getFocusHeight(), MeteringRectangle.METERING_WEIGHT_MAX - 1);
+		logger.debug("Picture focus at {}", focusArea);
+		captureBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, new MeteringRectangle[] {focusArea});
+		// captureBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, new MeteringRectangle[] {focusArea});
 	}
 
 	/**
