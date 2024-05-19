@@ -72,12 +72,12 @@ public abstract class BaseTimeSpanDialog {
 	public void showDialog() {
 		initDialog();
 
-		builder.setPositiveButton(context.getString(R.string.dialog_OK_button), (dialog, which) -> {
+		builder.setPositiveButton(R.string.dialog_OK_button, (dialog, which) -> {
 			storeValue();
 
 			changeListener.valueChanged();
 		});
-		builder.setNegativeButton(context.getString(R.string.dialog_CANCEL_button), (dialog, which) -> dialog.cancel());
+		builder.setNegativeButton(R.string.dialog_CANCEL_button, (dialog, which) -> dialog.cancel());
 
 		builder.show();
 	}

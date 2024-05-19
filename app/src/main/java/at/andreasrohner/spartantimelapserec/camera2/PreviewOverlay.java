@@ -89,7 +89,7 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 		}
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-		AfPos pos = AfPos.fromString(prefs.getString("pref_camera_af_field", null));
+		AfPos pos = AfPos.fromPref(prefs);
 		if (pos == null) {
 			return;
 		}

@@ -167,4 +167,6 @@
     <string name="log_dialog_info">Set the log level filter for future log messages</string>
     <string name="log_file_dialog_enabled_info">Write Logfile to internal storage in the folder «{}»</string>
     <string name="write_log_file">Write Logfile</string>
+    <string name="no_af_title">No Focus Control</string>
+    <string name="no_af_description">This camera does not support autofocus / focus configuration.</string>
 </resources>

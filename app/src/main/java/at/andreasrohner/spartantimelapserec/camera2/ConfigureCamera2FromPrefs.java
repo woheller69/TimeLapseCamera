@@ -91,7 +91,7 @@ public class ConfigureCamera2FromPrefs {
 	 * @param captureBuilder Camera Configuration
 	 */
 	private void applyAfField(CaptureRequest.Builder captureBuilder) {
-		AfPos pos = AfPos.fromString(prefs.getString("pref_camera_af_field", null));
+		AfPos pos = AfPos.fromPref(prefs);
 		if (pos == null) {
 			// Error already logged
 			return;

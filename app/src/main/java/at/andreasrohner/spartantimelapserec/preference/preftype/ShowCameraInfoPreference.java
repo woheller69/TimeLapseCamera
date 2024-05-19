@@ -134,7 +134,7 @@ public class ShowCameraInfoPreference extends DialogPreference {
 			String afMode = prefs.getString("pref_camera_af_mode", null);
 
 			if ("field".equals(afMode)) {
-				AfPos pos = AfPos.fromString(prefs.getString("pref_camera_af_field", null));
+				AfPos pos = AfPos.fromPref(prefs);
 				if (pos == null) {
 					setSummary("ERROR");
 				} else {

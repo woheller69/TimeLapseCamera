@@ -1,5 +1,7 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
+import android.content.SharedPreferences;
+
 import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
@@ -46,11 +48,11 @@ public class AfPos {
 	 * Parse position from String, e.g. "Res:4032/4032 Pos:2043,1362,100,100"
 	 *
 	 * @param str String
-	 * @return Position
+	 * @return Position, or null
 	 */
 	public static AfPos fromString(String str) {
-		if (str == null) {
-			logger.error("AF Pos is null");
+		if (str == null || "".equals(str)) {
+			logger.debug("AF Pos is null / not set");
 			return null;
 		}
 
@@ -99,6 +101,22 @@ public class AfPos {
 		}
 
 		return afPos;
+	}
+
+	/**
+	 * Parse position from Preferences
+	 *
+	 * @param prefs Preferences
+	 * @return Position, or null
+	 */
+	public static AfPos fromPref(SharedPreferences prefs) {
+		return fromString(prefs.getString("pref_camera_af_field", null));
+	}
+
+	/**
+	 * Use from... Method to create instance
+	 */
+	private AfPos() {
 	}
 
 	/**
