@@ -184,11 +184,11 @@ public class AfPos {
 	 * @return true if equals
 	 */
 	public boolean equalsSize(int sizeW, int sizeH) {
-		if (getWidth() != sizeW || getHeigth() != sizeH) {
-			return false;
+		if (getWidth() == sizeW && getHeigth() == sizeH) {
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 
 	/**

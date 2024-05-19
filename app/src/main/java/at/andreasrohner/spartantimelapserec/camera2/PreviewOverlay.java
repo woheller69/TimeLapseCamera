@@ -38,6 +38,11 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 	private PreviewScaling scaling;
 
 	/**
+	 * Focus state
+	 */
+	private FocusChangeListener.FocusState focusState;
+
+	/**
 	 * Constructor
 	 *
 	 * @param context Context
@@ -72,6 +77,13 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 	 */
 	public void setScaling(PreviewScaling scaling) {
 		this.scaling = scaling;
+	}
+
+	/**
+	 * @param focusState Focus state
+	 */
+	public void setFocusState(FocusChangeListener.FocusState focusState) {
+		this.focusState = focusState;
 	}
 
 	@Override
@@ -127,7 +139,13 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 		paint.setStrokeWidth(7);
 		canvas.drawRect(rect, paint);
 
-		paint.setColor(Color.RED);
+		if (focusState == FocusChangeListener.FocusState.FOCUS_SUCCESS) {
+			paint.setColor(Color.GREEN);
+		} else if (focusState == FocusChangeListener.FocusState.FOCUS_SUCCESS) {
+			paint.setColor(Color.RED);
+		} else {
+			paint.setColor(Color.GRAY);
+		}
 		paint.setStrokeWidth(3);
 		canvas.drawRect(rect, paint);
 

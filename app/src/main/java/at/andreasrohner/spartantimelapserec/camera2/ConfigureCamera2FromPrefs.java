@@ -1,6 +1,7 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.content.SharedPreferences;
+import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.util.Size;
@@ -106,6 +107,8 @@ public class ConfigureCamera2FromPrefs {
 
 		MeteringRectangle focusArea = pos.createMeteringRectangle();
 		logger.debug("Picture focus at {}", focusArea);
+		captureBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START);
+		captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO);
 		captureBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, new MeteringRectangle[] {focusArea});
 		// captureBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, new MeteringRectangle[] {focusArea});
 	}

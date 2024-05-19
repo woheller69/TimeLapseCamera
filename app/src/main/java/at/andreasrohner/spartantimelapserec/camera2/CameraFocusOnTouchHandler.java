@@ -116,9 +116,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 				logger.error("Error start repeating request after focus", e);
 			}
 
-			if (focusChangeListener != null) {
-				focusChangeListener.focusChanged();
-			}
+			fireFocusState(FocusChangeListener.FocusState.FOCUS_SUCCESS);
 		}
 
 		@Override
@@ -126,6 +124,8 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 			super.onCaptureFailed(session, request, failure);
 			logger.error("Manual AF failure: «{}»", failure);
 			manualFocusStarted = false;
+
+			fireFocusState(FocusChangeListener.FocusState.FOCUS_FAILED);
 		}
 	};
 
@@ -257,6 +257,8 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 	 * @param focusArea Focus position
 	 */
 	private void focusAtPosition(MeteringRectangle focusArea) {
+		fireFocusState(FocusChangeListener.FocusState.FOCUSSING);
+
 		stopRepeatingAndCancelAf();
 
 		// Now add a new AF trigger with focus region
@@ -276,6 +278,19 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 			logger.error("Start capture session failed!", e);
 		}
 		manualFocusStarted = true;
+	}
+
+	/**
+	 * Fire Focus state changed
+	 *
+	 * @param focusState Focus State
+	 */
+	private void fireFocusState(FocusChangeListener.FocusState focusState) {
+		if (focusChangeListener == null) {
+			return;
+		}
+
+		focusChangeListener.focusChanged(focusState);
 	}
 
 	/**
