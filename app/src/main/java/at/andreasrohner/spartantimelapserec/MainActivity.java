@@ -42,6 +42,7 @@ import at.andreasrohner.spartantimelapserec.camera2.Preview2Activity;
 import at.andreasrohner.spartantimelapserec.data.RecMode;
 import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
 import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
+import at.andreasrohner.spartantimelapserec.preference.PreferencesDefaultValues;
 import at.andreasrohner.spartantimelapserec.rest.RestControlUtil;
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
 import at.andreasrohner.spartantimelapserec.state.LogFileWriter;
@@ -96,6 +97,8 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 				logger.error("Uncaught Exception in «{}»", paramThread.getName(), paramThrowable);
 			}
 		});
+
+		new PreferencesDefaultValues(getApplicationContext()).setDefaultValues();
 
 		if (broadcastReceiver == null) {
 			broadcastReceiver = new DeviceStatusReceiver();
