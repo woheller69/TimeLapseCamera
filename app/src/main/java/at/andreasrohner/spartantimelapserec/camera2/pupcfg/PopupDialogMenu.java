@@ -297,9 +297,7 @@ public class PopupDialogMenu extends PopupDialogBase {
 			editor.putString("pref_camera", newSelectedCamera);
 
 			// Reset Auto Focus configuration on camera change
-			editor.putString("pref_camera_af_field", "");
-			editor.putString("pref_camera_af_mode", "auto");
-
+			resetFocusPreferences(editor);
 			flags = 1;
 		}
 
@@ -307,13 +305,23 @@ public class PopupDialogMenu extends PopupDialogBase {
 		String newFrameSize = this.camCameraResolution.getSelectedItem().getId();
 		if (!newFrameSize.equals(lastFrameSize)) {
 			// Reset Auto Focus configuration on resolution change
-			editor.putString("pref_camera_af_field", "");
-			editor.putString("pref_camera_af_mode", "auto");
+			resetFocusPreferences(editor);
 		}
 		editor.putString("pref_frame_size", newFrameSize);
 
 		editor.apply();
 		return flags;
+	}
+
+	/**
+	 * Reset preferences
+	 *
+	 * @param editor Editor
+	 */
+	private void resetFocusPreferences(SharedPreferences.Editor editor) {
+		editor.putString("pref_camera_af_field", "");
+		editor.putFloat("pref_camera_af_manual", 0);
+		editor.putString("pref_camera_af_mode", "auto");
 	}
 
 	@Override

@@ -9,12 +9,18 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 
 import androidx.preference.PreferenceManager;
+import at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameraInfoPreference;
 import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
  * Overlay for AF Fields
  */
 public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView {
+
+	/**
+	 * Rect size in pixel
+	 */
+	private static final int RECT_SIZE = 100;
 
 	/**
 	 * Logger
@@ -89,12 +95,13 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 		}
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-		AfPos pos = AfPos.fromPref(prefs);
-		if (pos == null) {
-			return;
-		}
 		String afMode = prefs.getString("pref_camera_af_mode", "auto");
 		if ("auto".equals(afMode)) {
+			return;
+		}
+
+		AfPos pos = AfPos.fromPref(prefs);
+		if (pos == null) {
 			return;
 		}
 
@@ -104,7 +111,16 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 		int x = (int) (iw * px) + left;
 		int y = (int) (ih * py) + top;
 
-		Rect rect = new Rect(x, y, x + 100, y + 100);
+		x -= RECT_SIZE / 2;
+		y -= RECT_SIZE / 2;
+		if (x < 0) {
+			x = 0;
+		}
+		if (y < 0) {
+			y = 0;
+		}
+
+		Rect rect = new Rect(x, y, x + RECT_SIZE, y + RECT_SIZE);
 		Paint paint = new Paint();
 		paint.setColor(Color.WHITE);
 		paint.setStyle(Paint.Style.STROKE);
@@ -121,7 +137,8 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 		if ("field".equals(afMode)) {
 			canvas.drawText("A", x, y, pt);
 		} else if ("manual".equals(afMode)) {
-			canvas.drawText("M", x, y, pt);
+			String[] text = ShowCameraInfoPreference.formatMfDistance(getContext(), prefs);
+			canvas.drawText("M: " + text[1], x, y, pt);
 		}
 	}
 }

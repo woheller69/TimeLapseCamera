@@ -137,7 +137,7 @@
     <string name="autofocus_message">Fokus Modus konfigurieren</string>
     <string name="cam_afmf_autofocus">Autofokus</string>
     <string name="cam_afmf_field">Autofokus auf gewählte Stelle</string>
-    <string name="cam_afmf_manual">Manuell gewählte Fokusdistanz wählen (funktioniert nicht mit den meisten Telefonen)</string>
+    <string name="cam_afmf_manual">Manuell gewählte Fokusdistanz wählen</string>
     <string name="cam_header_flash">Blitz</string>
     <string name="cam_header_flash_info">Die Blitzeinstellungen funktionieren nur im Vollautomatik Modus</string>
     <string name="camera_flash_on">Ein</string>
@@ -167,4 +167,6 @@
     <string name="write_log_file">Logdatei erstellen</string>
     <string name="no_af_title">Keine Fokussierung</string>
     <string name="no_af_description">Diese Kamera hat kein Autofokus / der Fokus kann nicht konfiguriert werden.</string>
+    <string name="mf_focus_info_title">Manueller Fokus</string>
+    <string name="mf_focus_info_text">Nicht alle Telefone unterstützen manuellen Fokus. Wenn der ausgewählte Abstand bei ∞ bleibt, unterstützt das Telefon möglicherweise keine manuelle Fokussierung.\nAuch wenn das Telefon die manuelle Fokussierung unterstützt, scheint es nicht gut zu funktionieren.\nVerbesserungsvorschläge sind willkommen. Wenn Sie einen Bug auf Github erstellen, können Sie @andreasb242 erwähnen.</string>
 </resources>

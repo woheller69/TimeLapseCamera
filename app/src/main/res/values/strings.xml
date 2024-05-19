@@ -139,7 +139,7 @@
     <string name="autofocus_message">Configure focus mode</string>
     <string name="cam_afmf_autofocus">Autofocus</string>
     <string name="cam_afmf_field">Autofocus at selected field</string>
-    <string name="cam_afmf_manual">Store manual selected focus distance (not working on most phones)</string>
+    <string name="cam_afmf_manual">Store manual selected focus distance</string>
     <string name="cam_header_flash">Flash</string>
     <string name="cam_header_flash_info">Flash Control just works in full auto mode</string>
     <string name="camera_flash_on">On</string>
@@ -169,4 +169,6 @@
     <string name="write_log_file">Write Logfile</string>
     <string name="no_af_title">No Focus Control</string>
     <string name="no_af_description">This camera does not support autofocus / focus configuration.</string>
+    <string name="mf_focus_info_title">Manual Focus</string>
+    <string name="mf_focus_info_text">Not all phones support manual Focus. If the selected distance stays at ∞, the phone may does not support manual focussing.\nEven if the phone supports manual focussing, it doesn\'t seem to work well.\nIf you a developer, you may look at the code. If you create a bug on github, you may mention @andreasb242.</string>
 </resources>

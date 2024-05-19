@@ -141,14 +141,8 @@ public class ShowCameraInfoPreference extends DialogPreference {
 					setSummary("F: " + String.format("%.02f", pos.getFocusRelX()) + " / " + String.format("%.02f", pos.getFocusRelY()));
 				}
 			} else if ("manual".equals(afMode)) {
-				float focusDistance = prefs.getFloat("pref_camera_af_manual", 0);
-				String m;
-				if (focusDistance == 0) {
-					m = "∞";
-				} else {
-					m = String.format("%.2f", (1.0f / focusDistance));
-				}
-				setSummary("M: " + String.format("%.4f", focusDistance) + " " + getContext().getText(R.string.dioptre) + " / " + m + "m");
+				String[] text = formatMfDistance(getContext(), prefs);
+				setSummary("M: " + text[0] + " / " + text[1]);
 			} else {
 				setSummary(R.string.camera_value_auto);
 			}
@@ -171,5 +165,23 @@ public class ShowCameraInfoPreference extends DialogPreference {
 		} else {
 			setSummary(prefs.getString(key, null));
 		}
+	}
+
+	/**
+	 * Format MF Distance
+	 *
+	 * @param context Context
+	 * @param prefs   Preferences to read from
+	 * @return Formatted String, [0] DP, [1] m
+	 */
+	public static String[] formatMfDistance(Context context, SharedPreferences prefs) {
+		float focusDistance = prefs.getFloat("pref_camera_af_manual", 0);
+		String m;
+		if (focusDistance == 0) {
+			m = "∞";
+		} else {
+			m = String.format("%.2f", (1.0f / focusDistance));
+		}
+		return new String[] {String.format("%.4f", focusDistance) + " " + context.getText(R.string.dioptre), m + "m"};
 	}
 }

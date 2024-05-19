@@ -1,7 +1,9 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.widget.ImageButton;
 import android.widget.RadioGroup;
 
 import androidx.preference.PreferenceManager;
@@ -27,6 +29,17 @@ public class PopupDialogAfMf extends PopupDialogBase {
 		super(context);
 
 		this.group = (RadioGroup) view.findViewById(R.id.bt_afmf_group);
+
+		ImageButton bt = (ImageButton) view.findViewById(R.id.bt_mf_manual_info);
+		bt.setOnClickListener(v -> {
+			AlertDialog.Builder builder = new AlertDialog.Builder(context);
+			builder.setTitle(R.string.mf_focus_info_title);
+			builder.setMessage(R.string.mf_focus_info_text);
+
+			builder.setPositiveButton(R.string.dialog_OK_button, null);
+			builder.show();
+		});
+
 		updateSelectedCheckbox();
 	}
 
@@ -62,6 +75,11 @@ public class PopupDialogAfMf extends PopupDialogBase {
 			mode = "auto";
 		}
 
+		// Reset AF Field / Position
+		editor.putString("pref_camera_af_field", "");
+		editor.putFloat("pref_camera_af_manual", 0);
+
+		// Store new mode
 		editor.putString("pref_camera_af_mode", mode);
 		editor.apply();
 
