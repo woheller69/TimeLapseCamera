@@ -206,6 +206,7 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 					updatePreview();
 
 					touchFocusHandler = new CameraFocusOnTouchHandler(getApplicationContext(), characteristics, captureRequestBuilder, Preview2Activity.this.cameraCaptureSession, backgroundHandler, scaling);
+					touchFocusHandler.loadLastFocusConfig();
 					textureView.setOnTouchListener(touchFocusHandler);
 					touchFocusHandler.setFocusChangeListener(() -> updateFocusDisplay());
 				}

@@ -1,6 +1,7 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.content.SharedPreferences;
+import android.hardware.camera2.params.MeteringRectangle;
 
 import at.andreasrohner.spartantimelapserec.state.Logger;
 
@@ -173,5 +174,27 @@ public class AfPos {
 	 */
 	public float getFocusRelY() {
 		return (float) focusY / (float) heigth;
+	}
+
+	/**
+	 * Check if the size matches
+	 *
+	 * @param sizeW Width
+	 * @param sizeH Height
+	 * @return true if equals
+	 */
+	public boolean equalsSize(int sizeW, int sizeH) {
+		if (getWidth() != sizeW || getHeigth() != sizeH) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * @return Create a MeteringRectangle
+	 */
+	public MeteringRectangle createMeteringRectangle() {
+		return new MeteringRectangle(getFocusX(), getFocusY(), getFocusWidth(), getFocusHeight(), MeteringRectangle.METERING_WEIGHT_MAX - 1);
 	}
 }

@@ -177,7 +177,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		}
 
 		// The Camera does not support AF, no config possible
-		if (Camera2Utils.isAfSupported(cameraCharacteristics)) {
+		if (!Camera2Utils.isAfSupported(cameraCharacteristics)) {
 			return true;
 		}
 
@@ -189,6 +189,26 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		processFocus(view, motionEvent);
 
 		return true;
+	}
+
+	/**
+	 * Load last focus configuration from settings
+	 */
+	public void loadLastFocusConfig() {
+		String afMode = prefs.getString("pref_camera_af_mode", null);
+		if (!"field".equals(afMode)) {
+			// Just load the AF Field in the field mode
+			return;
+		}
+
+		AfPos pos = AfPos.fromPref(prefs);
+		if (pos == null) {
+			// Error already logged
+			return;
+		}
+
+		MeteringRectangle focusArea = pos.createMeteringRectangle();
+		focusAtPosition(focusArea);
 	}
 
 	/**
@@ -226,12 +246,21 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		int focusSize = 50;
 		MeteringRectangle focusArea = new MeteringRectangle(Math.max(x - focusSize, 0), Math.max(y - focusSize, 0), focusSize * 2, focusSize * 2, MeteringRectangle.METERING_WEIGHT_MAX - 1);
 
+		storeAfPosition(sensorArraySize, focusArea);
+
+		focusAtPosition(focusArea);
+	}
+
+	/**
+	 * Focus at specific position
+	 *
+	 * @param focusArea Focus position
+	 */
+	private void focusAtPosition(MeteringRectangle focusArea) {
 		stopRepeatingAndCancelAf();
 
 		// Now add a new AF trigger with focus region
 		previewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, new MeteringRectangle[] {focusArea});
-
-		storeAfPosition(sensorArraySize, focusArea);
 
 		previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 		previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO);

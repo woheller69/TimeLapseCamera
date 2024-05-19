@@ -98,12 +98,13 @@ public class ConfigureCamera2FromPrefs {
 		}
 
 		prepareSize();
-		if (pos.getWidth() != sizeW || pos.getHeigth() != sizeH) {
+
+		if (!pos.equalsSize(sizeW, sizeH)) {
 			logger.warn("Focus set at another resolution, currently not implemented, re-focus manually: {}!={} || {}!={}", pos.getWidth(), sizeW, pos.getHeigth(), sizeH);
 			return;
 		}
 
-		MeteringRectangle focusArea = new MeteringRectangle(pos.getFocusX(), pos.getFocusY(), pos.getFocusWidth(), pos.getFocusHeight(), MeteringRectangle.METERING_WEIGHT_MAX - 1);
+		MeteringRectangle focusArea = pos.createMeteringRectangle();
 		logger.debug("Picture focus at {}", focusArea);
 		captureBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, new MeteringRectangle[] {focusArea});
 		// captureBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, new MeteringRectangle[] {focusArea});
