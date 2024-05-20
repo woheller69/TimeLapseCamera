@@ -287,6 +287,7 @@ public class PopupDialogMenu extends PopupDialogBase {
 		int flags = 0;
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		String selectedCamera = prefs.getString("pref_camera", null);
+		String lastFrameSize = prefs.getString("pref_camera", null);
 		String newSelectedCamera = this.camCameraSelection.getSelectedItem().getId();
 
 		SharedPreferences.Editor editor = prefs.edit();
@@ -294,14 +295,33 @@ public class PopupDialogMenu extends PopupDialogBase {
 
 		if (newSelectedCamera != null && !newSelectedCamera.equals(selectedCamera)) {
 			editor.putString("pref_camera", newSelectedCamera);
+
+			// Reset Auto Focus configuration on camera change
+			resetFocusPreferences(editor);
 			flags = 1;
 		}
 
 		editor.putString("pref_camera_flash", currentFlashMode);
-		editor.putString("pref_frame_size", this.camCameraResolution.getSelectedItem().getId());
+		String newFrameSize = this.camCameraResolution.getSelectedItem().getId();
+		if (!newFrameSize.equals(lastFrameSize)) {
+			// Reset Auto Focus configuration on resolution change
+			resetFocusPreferences(editor);
+		}
+		editor.putString("pref_frame_size", newFrameSize);
 
 		editor.apply();
 		return flags;
+	}
+
+	/**
+	 * Reset preferences
+	 *
+	 * @param editor Editor
+	 */
+	private void resetFocusPreferences(SharedPreferences.Editor editor) {
+		editor.putString("pref_camera_af_field", "");
+		editor.putFloat("pref_camera_af_manual", 0);
+		editor.putString("pref_camera_af_mode", "auto");
 	}
 
 	@Override

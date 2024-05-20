@@ -62,6 +62,11 @@ public class PopupDialogAfMf extends PopupDialogBase {
 			mode = "auto";
 		}
 
+		// Reset AF Field / Position
+		editor.putString("pref_camera_af_field", "");
+		editor.putFloat("pref_camera_af_manual", 0);
+
+		// Store new mode
 		editor.putString("pref_camera_af_mode", mode);
 		editor.apply();
 

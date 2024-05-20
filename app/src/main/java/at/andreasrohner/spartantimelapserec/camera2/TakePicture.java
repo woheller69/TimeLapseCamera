@@ -7,6 +7,7 @@ import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.media.Image;
 import android.media.ImageReader;
@@ -19,6 +20,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.camera2.filename.AbstractFileNameController;
 import at.andreasrohner.spartantimelapserec.state.Logger;
@@ -59,6 +61,109 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 	private ConfigureCamera2FromPrefs cameraConfig;
 
 	/**
+	 * Capture Request
+	 */
+	private CaptureRequest.Builder captureBuilder;
+
+	/**
+	 * Camera Session
+	 */
+	private CameraCaptureSession session;
+
+	private enum State {
+		/**
+		 * Camera state: Showing camera preview.
+		 */
+		STATE_PREVIEW,
+
+		/**
+		 * Camera state: Waiting for the focus to be locked.
+		 */
+		STATE_WAITING_LOCK,
+
+		/**
+		 * Camera state: Waiting for the exposure to be precapture state.
+		 */
+		STATE_WAITING_PRECAPTURE,
+
+		/**
+		 * Camera state: Waiting for the exposure state to be something other than precapture.
+		 */
+		STATE_WAITING_NON_PRECAPTURE,
+
+		/**
+		 * Camera state: Picture was taken.
+		 */
+		STATE_PICTURE_TAKEN
+	}
+
+	/**
+	 * The current state of camera state for taking pictures.
+	 *
+	 * @see #mCaptureCallback
+	 */
+	private State state = State.STATE_PREVIEW;
+
+	/**
+	 * A {@link CameraCaptureSession.CaptureCallback} that handles events related to JPEG capture.
+	 */
+	private CameraCaptureSession.CaptureCallback mCaptureCallback = new CameraCaptureSession.CaptureCallback() {
+
+		private void process(CaptureResult result) {
+			switch (state) {
+				case STATE_PREVIEW: {
+					// We have nothing to do when the camera preview is working normally.
+					break;
+				}
+				case STATE_WAITING_LOCK: {
+					Integer afState = result.get(CaptureResult.CONTROL_AF_STATE);
+					if (afState == null) {
+						captureStillPicture();
+					} else if (CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED == afState || CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED == afState) {
+						// CONTROL_AE_STATE can be null on some devices
+						Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
+						if (aeState == null || aeState == CaptureResult.CONTROL_AE_STATE_CONVERGED) {
+							state = State.STATE_PICTURE_TAKEN;
+							captureStillPicture();
+						} else {
+							runPrecaptureSequence();
+						}
+					}
+					break;
+				}
+				case STATE_WAITING_PRECAPTURE: {
+					// CONTROL_AE_STATE can be null on some devices
+					Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
+					if (aeState == null || aeState == CaptureResult.CONTROL_AE_STATE_PRECAPTURE || aeState == CaptureRequest.CONTROL_AE_STATE_FLASH_REQUIRED) {
+						state = State.STATE_WAITING_NON_PRECAPTURE;
+					}
+					break;
+				}
+				case STATE_WAITING_NON_PRECAPTURE: {
+					// CONTROL_AE_STATE can be null on some devices
+					Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
+					if (aeState == null || aeState != CaptureResult.CONTROL_AE_STATE_PRECAPTURE) {
+						state = State.STATE_PICTURE_TAKEN;
+						captureStillPicture();
+					}
+					break;
+				}
+			}
+		}
+
+		@Override
+		public void onCaptureProgressed(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull CaptureResult partialResult) {
+			process(partialResult);
+		}
+
+		@Override
+		public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
+			process(result);
+		}
+
+	};
+
+	/**
 	 * Constructor
 	 *
 	 * @param camera            Camera
@@ -95,7 +200,7 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 			List<Surface> outputSurfaces = new ArrayList<>(1);
 			outputSurfaces.add(reader.getSurface());
 
-			final CaptureRequest.Builder captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+			this.captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
 			captureBuilder.addTarget(reader.getSurface());
 			captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 
@@ -128,23 +233,13 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 			cameraConfig.config(captureBuilder);
 
 			reader.setOnImageAvailableListener(this, backgroundHandler);
-			final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
-				@Override
-				public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
-					super.onCaptureCompleted(session, request, result);
-					if (imageTakenListener != null) {
-						imageTakenListener.takeImageFinished();
-					}
-				}
-			};
+
 			cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
+
 				@Override
 				public void onConfigured(CameraCaptureSession session) {
-					try {
-						session.capture(captureBuilder.build(), captureListener, backgroundHandler);
-					} catch (Exception e) {
-						camera.getErrorHandler().error("Failed to configure camera", e);
-					}
+					TakePicture.this.session = session;
+					lockFocus();
 				}
 
 				@Override
@@ -154,6 +249,82 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 			}, backgroundHandler);
 		} catch (Exception e) {
 			camera.getErrorHandler().error("Failed to create picture", e);
+		}
+	}
+
+	/**
+	 * Lock the focus as the first step for a still image capture.
+	 */
+	private void lockFocus() {
+		try {
+			// This is how to tell the camera to lock focus.
+			captureBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START);
+			// Tell #mCaptureCallback to wait for the lock.
+			state = State.STATE_WAITING_LOCK;
+			session.capture(captureBuilder.build(), mCaptureCallback, backgroundHandler);
+		} catch (Exception e) {
+			camera.getErrorHandler().error("Failed to lock focus", e);
+		}
+	}
+
+	/**
+	 * Run the precapture sequence for capturing a still image. This method should be called when
+	 * we get a response in {@link #mCaptureCallback} from {@link #lockFocus()}.
+	 */
+	private void runPrecaptureSequence() {
+		try {
+			// This is how to tell the camera to trigger.
+			captureBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER, CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
+			// Tell #mCaptureCallback to wait for the precapture sequence to be set.
+			state = State.STATE_WAITING_PRECAPTURE;
+			session.capture(captureBuilder.build(), mCaptureCallback, backgroundHandler);
+		} catch (Exception e) {
+			camera.getErrorHandler().error("Failed to run precapture sequence", e);
+		}
+	}
+
+	/**
+	 * Capture a still picture. This method should be called when we get a response in
+	 * {@link #mCaptureCallback} from both {@link #lockFocus()}.
+	 */
+	private void captureStillPicture() {
+		try {
+			captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+
+			CameraCaptureSession.CaptureCallback CaptureCallback = new CameraCaptureSession.CaptureCallback() {
+
+				@Override
+				public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
+					logger.info("Image taken");
+					if (imageTakenListener != null) {
+						imageTakenListener.takeImageFinished();
+					}
+					unlockFocus();
+				}
+			};
+
+			session.stopRepeating();
+			session.abortCaptures();
+			session.capture(captureBuilder.build(), CaptureCallback, null);
+		} catch (Exception e) {
+			camera.getErrorHandler().error("Failed to take image", e);
+		}
+	}
+
+	/**
+	 * Unlock the focus. This method should be called when still image capture sequence is
+	 * finished.
+	 */
+	private void unlockFocus() {
+		try {
+			// Reset the auto-focus trigger
+			captureBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
+			session.capture(captureBuilder.build(), mCaptureCallback, backgroundHandler);
+			// After this, the camera will go back to the normal state of preview.
+			state = State.STATE_PREVIEW;
+			session.setRepeatingRequest(captureBuilder.build(), mCaptureCallback, backgroundHandler);
+		} catch (Exception e) {
+			camera.getErrorHandler().error("Unlock focus failed", e);
 		}
 	}
 
