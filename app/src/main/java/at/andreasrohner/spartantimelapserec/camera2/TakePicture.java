@@ -59,6 +59,16 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 	private ConfigureCamera2FromPrefs cameraConfig;
 
 	/**
+	 * Capture Request
+	 */
+	private CaptureRequest.Builder captureBuilder;
+
+	/**
+	 * Camera Session
+	 */
+	private CameraCaptureSession session;
+
+	/**
 	 * Constructor
 	 *
 	 * @param camera            Camera
@@ -95,7 +105,7 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 			List<Surface> outputSurfaces = new ArrayList<>(1);
 			outputSurfaces.add(reader.getSurface());
 
-			final CaptureRequest.Builder captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+			this.captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
 			captureBuilder.addTarget(reader.getSurface());
 			captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 
@@ -128,23 +138,13 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 			cameraConfig.config(captureBuilder);
 
 			reader.setOnImageAvailableListener(this, backgroundHandler);
-			final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
-				@Override
-				public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
-					super.onCaptureCompleted(session, request, result);
-					if (imageTakenListener != null) {
-						imageTakenListener.takeImageFinished();
-					}
-				}
-			};
+
 			cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
+
 				@Override
 				public void onConfigured(CameraCaptureSession session) {
-					try {
-						session.capture(captureBuilder.build(), captureListener, backgroundHandler);
-					} catch (Exception e) {
-						camera.getErrorHandler().error("Failed to configure camera", e);
-					}
+					TakePicture.this.session = session;
+					cameraReady();
 				}
 
 				@Override
@@ -154,6 +154,52 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 			}, backgroundHandler);
 		} catch (Exception e) {
 			camera.getErrorHandler().error("Failed to create picture", e);
+		}
+	}
+
+	/**
+	 * Camera is ready now, focus and then take a picture
+	 */
+	private void cameraReady() {
+		/* Focusing does not work
+		// Focus Camera
+		FocusHelper focus = new FocusHelper(session, captureBuilder, backgroundHandler) {
+			@Override
+			protected void focusCompleted(TotalCaptureResult result) {
+				takePicture();
+			}
+		};
+		cameraConfig.config(captureBuilder);
+		MeteringRectangle fa = cameraConfig.getFocusArea();
+		if (fa != null) {
+			focus.focusAtPosition(fa);
+		} else {
+			takePicture();
+		}
+		*/
+
+		takePicture();
+	}
+
+	/**
+	 * Take a picture
+	 */
+	private void takePicture() {
+		final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
+
+			@Override
+			public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
+				super.onCaptureCompleted(session, request, result);
+				if (imageTakenListener != null) {
+					imageTakenListener.takeImageFinished();
+				}
+			}
+		};
+
+		try {
+			session.capture(captureBuilder.build(), captureListener, backgroundHandler);
+		} catch (Exception e) {
+			camera.getErrorHandler().error("Failed to configure camera", e);
 		}
 	}
 

@@ -6,8 +6,6 @@ import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraMetadata;
-import android.hardware.camera2.CaptureFailure;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
@@ -16,7 +14,6 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.state.Logger;
 
@@ -28,12 +25,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 	/**
 	 * Logger
 	 */
-	private Logger logger = new Logger(getClass());
-
-	/**
-	 * Tag used for feedback
-	 */
-	private static String REQUEST_TAG = "FOCUS_TAG";
+	protected Logger logger = new Logger(getClass());
 
 	/**
 	 * Preferences
@@ -61,19 +53,9 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 	private CameraCaptureSession captureSession;
 
 	/**
-	 * Background Thread
+	 * Wraps the Camera2 instance to focus
 	 */
-	private Handler backgroundHandler;
-
-	/**
-	 * Manual focus already started
-	 */
-	private boolean manualFocusStarted = false;
-
-	/**
-	 * Listener for focus changes
-	 */
-	private FocusChangeListener focusChangeListener;
+	private FocusHelper focusHelper;
 
 	/**
 	 * Image Relative X
@@ -84,50 +66,6 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 	 * Image Relative Y
 	 */
 	private float relY;
-
-	/**
-	 * Callback
-	 */
-	private CameraCaptureSession.CaptureCallback captureCallbackHandler = new CameraCaptureSession.CaptureCallback() {
-		@Override
-		public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
-			super.onCaptureCompleted(session, request, result);
-			manualFocusStarted = false;
-
-			if (!REQUEST_TAG.equals(request.getTag())) {
-				return;
-			}
-
-			String afMode = prefs.getString("pref_camera_af_mode", "auto");
-
-			if ("manual".equals(afMode)) {
-				float focusDistance = result.get(CaptureResult.LENS_FOCUS_DISTANCE);
-				SharedPreferences.Editor editor = prefs.edit();
-				editor.putFloat("pref_camera_af_manual", focusDistance);
-				editor.apply();
-			}
-
-			// the focus trigger is complete - resume repeating (preview surface will get frames), clear AF trigger
-			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, null);
-
-			try {
-				captureSession.setRepeatingRequest(previewRequestBuilder.build(), null, null);
-			} catch (Exception e) {
-				logger.error("Error start repeating request after focus", e);
-			}
-
-			fireFocusState(FocusChangeListener.FocusState.FOCUS_SUCCESS);
-		}
-
-		@Override
-		public void onCaptureFailed(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull CaptureFailure failure) {
-			super.onCaptureFailed(session, request, failure);
-			logger.error("Manual AF failure: «{}»", failure);
-			manualFocusStarted = false;
-
-			fireFocusState(FocusChangeListener.FocusState.FOCUS_FAILED);
-		}
-	};
 
 	/**
 	 * Constructor
@@ -153,19 +91,31 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		if (captureSession == null) {
 			throw new IllegalArgumentException("captureSession == null");
 		}
-		this.backgroundHandler = backgroundHandler;
 		if (backgroundHandler == null) {
 			throw new IllegalArgumentException("backgroundHandler == null");
 		}
 
 		this.scaling = scaling;
+		this.focusHelper = new FocusHelper(captureSession, previewRequestBuilder, backgroundHandler) {
+			@Override
+			protected void focusCompleted(TotalCaptureResult result) {
+				String afMode = prefs.getString("pref_camera_af_mode", "auto");
+
+				if ("manual".equals(afMode)) {
+					float focusDistance = result.get(CaptureResult.LENS_FOCUS_DISTANCE);
+					SharedPreferences.Editor editor = prefs.edit();
+					editor.putFloat("pref_camera_af_manual", focusDistance);
+					editor.apply();
+				}
+			}
+		};
 	}
 
 	/**
 	 * @param focusChangeListener Listener for focus changes
 	 */
 	public void setFocusChangeListener(FocusChangeListener focusChangeListener) {
-		this.focusChangeListener = focusChangeListener;
+		focusHelper.setFocusChangeListener(focusChangeListener);
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -181,7 +131,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 			return true;
 		}
 
-		if (manualFocusStarted) {
+		if (focusHelper.isManualFocusStarted()) {
 			logger.warn("Manual focus already started");
 			return true;
 		}
@@ -208,7 +158,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		}
 
 		MeteringRectangle focusArea = pos.createMeteringRectangle();
-		focusAtPosition(focusArea);
+		focusHelper.focusAtPosition(focusArea);
 	}
 
 	/**
@@ -248,70 +198,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 
 		storeAfPosition(sensorArraySize, focusArea);
 
-		focusAtPosition(focusArea);
-	}
-
-	/**
-	 * Focus at specific position
-	 *
-	 * @param focusArea Focus position
-	 */
-	private void focusAtPosition(MeteringRectangle focusArea) {
-		fireFocusState(FocusChangeListener.FocusState.FOCUSSING);
-
-		stopRepeatingAndCancelAf();
-
-		// Now add a new AF trigger with focus region
-		previewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, new MeteringRectangle[] {focusArea});
-
-		previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-		previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO);
-		previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START);
-
-		// we'll capture this later for resuming the preview
-		previewRequestBuilder.setTag(REQUEST_TAG);
-
-		// then we ask for a single request (not repeating!)
-		try {
-			captureSession.capture(previewRequestBuilder.build(), captureCallbackHandler, backgroundHandler);
-		} catch (Exception e) {
-			logger.error("Start capture session failed!", e);
-		}
-		manualFocusStarted = true;
-	}
-
-	/**
-	 * Fire Focus state changed
-	 *
-	 * @param focusState Focus State
-	 */
-	private void fireFocusState(FocusChangeListener.FocusState focusState) {
-		if (focusChangeListener == null) {
-			return;
-		}
-
-		focusChangeListener.focusChanged(focusState);
-	}
-
-	/**
-	 * Stop already running repeating requests, and stop AF trigger
-	 */
-	private void stopRepeatingAndCancelAf() {
-		// first stop the existing repeating request
-		try {
-			captureSession.stopRepeating();
-		} catch (Exception e) {
-			logger.error("Stop repeating for AF failed!", e);
-		}
-
-		// cancel any existing AF trigger (repeated touches, etc.)
-		previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
-		previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
-		try {
-			captureSession.capture(previewRequestBuilder.build(), captureCallbackHandler, backgroundHandler);
-		} catch (Exception e) {
-			logger.error("Start capture / cancel session failed!", e);
-		}
+		focusHelper.focusAtPosition(focusArea);
 	}
 
 	/**

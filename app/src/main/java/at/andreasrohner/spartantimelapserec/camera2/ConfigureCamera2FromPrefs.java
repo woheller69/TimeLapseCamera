@@ -34,6 +34,11 @@ public class ConfigureCamera2FromPrefs {
 	private int sizeH;
 
 	/**
+	 * Current focus area
+	 */
+	private MeteringRectangle focusArea;
+
+	/**
 	 * Constructor
 	 *
 	 * @param prefs Preferences
@@ -65,6 +70,13 @@ public class ConfigureCamera2FromPrefs {
 		configureAe(captureBuilder);
 		configureFocus(captureBuilder);
 		configureWb(captureBuilder);
+	}
+
+	/**
+	 * @return Current focus area
+	 */
+	public MeteringRectangle getFocusArea() {
+		return focusArea;
 	}
 
 	/**
@@ -105,7 +117,7 @@ public class ConfigureCamera2FromPrefs {
 			return;
 		}
 
-		MeteringRectangle focusArea = pos.createMeteringRectangle();
+		this.focusArea = pos.createMeteringRectangle();
 		logger.debug("Picture focus at {}", focusArea);
 		captureBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START);
 		captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO);
