@@ -139,7 +139,7 @@
     <string name="autofocus_message">Configure focus mode</string>
     <string name="cam_afmf_autofocus">Autofocus</string>
     <string name="cam_afmf_field">Autofocus at selected field</string>
-    <string name="cam_afmf_manual">Store manual selected focus distance (not working on most phones)</string>
+    <string name="cam_afmf_manual">Store manual selected focus distance</string>
     <string name="cam_header_flash">Flash</string>
     <string name="cam_header_flash_info">Flash Control just works in full auto mode</string>
     <string name="camera_flash_on">On</string>
@@ -167,4 +167,6 @@
     <string name="log_dialog_info">Set the log level filter for future log messages</string>
     <string name="log_file_dialog_enabled_info">Write Logfile to internal storage in the folder «{}»</string>
     <string name="write_log_file">Write Logfile</string>
+    <string name="no_af_title">No Focus Control</string>
+    <string name="no_af_description">This camera does not support autofocus / focus configuration.</string>
 </resources>

@@ -51,13 +51,13 @@ public abstract class PopupDialogBase implements View.OnClickListener {
 		builder.setMessage(context.getString(getMessageId()));
 
 		builder.setView(view);
-		builder.setPositiveButton(context.getString(R.string.dialog_OK_button), (dialog, which) -> {
+		builder.setPositiveButton(R.string.dialog_OK_button, (dialog, which) -> {
 			int flags = storeValue();
 			if (dialogResultListener != null) {
 				dialogResultListener.dialogFinished(true, flags);
 			}
 		});
-		builder.setNegativeButton(context.getString(R.string.dialog_CANCEL_button), (dialog, which) -> {
+		builder.setNegativeButton(R.string.dialog_CANCEL_button, (dialog, which) -> {
 			dialog.cancel();
 			if (dialogResultListener != null) {
 				dialogResultListener.dialogFinished(false, 0);
