@@ -1,5 +1,6 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
+import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.widget.ImageButton;
 
@@ -7,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.camera2.pupcfg.PopupDialogMenu;
+import at.andreasrohner.spartantimelapserec.camera2.wrapper.Camera2Wrapper;
 
 /**
  * Handle buttons and button actions of the camera preview
@@ -54,6 +56,11 @@ public class CameraControlButtonHandler implements PopupDialogBase.DialogResult 
 	private ConfigChangeListener configChangeListener;
 
 	/**
+	 * Autofocus config Popup Dialog
+	 */
+	private PopupDialogAfMf afMfDialog;
+
+	/**
 	 * Constructor
 	 *
 	 * @param activity Activity
@@ -79,7 +86,7 @@ public class CameraControlButtonHandler implements PopupDialogBase.DialogResult 
 		this.camera = camera;
 
 		this.afmfButton = (ImageButton) activity.findViewById(R.id.bt_afmf);
-		PopupDialogAfMf afMfDialog = new PopupDialogAfMf(activity, camera);
+		this.afMfDialog = new PopupDialogAfMf(activity, camera);
 		afMfDialog.setDialogResultListener(this);
 		this.afmfButton.setOnClickListener(afMfDialog);
 
@@ -123,10 +130,14 @@ public class CameraControlButtonHandler implements PopupDialogBase.DialogResult 
 		String afMode = prefs.getString("pref_camera_af_mode", "auto");
 		if (!camera.isAfSupported()) {
 			this.afmfButton.setImageResource(R.drawable.ic_cam_bt_afmf_disabled);
-		} else if ("auto".equals(afMode)) {
-			this.afmfButton.setImageResource(R.drawable.ic_cam_bt_afmf);
+			this.afmfButton.setOnClickListener(v -> showNoAfConfigDialog());
 		} else {
-			this.afmfButton.setImageResource(R.drawable.ic_cam_bt_afmf_enabled);
+			this.afmfButton.setOnClickListener(afMfDialog);
+			if ("auto".equals(afMode)) {
+				this.afmfButton.setImageResource(R.drawable.ic_cam_bt_afmf);
+			} else {
+				this.afmfButton.setImageResource(R.drawable.ic_cam_bt_afmf_enabled);
+			}
 		}
 
 		boolean menuButtonEnabled = false;
@@ -145,6 +156,18 @@ public class CameraControlButtonHandler implements PopupDialogBase.DialogResult 
 		} else {
 			this.menuButton.setImageResource(R.drawable.ic_cam_bt_menu);
 		}
+	}
+
+	/**
+	 * Show information that the camera does not support AF Configuration
+	 */
+	private void showNoAfConfigDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+		builder.setTitle(R.string.no_af_title);
+		builder.setMessage(R.string.no_af_description);
+
+		builder.setPositiveButton(R.string.dialog_OK_button, null);
+		builder.show();
 	}
 
 	@Override

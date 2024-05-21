@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.text.format.DateFormat;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 import androidx.documentfile.provider.DocumentFile;
 import at.andreasrohner.spartantimelapserec.ImageRecorderState;
@@ -59,21 +58,16 @@ public class FileNameControllerExternal extends AbstractFileNameController {
 		logger.info("Project Folder: «{}»", this.outputDir.getUri());
 	}
 
-	/**
-	 * Get Next output filename
-	 *
-	 * @param ext Extension
-	 * @return File
-	 * @throws IOException
-	 */
-	public OutputStream getOutputFile(String ext) throws IOException {
+	@Override
+	public ImageOutput getOutputFile(String ext) throws IOException {
 		if (this.outputDir == null) {
 			throw new IOException("Cannot write to external drive");
 		}
 
 		DocumentFile outFile = null;
+		String name;
 		do {
-			String name = projectName + fileIndex + "." + ext;
+			name = projectName + fileIndex + "." + ext;
 
 			// File not found / does not exists
 			if (this.outputDir.findFile(name) == null) {
@@ -88,6 +82,6 @@ public class FileNameControllerExternal extends AbstractFileNameController {
 
 		ImageRecorderState.setCurrentImage(new ImageFileDocumentFile(outFile));
 
-		return context.getContentResolver().openOutputStream(outFile.getUri());
+		return new ImageOutput(name, context.getContentResolver().openOutputStream(outFile.getUri()));
 	}
 }

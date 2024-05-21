@@ -3,6 +3,7 @@ package at.andreasrohner.spartantimelapserec.camera2.filename;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -68,5 +69,51 @@ public abstract class AbstractFileNameController {
 	 * @return File
 	 * @throws IOException
 	 */
-	public abstract OutputStream getOutputFile(String ext) throws IOException;
+	public abstract ImageOutput getOutputFile(String ext) throws IOException;
+
+	/**
+	 * Image Output
+	 */
+	public static class ImageOutput implements Closeable {
+
+		/**
+		 * Image name
+		 */
+		private String name;
+
+		/**
+		 * OutputStream
+		 */
+		private OutputStream out;
+
+		/**
+		 * Constructor
+		 *
+		 * @param name Image name
+		 * @param out  OutputStream
+		 */
+		public ImageOutput(String name, OutputStream out) {
+			this.name = name;
+			this.out = out;
+		}
+
+		/**
+		 * @return Image name
+		 */
+		public String getName() {
+			return name;
+		}
+
+		/**
+		 * @return OutputStream
+		 */
+		public OutputStream getOut() {
+			return out;
+		}
+
+		@Override
+		public void close() throws IOException {
+			out.close();
+		}
+	}
 }

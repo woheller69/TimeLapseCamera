@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory android:title="@string/pref_capture_rate">
         <at.andreasrohner.spartantimelapserec.preference.preftype.TimeSpanPreference
-            android:defaultValue="1000"
+            android:defaultValue="10000"
             android:dialogMessage="@string/pref_capture_rate_summ"
             android:key="pref_capture_rate"
             android:title="@string/pref_capture_rate"

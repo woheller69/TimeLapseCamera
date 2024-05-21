@@ -6,6 +6,7 @@ import android.widget.RadioGroup;
 
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
+import at.andreasrohner.spartantimelapserec.camera2.wrapper.Camera2Wrapper;
 
 /**
  * Autofocus config Popup Dialog
@@ -62,6 +63,11 @@ public class PopupDialogAfMf extends PopupDialogBase {
 			mode = "auto";
 		}
 
+		// Reset AF Field / Position
+		editor.putString("pref_camera_af_field", "");
+		editor.putFloat("pref_camera_af_manual", 0);
+
+		// Store new mode
 		editor.putString("pref_camera_af_mode", mode);
 		editor.apply();
 

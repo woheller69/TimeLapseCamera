@@ -41,20 +41,20 @@ public class GithubStar {
 		if (prefManager.getBoolean("askForStar", true)) {
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 			alertDialogBuilder.setMessage(R.string.dialog_StarOnGitHub);
-			alertDialogBuilder.setPositiveButton(context.getString(R.string.dialog_OK_button), new DialogInterface.OnClickListener() {
+			alertDialogBuilder.setPositiveButton(R.string.dialog_OK_button, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
 					setAskForStar(false, context);
 				}
 			});
-			alertDialogBuilder.setNegativeButton(context.getString(R.string.dialog_NO_button), new DialogInterface.OnClickListener() {
+			alertDialogBuilder.setNegativeButton(R.string.dialog_NO_button, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					setAskForStar(false, context);
 				}
 			});
-			alertDialogBuilder.setNeutralButton(context.getString(R.string.dialog_Later_button), null);
+			alertDialogBuilder.setNeutralButton(R.string.dialog_Later_button, null);
 
 			AlertDialog alertDialog = alertDialogBuilder.create();
 			alertDialog.show();
