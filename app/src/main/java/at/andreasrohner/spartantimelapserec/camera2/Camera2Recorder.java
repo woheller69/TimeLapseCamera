@@ -137,7 +137,7 @@ public class Camera2Recorder implements Runnable, TakePicture.ImageTakenListener
 		// Schedule next image
 		handler.postDelayed(this, captureIntervalTime);
 
-		logger.debug("Take Image");
+		logger.debug("Scheduled Image in {}ms", captureIntervalTime);
 
 		if (waitForImage) {
 			logger.warn("Still waiting for the last image! missed count: {}", missedImages);

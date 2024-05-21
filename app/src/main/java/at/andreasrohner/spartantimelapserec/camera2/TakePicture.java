@@ -3,6 +3,7 @@ package at.andreasrohner.spartantimelapserec.camera2;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
+import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraMetadata;
@@ -15,10 +16,10 @@ import android.os.Handler;
 import android.util.Size;
 import android.view.Surface;
 
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
@@ -31,9 +32,19 @@ import at.andreasrohner.spartantimelapserec.state.Logger;
 public class TakePicture implements ImageReader.OnImageAvailableListener {
 
 	/**
+	 * Global ID, incremented to get unique IDs
+	 */
+	private static AtomicInteger SID = new AtomicInteger(0);
+
+	/**
 	 * Logger
 	 */
 	private Logger logger = new Logger(getClass());
+
+	/**
+	 * ID Of this picture instance, for logging
+	 */
+	private final int id = SID.incrementAndGet();
 
 	/**
 	 * Camera implementation
@@ -94,7 +105,12 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 		/**
 		 * Camera state: Picture was taken.
 		 */
-		STATE_PICTURE_TAKEN
+		STATE_PICTURE_TAKEN,
+
+		/**
+		 * Take image ended
+		 */
+		STATE_ENDED
 	}
 
 	/**
@@ -102,7 +118,7 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 	 *
 	 * @see #mCaptureCallback
 	 */
-	private State state = State.STATE_PREVIEW;
+	private State currentState = State.STATE_PREVIEW;
 
 	/**
 	 * A {@link CameraCaptureSession.CaptureCallback} that handles events related to JPEG capture.
@@ -110,7 +126,9 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 	private CameraCaptureSession.CaptureCallback mCaptureCallback = new CameraCaptureSession.CaptureCallback() {
 
 		private void process(CaptureResult result) {
-			switch (state) {
+			logger.debug("TakePicture #{} process state {}", id, currentState);
+
+			switch (currentState) {
 				case STATE_PREVIEW: {
 					// We have nothing to do when the camera preview is working normally.
 					break;
@@ -123,7 +141,7 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 						// CONTROL_AE_STATE can be null on some devices
 						Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
 						if (aeState == null || aeState == CaptureResult.CONTROL_AE_STATE_CONVERGED) {
-							state = State.STATE_PICTURE_TAKEN;
+							setCurrentState(State.STATE_PICTURE_TAKEN);
 							captureStillPicture();
 						} else {
 							runPrecaptureSequence();
@@ -135,7 +153,7 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 					// CONTROL_AE_STATE can be null on some devices
 					Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
 					if (aeState == null || aeState == CaptureResult.CONTROL_AE_STATE_PRECAPTURE || aeState == CaptureRequest.CONTROL_AE_STATE_FLASH_REQUIRED) {
-						state = State.STATE_WAITING_NON_PRECAPTURE;
+						setCurrentState(State.STATE_WAITING_NON_PRECAPTURE);
 					}
 					break;
 				}
@@ -143,7 +161,7 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 					// CONTROL_AE_STATE can be null on some devices
 					Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
 					if (aeState == null || aeState != CaptureResult.CONTROL_AE_STATE_PRECAPTURE) {
-						state = State.STATE_PICTURE_TAKEN;
+						setCurrentState(State.STATE_PICTURE_TAKEN);
 						captureStillPicture();
 					}
 					break;
@@ -175,6 +193,18 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 		this.context = camera.getContext();
 
 		cameraConfig = new ConfigureCamera2FromPrefs(PreferenceManager.getDefaultSharedPreferences(context));
+
+		logger.debug("New TakePicture instance #{}", id);
+	}
+
+	/**
+	 * Set the state
+	 *
+	 * @param currentState State
+	 */
+	private void setCurrentState(State currentState) {
+		// logger.debug("TakePicture #{} new state {}", id, currentState);
+		this.currentState = currentState;
 	}
 
 	/**
@@ -188,6 +218,7 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 	 * Create a picture
 	 */
 	public void create() {
+		logger.debug("TakePicture #{}", id);
 		try {
 			CameraDevice cameraDevice = camera.getCameraDevice();
 			if (cameraDevice == null) {
@@ -260,7 +291,7 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 			// This is how to tell the camera to lock focus.
 			captureBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START);
 			// Tell #mCaptureCallback to wait for the lock.
-			state = State.STATE_WAITING_LOCK;
+			setCurrentState(State.STATE_WAITING_LOCK);
 			session.capture(captureBuilder.build(), mCaptureCallback, backgroundHandler);
 		} catch (Exception e) {
 			camera.getErrorHandler().error("Failed to lock focus", e);
@@ -276,7 +307,7 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 			// This is how to tell the camera to trigger.
 			captureBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER, CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
 			// Tell #mCaptureCallback to wait for the precapture sequence to be set.
-			state = State.STATE_WAITING_PRECAPTURE;
+			setCurrentState(State.STATE_WAITING_PRECAPTURE);
 			session.capture(captureBuilder.build(), mCaptureCallback, backgroundHandler);
 		} catch (Exception e) {
 			camera.getErrorHandler().error("Failed to run precapture sequence", e);
@@ -299,7 +330,13 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 					if (imageTakenListener != null) {
 						imageTakenListener.takeImageFinished();
 					}
-					unlockFocus();
+					setCurrentState(State.STATE_ENDED);
+					try {
+						session.stopRepeating();
+						session.abortCaptures();
+					} catch (CameraAccessException e) {
+						camera.getErrorHandler().error("Cleanup camera failed", e);
+					}
 				}
 			};
 
@@ -311,25 +348,12 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 		}
 	}
 
-	/**
-	 * Unlock the focus. This method should be called when still image capture sequence is
-	 * finished.
-	 */
-	private void unlockFocus() {
-		try {
-			// Reset the auto-focus trigger
-			captureBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
-			session.capture(captureBuilder.build(), mCaptureCallback, backgroundHandler);
-			// After this, the camera will go back to the normal state of preview.
-			state = State.STATE_PREVIEW;
-			session.setRepeatingRequest(captureBuilder.build(), mCaptureCallback, backgroundHandler);
-		} catch (Exception e) {
-			camera.getErrorHandler().error("Unlock focus failed", e);
-		}
-	}
-
 	@Override
 	public void onImageAvailable(ImageReader reader) {
+		if (currentState != State.STATE_PICTURE_TAKEN) {
+			return;
+		}
+
 		try (Image image = reader.acquireLatestImage()) {
 			ByteBuffer buffer = image.getPlanes()[0].getBuffer();
 			byte[] bytes = new byte[buffer.capacity()];
@@ -337,8 +361,9 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 
 			AbstractFileNameController fileNameController = camera.getFileNameController();
 
-			try (OutputStream output = fileNameController.getOutputFile("jpg")) {
-				output.write(bytes);
+			try (AbstractFileNameController.ImageOutput output = fileNameController.getOutputFile("jpg")) {
+				output.getOut().write(bytes);
+				logger.debug("Picture #{} stored as «{}»", id, output.getName());
 			}
 		} catch (Exception e) {
 			camera.getErrorHandler().error("Error saving image", e);
