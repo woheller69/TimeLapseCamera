@@ -28,11 +28,14 @@ import at.andreasrohner.spartantimelapserec.ImageRecorderState;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.camera2.filename.AbstractFileNameController;
 import at.andreasrohner.spartantimelapserec.camera2.filename.ImageFile;
+import at.andreasrohner.spartantimelapserec.camera2.wrapper.Camera2Wrapper;
+import at.andreasrohner.spartantimelapserec.camera2.wrapper.CameraOpenCallback;
+import at.andreasrohner.spartantimelapserec.camera2.wrapper.ImageTakenListener;
 
 /**
  * Preview with Camera 2 Activity
  */
-public class Preview2Activity extends AppCompatActivity implements Camera2Wrapper.CameraOpenCallback, TakePicture.ImageTakenListener, ProcessErrorHandler, CameraControlButtonHandler.ConfigChangeListener {
+public class Preview2Activity extends AppCompatActivity implements CameraOpenCallback, ImageTakenListener, ProcessErrorHandler, CameraControlButtonHandler.ConfigChangeListener {
 
 	/**
 	 * Log Tag
@@ -189,6 +192,7 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 			StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 			assert map != null;
 			Size imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
+			
 			transformTexture(imageDimension);
 			texture.setDefaultBufferSize(imageDimension.getWidth(), imageDimension.getHeight());
 			Surface surface = new Surface(texture);

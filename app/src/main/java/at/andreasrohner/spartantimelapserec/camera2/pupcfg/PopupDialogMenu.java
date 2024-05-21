@@ -17,8 +17,8 @@ import java.util.List;
 
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
-import at.andreasrohner.spartantimelapserec.camera2.Camera2Wrapper;
 import at.andreasrohner.spartantimelapserec.camera2.PopupDialogBase;
+import at.andreasrohner.spartantimelapserec.camera2.wrapper.Camera2Wrapper;
 import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**

@@ -6,6 +6,7 @@ import android.widget.RadioGroup;
 
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
+import at.andreasrohner.spartantimelapserec.camera2.wrapper.Camera2Wrapper;
 
 /**
  * Autofocus config Popup Dialog

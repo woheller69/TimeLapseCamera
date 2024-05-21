@@ -1,4 +1,4 @@
-package at.andreasrohner.spartantimelapserec.camera2;
+package at.andreasrohner.spartantimelapserec.camera2.wrapper;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -9,11 +9,13 @@ import android.hardware.camera2.CameraManager;
 import android.os.Handler;
 
 import androidx.preference.PreferenceManager;
+import at.andreasrohner.spartantimelapserec.camera2.Camera2Utils;
+import at.andreasrohner.spartantimelapserec.camera2.ProcessErrorHandler;
 import at.andreasrohner.spartantimelapserec.camera2.filename.AbstractFileNameController;
 import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
- * Wrapps the camera interface and configures the camera
+ * Wraps the camera interface and configures the camera
  */
 public class Camera2Wrapper {
 
@@ -193,7 +195,7 @@ public class Camera2Wrapper {
 	 * @param backgroundHandler  Background Thread to use to store the image
 	 * @param imageTakenListener Interface to get notified when the image is taken
 	 */
-	public void takePicture(Handler backgroundHandler, TakePicture.ImageTakenListener imageTakenListener) {
+	public void takePicture(Handler backgroundHandler, ImageTakenListener imageTakenListener) {
 		TakePicture picture = new TakePicture(this, backgroundHandler);
 		picture.setImageTakenListener(imageTakenListener);
 		picture.create();
@@ -201,18 +203,5 @@ public class Camera2Wrapper {
 
 	public boolean isAfSupported() {
 		return Camera2Utils.isAfSupported(characteristics);
-	}
-
-	/**
-	 * Callback to get informed when the camera is open
-	 */
-	public interface CameraOpenCallback {
-
-		/**
-		 * Gets called when the camea was opened
-		 *
-		 * @param success true on succes
-		 */
-		void cameraOpened(boolean success);
 	}
 }

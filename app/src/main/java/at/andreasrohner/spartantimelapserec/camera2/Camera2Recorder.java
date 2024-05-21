@@ -8,13 +8,15 @@ import android.os.HandlerThread;
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.StatusSenderUtil;
 import at.andreasrohner.spartantimelapserec.camera2.filename.AbstractFileNameController;
+import at.andreasrohner.spartantimelapserec.camera2.wrapper.Camera2Wrapper;
+import at.andreasrohner.spartantimelapserec.camera2.wrapper.ImageTakenListener;
 import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
 import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
  * Handle Recording
  */
-public class Camera2Recorder implements Runnable, TakePicture.ImageTakenListener, ProcessErrorHandler {
+public class Camera2Recorder implements Runnable, ImageTakenListener, ProcessErrorHandler {
 
 	/**
 	 * Logger

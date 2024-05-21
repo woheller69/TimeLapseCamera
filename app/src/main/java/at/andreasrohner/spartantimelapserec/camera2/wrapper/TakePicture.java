@@ -1,4 +1,4 @@
-package at.andreasrohner.spartantimelapserec.camera2;
+package at.andreasrohner.spartantimelapserec.camera2.wrapper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -23,6 +23,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
+import at.andreasrohner.spartantimelapserec.camera2.CameraOrientation;
+import at.andreasrohner.spartantimelapserec.camera2.ConfigureCamera2FromPrefs;
 import at.andreasrohner.spartantimelapserec.camera2.filename.AbstractFileNameController;
 import at.andreasrohner.spartantimelapserec.state.Logger;
 
@@ -82,6 +84,7 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 	private CameraCaptureSession session;
 
 	private enum State {
+
 		/**
 		 * Camera state: Showing camera preview.
 		 */
@@ -368,16 +371,5 @@ public class TakePicture implements ImageReader.OnImageAvailableListener {
 		} catch (Exception e) {
 			camera.getErrorHandler().error("Error saving image", e);
 		}
-	}
-
-	/**
-	 * Interface to get notified when the image is taken
-	 */
-	public interface ImageTakenListener {
-
-		/**
-		 * The image is taken
-		 */
-		void takeImageFinished();
 	}
 }

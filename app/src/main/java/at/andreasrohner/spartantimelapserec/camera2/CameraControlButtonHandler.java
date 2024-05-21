@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.camera2.pupcfg.PopupDialogMenu;
+import at.andreasrohner.spartantimelapserec.camera2.wrapper.Camera2Wrapper;
 
 /**
  * Handle buttons and button actions of the camera preview
