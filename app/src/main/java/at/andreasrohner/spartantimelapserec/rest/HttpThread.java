@@ -117,9 +117,9 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 			logger.error("Invalid Request: «{}»", request);
 		}
 		String url = request.substring(pos + 1, pos2);
-		String protocol = request.substring(pos2);
+		String protocol = request.substring(pos2).trim();
 
-		logger.error("Request: «{}» «{}» «{}}»", method, url, protocol);
+		logger.info("Request: «{}» «{}» «{}»", method, url, protocol);
 
 		String line = reader.readLine();
 		Map<String, String> header = new HashMap<>();
@@ -205,6 +205,13 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 		if (url.startsWith("/1/device/battery")) {
 			sendReplyHeader(ReplyCode.FOUND, "text/plain");
 			sendLine(String.valueOf(getBatteryLevel()));
+			return true;
+		}
+
+		if (url.startsWith("/1/device/storage")) {
+			sendReplyHeader(ReplyCode.FOUND, "text/plain");
+			ImageFile rootDir = initRootDir();
+			sendLine("imagestorage=" + rootDir.getFreeSpace(restService.getApplicationContext()));
 			return true;
 		}
 

@@ -62,7 +62,7 @@ public class PopupDialogAfMf extends PopupDialogBase {
 			mode = "auto";
 		}
 
-		editor.putString("pref_camera_af_mode", "auto");
+		editor.putString("pref_camera_af_mode", mode);
 		editor.apply();
 
 		return 0;

@@ -89,8 +89,8 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 		}
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-		String afField = prefs.getString("pref_camera_af_field", null);
-		if (afField == null) {
+		AfPos pos = AfPos.fromString(prefs.getString("pref_camera_af_field", null));
+		if (pos == null) {
 			return;
 		}
 		String afMode = prefs.getString("pref_camera_af_mode", "auto");
@@ -98,16 +98,9 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 			return;
 		}
 
-		float px;
-		float py;
-		try {
-			String[] parts = afField.split("/");
-			px = Float.parseFloat(parts[0]);
-			py = Float.parseFloat(parts[1]);
-		} catch (Exception e) {
-			logger.error("Invalid AF Value: «{}»", afField, e);
-			return;
-		}
+		// X/Y Swapped, preview is always portrait, camera is always landscape
+		float px = pos.getFocusRelY();
+		float py = pos.getFocusRelX();
 		int x = (int) (iw * px) + left;
 		int y = (int) (ih * py) + top;
 

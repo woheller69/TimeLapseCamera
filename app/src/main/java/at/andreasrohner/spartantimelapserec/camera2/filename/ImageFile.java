@@ -61,4 +61,10 @@ public interface ImageFile {
 	 * @return Files in folder
 	 */
 	List<ImageFile> listFiles();
+
+	/**
+	 * @param context Context
+	 * @return Free space in bytes
+	 */
+	long getFreeSpace(Context context);
 }

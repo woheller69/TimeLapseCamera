@@ -1,6 +1,9 @@
 package at.andreasrohner.spartantimelapserec.camera2.filename;
 
 import android.content.Context;
+import android.os.ParcelFileDescriptor;
+import android.system.Os;
+import android.system.StructStatVfs;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -8,11 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.documentfile.provider.DocumentFile;
+import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
  * Wrapper for DocumentFile
  */
 public class ImageFileDocumentFile implements ImageFile {
+
+	/**
+	 * Logger
+	 */
+	private Logger logger = new Logger(getClass());
 
 	/**
 	 * File
@@ -135,4 +144,18 @@ public class ImageFileDocumentFile implements ImageFile {
 		return list;
 	}
 
+	@Override
+	public synchronized long getFreeSpace(Context context) {
+		try {
+			DocumentFile createdFile = file.createFile("plain/text", "TimeLapseCamera.txt");
+			ParcelFileDescriptor pfd = context.getContentResolver().openFileDescriptor(createdFile.getUri(), "w");
+			assert pfd != null;
+			StructStatVfs stats = Os.fstatvfs(pfd.getFileDescriptor());
+			createdFile.delete();
+			return stats.f_bavail * stats.f_bsize;
+		} catch (Exception e) {
+			logger.error("Could not get free space for «{}»", file.getUri(), e);
+			return -1;
+		}
+	}
 }
