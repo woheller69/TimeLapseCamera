@@ -1,5 +1,6 @@
 package at.andreasrohner.spartantimelapserec;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,6 +17,11 @@ import at.andreasrohner.spartantimelapserec.state.Logger;
  * Helper class to start / stop picture service
  */
 public class ServiceHelper {
+
+	/**
+	 * Current preview activity
+	 */
+	private static Activity currentPreviewActivity;
 
 	/**
 	 * Logger
@@ -37,6 +43,26 @@ public class ServiceHelper {
 	}
 
 	/**
+	 * Set current preview activity
+	 *
+	 * @param activity Activity
+	 */
+	public static synchronized void setCurrentPreviewActivity(Activity activity) {
+		ServiceHelper.currentPreviewActivity = activity;
+	}
+
+	/**
+	 * Reset current preview activity
+	 *
+	 * @param activity Activity
+	 */
+	public static synchronized void resetCurrentPreviewActivity(Activity activity) {
+		if (ServiceHelper.currentPreviewActivity == activity) {
+			ServiceHelper.currentPreviewActivity = null;
+		}
+	}
+
+	/**
 	 * Start
 	 *
 	 * @param calledFromUi true if called from Activity, false if not
@@ -44,7 +70,12 @@ public class ServiceHelper {
 	public void start(boolean calledFromUi) {
 		logger.info("Start Service");
 
-		ImageRecorderState.resetImageCount();
+		// Stop preview, if running
+		synchronized (ServiceHelper.class) {
+			if (ServiceHelper.currentPreviewActivity != null) {
+				ServiceHelper.currentPreviewActivity.finish();
+			}
+		}
 
 		Intent intent;
 		if (getRecMode() == RecMode.CAMERA2_TIME_LAPSE) {

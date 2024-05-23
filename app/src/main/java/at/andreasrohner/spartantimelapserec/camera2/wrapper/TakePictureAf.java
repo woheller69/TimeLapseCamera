@@ -17,6 +17,8 @@ import androidx.annotation.NonNull;
 
 /**
  * Create a picture with autofocus handling
+ * <p>
+ * Example: https://raw.githubusercontent.com/googlearchive/android-Camera2Basic/master/Application/src/main/java/com/example/android/camera2basic/Camera2BasicFragment.java
  */
 public class TakePictureAf extends BaseTakePicture {
 

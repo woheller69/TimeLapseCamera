@@ -26,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.ImageRecorderState;
 import at.andreasrohner.spartantimelapserec.R;
+import at.andreasrohner.spartantimelapserec.ServiceHelper;
 import at.andreasrohner.spartantimelapserec.camera2.filename.AbstractFileNameController;
 import at.andreasrohner.spartantimelapserec.camera2.filename.ImageFile;
 import at.andreasrohner.spartantimelapserec.camera2.wrapper.Camera2Wrapper;
@@ -192,7 +193,7 @@ public class Preview2Activity extends AppCompatActivity implements CameraOpenCal
 			StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 			assert map != null;
 			Size imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
-			
+
 			transformTexture(imageDimension);
 			texture.setDefaultBufferSize(imageDimension.getWidth(), imageDimension.getHeight());
 			Surface surface = new Surface(texture);
@@ -317,6 +318,7 @@ public class Preview2Activity extends AppCompatActivity implements CameraOpenCal
 	private void closeCamera() {
 		if (camera != null) {
 			camera.close();
+			camera = null;
 		}
 		if (null != imageReader) {
 			imageReader.close();
@@ -327,6 +329,7 @@ public class Preview2Activity extends AppCompatActivity implements CameraOpenCal
 	@Override
 	protected void onResume() {
 		super.onResume();
+		ServiceHelper.setCurrentPreviewActivity(this);
 		startBackgroundThread();
 		if (textureView.isAvailable()) {
 			openCamera();
@@ -337,7 +340,8 @@ public class Preview2Activity extends AppCompatActivity implements CameraOpenCal
 
 	@Override
 	protected void onPause() {
-		//closeCamera();
+		ServiceHelper.resetCurrentPreviewActivity(this);
+		closeCamera();
 		stopBackgroundThread();
 		super.onPause();
 	}
