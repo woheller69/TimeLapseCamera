@@ -7,8 +7,6 @@ import android.graphics.Rect;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.CaptureResult;
-import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.os.Handler;
 import android.view.MotionEvent;
@@ -97,19 +95,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		}
 
 		this.scaling = scaling;
-		this.focusHelper = new FocusHelper(captureSession, previewRequestBuilder, backgroundHandler) {
-			@Override
-			protected void focusCompleted(TotalCaptureResult result) {
-				PrefUtil.AfMode afMode = PrefUtil.getAfMode(prefs);
-
-				if (afMode == PrefUtil.AfMode.MANUAL) {
-					float focusDistance = result.get(CaptureResult.LENS_FOCUS_DISTANCE);
-					SharedPreferences.Editor editor = prefs.edit();
-					editor.putFloat("pref_camera_af_manual", focusDistance);
-					editor.apply();
-				}
-			}
-		};
+		this.focusHelper = new FocusHelper(captureSession, previewRequestBuilder, backgroundHandler);
 	}
 
 	/**
@@ -210,10 +196,7 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 	 */
 	private void storeAfPosition(Rect sensorArraySize, MeteringRectangle focusArea) {
 		PrefUtil.AfMode afMode = PrefUtil.getAfMode(prefs);
-		if (afMode != PrefUtil.AfMode.FIELD && afMode != PrefUtil.AfMode.MANUAL) {
-			// The field is needed for 'field', but additionally also saved for 'manual', so the focus
-			// position can be displayed in the preview, even if this value is not use. For 'manual'
-			// the 'pref_camera_af_manual' is used.
+		if (afMode != PrefUtil.AfMode.FIELD) {
 			return;
 		}
 

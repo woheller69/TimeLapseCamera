@@ -19,12 +19,7 @@ public final class PrefUtil {
 		/**
 		 * Use a special AF Field
 		 */
-		FIELD,
-
-		/**
-		 * Specify AF value
-		 */
-		MANUAL
+		FIELD
 	}
 
 	/**
@@ -44,10 +39,6 @@ public final class PrefUtil {
 
 		if ("field".equals(afMode)) {
 			return AfMode.FIELD;
-		}
-
-		if ("manual".equals(afMode)) {
-			return AfMode.MANUAL;
 		}
 
 		return AfMode.AUTO;

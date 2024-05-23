@@ -26,7 +26,7 @@ public class TakePicture extends BaseTakePicture {
 	}
 
 	@Override
-	protected void takeImage(CameraDevice cameraDevice, CaptureRequest.Builder captureBuilder, List<Surface> outputSurfaces) throws CameraAccessException {
+	protected void takeImage(CameraDevice cameraDevice, List<Surface> outputSurfaces) throws CameraAccessException {
 		final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
 			@Override
 			public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {

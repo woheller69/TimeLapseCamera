@@ -70,6 +70,11 @@ public abstract class BaseTakePicture implements ImageReader.OnImageAvailableLis
 	protected ConfigureCamera2FromPrefs cameraConfig;
 
 	/**
+	 * Capture Request
+	 */
+	protected CaptureRequest.Builder captureBuilder;
+
+	/**
 	 * Constructor
 	 *
 	 * @param camera            Camera
@@ -122,7 +127,7 @@ public abstract class BaseTakePicture implements ImageReader.OnImageAvailableLis
 		List<Surface> outputSurfaces = new ArrayList<>(1);
 		outputSurfaces.add(reader.getSurface());
 
-		final CaptureRequest.Builder captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+		captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
 		captureBuilder.addTarget(reader.getSurface());
 		captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 
@@ -155,7 +160,7 @@ public abstract class BaseTakePicture implements ImageReader.OnImageAvailableLis
 		cameraConfig.config(captureBuilder);
 		reader.setOnImageAvailableListener(this, backgroundHandler);
 
-		takeImage(cameraDevice, captureBuilder, outputSurfaces);
+		takeImage(cameraDevice, outputSurfaces);
 	}
 
 	/**
@@ -165,7 +170,7 @@ public abstract class BaseTakePicture implements ImageReader.OnImageAvailableLis
 	 * @param captureBuilder Capture Builder
 	 * @param outputSurfaces Output Surface
 	 */
-	protected abstract void takeImage(CameraDevice cameraDevice, CaptureRequest.Builder captureBuilder, List<Surface> outputSurfaces) throws CameraAccessException;
+	protected abstract void takeImage(CameraDevice cameraDevice, List<Surface> outputSurfaces) throws CameraAccessException;
 
 	@Override
 	public void onImageAvailable(ImageReader reader) {

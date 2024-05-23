@@ -139,11 +139,8 @@ public class ShowCameraInfoPreference extends DialogPreference {
 				if (pos == null) {
 					setSummary("ERROR");
 				} else {
-					setSummary("F: " + String.format("%.02f", pos.getFocusRelX()) + " / " + String.format("%.02f", pos.getFocusRelY()));
+					setSummary(String.format("%.02f", pos.getFocusRelX()) + " / " + String.format("%.02f", pos.getFocusRelY()));
 				}
-			} else if (afMode == PrefUtil.AfMode.MANUAL) {
-				String[] text = formatMfDistance(getContext(), prefs);
-				setSummary("M: " + text[0] + " / " + text[1]);
 			} else {
 				setSummary(R.string.camera_value_auto);
 			}

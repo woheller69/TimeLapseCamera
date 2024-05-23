@@ -90,10 +90,6 @@ public class ConfigureCamera2FromPrefs {
 
 		if (afMode == PrefUtil.AfMode.FIELD) {
 			applyAfField(captureBuilder);
-		} else if (afMode == PrefUtil.AfMode.MANUAL) {
-			captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
-			float focusDistance = prefs.getFloat("pref_camera_af_manual", 0);
-			captureBuilder.set(CaptureRequest.LENS_FOCUS_DISTANCE, focusDistance);
 		} else {
 			captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO);
 		}

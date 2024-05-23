@@ -20,11 +20,5 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/cam_afmf_field" />
-
-        <RadioButton
-            android:id="@+id/bt_afmf_af_manual"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/cam_afmf_manual" />
     </RadioGroup>
 </LinearLayout>

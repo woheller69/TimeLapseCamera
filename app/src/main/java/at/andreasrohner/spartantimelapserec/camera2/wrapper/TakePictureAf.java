@@ -23,11 +23,6 @@ import androidx.annotation.NonNull;
 public class TakePictureAf extends BaseTakePicture {
 
 	/**
-	 * Capture Request
-	 */
-	private CaptureRequest.Builder captureBuilder;
-
-	/**
 	 * Camera Session
 	 */
 	private CameraCaptureSession session;
@@ -121,7 +116,7 @@ public class TakePictureAf extends BaseTakePicture {
 	}
 
 	@Override
-	protected void takeImage(CameraDevice cameraDevice, CaptureRequest.Builder captureBuilder, List<Surface> outputSurfaces) throws CameraAccessException {
+	protected void takeImage(CameraDevice cameraDevice, List<Surface> outputSurfaces) throws CameraAccessException {
 		cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
 
 			@Override

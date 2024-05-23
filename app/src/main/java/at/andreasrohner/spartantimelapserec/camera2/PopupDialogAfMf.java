@@ -41,8 +41,6 @@ public class PopupDialogAfMf extends PopupDialogBase {
 
 		if (afMode == PrefUtil.AfMode.FIELD) {
 			this.group.check(R.id.bt_afmf_af_field);
-		} else if (afMode == PrefUtil.AfMode.MANUAL) {
-			this.group.check(R.id.bt_afmf_af_manual);
 		} else {
 			this.group.check(R.id.bt_afmf_autofocus);
 		}
@@ -56,9 +54,7 @@ public class PopupDialogAfMf extends PopupDialogBase {
 		int radioButtonID = group.getCheckedRadioButtonId();
 
 		String mode;
-		if (radioButtonID == R.id.bt_afmf_af_manual) {
-			mode = "manual";
-		} else if (radioButtonID == R.id.bt_afmf_af_field) {
+		if (radioButtonID == R.id.bt_afmf_af_field) {
 			mode = "field";
 		} else {
 			mode = "auto";
