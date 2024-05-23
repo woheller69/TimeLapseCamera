@@ -7,6 +7,7 @@ import android.widget.RadioGroup;
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.camera2.wrapper.Camera2Wrapper;
+import at.andreasrohner.spartantimelapserec.preference.PrefUtil;
 
 /**
  * Autofocus config Popup Dialog
@@ -36,11 +37,11 @@ public class PopupDialogAfMf extends PopupDialogBase {
 	 */
 	private void updateSelectedCheckbox() {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		String afMode = prefs.getString("pref_camera_af_mode", "auto");
+		PrefUtil.AfMode afMode = PrefUtil.getAfMode(prefs);
 
-		if ("field".equals(afMode)) {
+		if (afMode == PrefUtil.AfMode.FIELD) {
 			this.group.check(R.id.bt_afmf_af_field);
-		} else if ("manual".equals(afMode)) {
+		} else if (afMode == PrefUtil.AfMode.MANUAL) {
 			this.group.check(R.id.bt_afmf_af_manual);
 		} else {
 			this.group.check(R.id.bt_afmf_autofocus);

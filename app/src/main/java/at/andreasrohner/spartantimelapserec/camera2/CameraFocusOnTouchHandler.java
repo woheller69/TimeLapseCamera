@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.preference.PreferenceManager;
+import at.andreasrohner.spartantimelapserec.preference.PrefUtil;
 import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
@@ -99,9 +100,9 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		this.focusHelper = new FocusHelper(captureSession, previewRequestBuilder, backgroundHandler) {
 			@Override
 			protected void focusCompleted(TotalCaptureResult result) {
-				String afMode = prefs.getString("pref_camera_af_mode", "auto");
+				PrefUtil.AfMode afMode = PrefUtil.getAfMode(prefs);
 
-				if ("manual".equals(afMode)) {
+				if (afMode == PrefUtil.AfMode.MANUAL) {
 					float focusDistance = result.get(CaptureResult.LENS_FOCUS_DISTANCE);
 					SharedPreferences.Editor editor = prefs.edit();
 					editor.putFloat("pref_camera_af_manual", focusDistance);
@@ -145,8 +146,8 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 	 * Load last focus configuration from settings
 	 */
 	public void loadLastFocusConfig() {
-		String afMode = prefs.getString("pref_camera_af_mode", null);
-		if (!"field".equals(afMode)) {
+		PrefUtil.AfMode afMode = PrefUtil.getAfMode(prefs);
+		if (afMode != PrefUtil.AfMode.FIELD) {
 			// Just load the AF Field in the field mode
 			return;
 		}
@@ -208,8 +209,8 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 	 * @param focusArea       Focus Area
 	 */
 	private void storeAfPosition(Rect sensorArraySize, MeteringRectangle focusArea) {
-		String afMode = prefs.getString("pref_camera_af_mode", null);
-		if (!"field".equals(afMode) && !"manual".equals(afMode)) {
+		PrefUtil.AfMode afMode = PrefUtil.getAfMode(prefs);
+		if (afMode != PrefUtil.AfMode.FIELD && afMode != PrefUtil.AfMode.MANUAL) {
 			// The field is needed for 'field', but additionally also saved for 'manual', so the focus
 			// position can be displayed in the preview, even if this value is not use. For 'manual'
 			// the 'pref_camera_af_manual' is used.

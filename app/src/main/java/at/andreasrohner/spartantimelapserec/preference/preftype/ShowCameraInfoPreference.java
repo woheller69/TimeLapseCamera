@@ -13,6 +13,7 @@ import at.andreasrohner.spartantimelapserec.camera2.AfPos;
 import at.andreasrohner.spartantimelapserec.camera2.CameraTiming;
 import at.andreasrohner.spartantimelapserec.camera2.pupcfg.CameraModel;
 import at.andreasrohner.spartantimelapserec.preference.CameraSettings;
+import at.andreasrohner.spartantimelapserec.preference.PrefUtil;
 import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
@@ -131,16 +132,16 @@ public class ShowCameraInfoPreference extends DialogPreference {
 				setSummary(R.string.camera_flash_off);
 			}
 		} else if ("pref_camera_af_mode".equals(key)) {
-			String afMode = prefs.getString("pref_camera_af_mode", null);
+			PrefUtil.AfMode afMode = PrefUtil.getAfMode(prefs);
 
-			if ("field".equals(afMode)) {
+			if (afMode == PrefUtil.AfMode.FIELD) {
 				AfPos pos = AfPos.fromPref(prefs);
 				if (pos == null) {
 					setSummary("ERROR");
 				} else {
 					setSummary("F: " + String.format("%.02f", pos.getFocusRelX()) + " / " + String.format("%.02f", pos.getFocusRelY()));
 				}
-			} else if ("manual".equals(afMode)) {
+			} else if (afMode == PrefUtil.AfMode.MANUAL) {
 				String[] text = formatMfDistance(getContext(), prefs);
 				setSummary("M: " + text[0] + " / " + text[1]);
 			} else {

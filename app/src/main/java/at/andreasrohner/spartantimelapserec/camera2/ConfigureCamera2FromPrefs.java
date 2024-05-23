@@ -6,6 +6,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.util.Size;
 
+import at.andreasrohner.spartantimelapserec.preference.PrefUtil;
 import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
@@ -85,11 +86,11 @@ public class ConfigureCamera2FromPrefs {
 	 * @param captureBuilder Camera Configuration
 	 */
 	private void configureFocus(CaptureRequest.Builder captureBuilder) {
-		String afMode = prefs.getString("pref_camera_af_mode", "auto");
+		PrefUtil.AfMode afMode = PrefUtil.getAfMode(prefs);
 
-		if ("field".equals(afMode)) {
+		if (afMode == PrefUtil.AfMode.FIELD) {
 			applyAfField(captureBuilder);
-		} else if ("manual".equals(afMode)) {
+		} else if (afMode == PrefUtil.AfMode.MANUAL) {
 			captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
 			float focusDistance = prefs.getFloat("pref_camera_af_manual", 0);
 			captureBuilder.set(CaptureRequest.LENS_FOCUS_DISTANCE, focusDistance);

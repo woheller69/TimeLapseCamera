@@ -9,6 +9,7 @@ import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.camera2.pupcfg.PopupDialogMenu;
 import at.andreasrohner.spartantimelapserec.camera2.wrapper.Camera2Wrapper;
+import at.andreasrohner.spartantimelapserec.preference.PrefUtil;
 
 /**
  * Handle buttons and button actions of the camera preview
@@ -127,13 +128,13 @@ public class CameraControlButtonHandler implements PopupDialogBase.DialogResult 
 			this.exposureButton.setImageResource(R.drawable.ic_cam_bt_brightness_enabled);
 		}
 
-		String afMode = prefs.getString("pref_camera_af_mode", "auto");
+		PrefUtil.AfMode afMode = PrefUtil.getAfMode(prefs);
 		if (!camera.isAfSupported()) {
 			this.afmfButton.setImageResource(R.drawable.ic_cam_bt_afmf_disabled);
 			this.afmfButton.setOnClickListener(v -> showNoAfConfigDialog());
 		} else {
 			this.afmfButton.setOnClickListener(afMfDialog);
-			if ("auto".equals(afMode)) {
+			if (afMode == PrefUtil.AfMode.AUTO) {
 				this.afmfButton.setImageResource(R.drawable.ic_cam_bt_afmf);
 			} else {
 				this.afmfButton.setImageResource(R.drawable.ic_cam_bt_afmf_enabled);

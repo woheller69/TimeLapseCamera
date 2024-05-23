@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 
 import androidx.preference.PreferenceManager;
+import at.andreasrohner.spartantimelapserec.preference.PrefUtil;
 import at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameraInfoPreference;
 import at.andreasrohner.spartantimelapserec.state.Logger;
 
@@ -107,8 +108,8 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 		}
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-		String afMode = prefs.getString("pref_camera_af_mode", "auto");
-		if ("auto".equals(afMode)) {
+		PrefUtil.AfMode afMode = PrefUtil.getAfMode(prefs);
+		if (afMode == PrefUtil.AfMode.AUTO) {
 			return;
 		}
 

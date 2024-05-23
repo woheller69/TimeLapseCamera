@@ -11,6 +11,7 @@ import at.andreasrohner.spartantimelapserec.camera2.filename.AbstractFileNameCon
 import at.andreasrohner.spartantimelapserec.camera2.wrapper.Camera2Wrapper;
 import at.andreasrohner.spartantimelapserec.camera2.wrapper.ImageTakenListener;
 import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
+import at.andreasrohner.spartantimelapserec.preference.PrefUtil;
 import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
@@ -152,7 +153,15 @@ public class Camera2Recorder implements Runnable, ImageTakenListener, ProcessErr
 		}
 
 		waitForImage = true;
-		camera.takePicture(backgroundHandler, this);
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		PrefUtil.AfMode afMode = PrefUtil.getAfMode(prefs);
+
+		if (afMode == PrefUtil.AfMode.AUTO) {
+			camera.takePicture(backgroundHandler, this);
+		} else {
+			camera.takePictureWithAf(backgroundHandler, this);
+		}
 	}
 
 	/**
