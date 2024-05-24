@@ -118,11 +118,7 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 		int x = (int) (scaledWidth * px) + left;
 		int y = (int) (scaledHeight * py) + top;
 
-		float scaleRect = scaleX;
-		if (scaleY < scaleX) {
-			scaleRect = scaleY;
-		}
-
+		float scaleRect = displayWidth / scaling.getImageWidth();
 		int scaledRectWidth = (int) (pos.getFocusWidth() * scaleRect);
 		int scaledRectHeight = (int) (pos.getFocusHeight() * scaleRect);
 

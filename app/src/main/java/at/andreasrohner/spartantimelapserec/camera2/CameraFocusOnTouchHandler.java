@@ -177,12 +177,15 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 		this.relY = tpy / ih;
 
 		final Rect sensorArraySize = cameraCharacteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
-		final int y = (int) (relX * (float) sensorArraySize.height());
-		final int x = (int) (relY * (float) sensorArraySize.width());
 
 		int focusFieldWidth = prefs.getInt("pref_camera_af_field_width", 100);
 		int focusFieldHeight = prefs.getInt("pref_camera_af_field_height", 100);
-		MeteringRectangle focusArea = new MeteringRectangle(Math.max(x - focusFieldWidth / 2, 0), Math.max(y - focusFieldHeight / 2, 0), focusFieldWidth, focusFieldHeight, MeteringRectangle.METERING_WEIGHT_MAX - 1);
+
+		// X / Y is swapped, because the camera is rotated 90°!
+		final int y = (int) (relX * (float) sensorArraySize.height()) - focusFieldWidth / 2;
+		final int x = (int) (relY * (float) sensorArraySize.width()) - focusFieldHeight / 2;
+
+		MeteringRectangle focusArea = new MeteringRectangle(Math.max(x, 0), Math.max(y, 0), focusFieldWidth, focusFieldHeight, MeteringRectangle.METERING_WEIGHT_MAX - 1);
 
 		storeAfPosition(sensorArraySize, focusArea);
 
