@@ -143,10 +143,10 @@ public class Camera2Recorder implements Runnable, ImageTakenListener, ProcessErr
 		logger.debug("Scheduled Image in {}ms", captureIntervalTime);
 
 		if (waitForImage) {
-			logger.warn("Still waiting for the last image! missed count: {}", missedImages);
 			missedImages++;
+			logger.warn("Still waiting for the last image! missed count: {}", missedImages);
 			if (missedImages >= 3) {
-				error("Could not create the last 3 images!", null);
+				error("Could not create the last 3 images! Probably the interval is to short, choose a longer one.", null);
 			}
 		} else {
 			missedImages = 0;

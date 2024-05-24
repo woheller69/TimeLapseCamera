@@ -229,8 +229,8 @@ public class Camera2Wrapper {
 	 */
 	public void takePicture(Handler backgroundHandler, ImageTakenListener imageTakenListener) {
 		TakePicture picture = new TakePicture(this, backgroundHandler);
-		picture.setImageTakenListener(imageTakenListener);
-		picture.create();
+		picture.addImageTakenListener(imageTakenListener);
+		takePicture(picture);
 	}
 
 	/**
@@ -241,7 +241,16 @@ public class Camera2Wrapper {
 	 */
 	public void takePictureWithAf(Handler backgroundHandler, ImageTakenListener imageTakenListener) {
 		TakePictureAf picture = new TakePictureAf(this, backgroundHandler);
-		picture.setImageTakenListener(imageTakenListener);
+		picture.addImageTakenListener(imageTakenListener);
+		takePicture(picture);
+	}
+
+	/**
+	 * Take a picture
+	 *
+	 * @param picture Picture handler
+	 */
+	private void takePicture(BaseTakePicture picture) {
 		picture.create();
 	}
 

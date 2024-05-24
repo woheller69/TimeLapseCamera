@@ -320,7 +320,6 @@ public class PopupDialogMenu extends PopupDialogBase {
 	 */
 	private void resetFocusPreferences(SharedPreferences.Editor editor) {
 		editor.putString("pref_camera_af_field", "");
-		editor.putFloat("pref_camera_af_manual", 0);
 		editor.putString("pref_camera_af_mode", "auto");
 	}
 

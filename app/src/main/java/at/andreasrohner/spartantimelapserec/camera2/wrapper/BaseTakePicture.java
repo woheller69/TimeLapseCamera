@@ -62,7 +62,7 @@ public abstract class BaseTakePicture implements ImageReader.OnImageAvailableLis
 	/**
 	 * Interface to get notified when the image is taken
 	 */
-	protected ImageTakenListener imageTakenListener;
+	protected List<ImageTakenListener> imageTakenListener = new ArrayList<>();
 
 	/**
 	 * Camera configuration
@@ -92,8 +92,26 @@ public abstract class BaseTakePicture implements ImageReader.OnImageAvailableLis
 	/**
 	 * @param imageTakenListener Interface to get notified when the image is taken
 	 */
-	public void setImageTakenListener(ImageTakenListener imageTakenListener) {
-		this.imageTakenListener = imageTakenListener;
+	public synchronized void addImageTakenListener(ImageTakenListener imageTakenListener) {
+		this.imageTakenListener.add(imageTakenListener);
+	}
+
+	/**
+	 * Rremove listener
+	 *
+	 * @param imageTakenListener Listener to remove
+	 */
+	public synchronized void removeImageTakeListener(ImageTakenListener imageTakenListener) {
+		this.imageTakenListener.remove(imageTakenListener);
+	}
+
+	/**
+	 * Fire an image is taken
+	 */
+	protected synchronized void fireImageTaken() {
+		for (ImageTakenListener l : imageTakenListener) {
+			l.takeImageFinished();
+		}
 	}
 
 	/**
@@ -167,7 +185,6 @@ public abstract class BaseTakePicture implements ImageReader.OnImageAvailableLis
 	 * Take the image
 	 *
 	 * @param cameraDevice   Camera Device
-	 * @param captureBuilder Capture Builder
 	 * @param outputSurfaces Output Surface
 	 */
 	protected abstract void takeImage(CameraDevice cameraDevice, List<Surface> outputSurfaces) throws CameraAccessException;

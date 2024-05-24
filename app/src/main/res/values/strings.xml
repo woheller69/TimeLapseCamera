@@ -168,4 +168,8 @@
     <string name="write_log_file">Write Logfile</string>
     <string name="no_af_title">No Focus Control</string>
     <string name="no_af_description">This camera does not support autofocus / focus configuration.</string>
+    <string name="cam_afmf_field_size_header">AF Field Size</string>
+    <string name="width">Width</string>
+    <string name="height">Height</string>
+    <string name="px">px</string>
 </resources>

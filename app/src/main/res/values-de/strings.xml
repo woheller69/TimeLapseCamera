@@ -166,4 +166,8 @@
     <string name="write_log_file">Logdatei erstellen</string>
     <string name="no_af_title">Keine Fokussierung</string>
     <string name="no_af_description">Diese Kamera hat kein Autofokus / der Fokus kann nicht konfiguriert werden.</string>
+    <string name="cam_afmf_field_size_header">AF Feld Grösse</string>
+    <string name="width">Breite</string>
+    <string name="height">Höhe</string>
+    <string name="px">px</string>
 </resources>

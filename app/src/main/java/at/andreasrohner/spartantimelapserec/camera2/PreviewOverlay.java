@@ -10,18 +10,12 @@ import android.util.AttributeSet;
 
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.preference.PrefUtil;
-import at.andreasrohner.spartantimelapserec.preference.preftype.ShowCameraInfoPreference;
 import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
  * Overlay for AF Fields
  */
 public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView {
-
-	/**
-	 * Rect size in pixel
-	 */
-	private static final int RECT_SIZE = 100;
 
 	/**
 	 * Logger
@@ -89,17 +83,17 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 
 	@Override
 	public void onDraw(Canvas canvas) {
-		float sx = scaling.getScaleX();
-		float sy = scaling.getScaleY();
-		int vw = getWidth();
-		int vh = getHeight();
-		int iw = (int) (vw * sx);
-		int ih = (int) (vh * sy);
-		int left = (vw - iw) / 2;
-		int top = (vh - ih) / 2;
+		float scaleX = scaling.getScaleX();
+		float scaleY = scaling.getScaleY();
+		int displayWidth = getWidth();
+		int displayHeight = getHeight();
+		int scaledWidth = (int) (displayWidth * scaleX);
+		int scaledHeight = (int) (displayHeight * scaleY);
+		int left = (displayWidth - scaledWidth) / 2;
+		int top = (displayHeight - scaledHeight) / 2;
 
 		if (DRAW_DEBUG_BORDER) {
-			Rect boundingBox = new Rect(left, top, iw + left, ih + top);
+			Rect boundingBox = new Rect(left, top, scaledWidth + left, scaledHeight + top);
 			Paint p = new Paint();
 			p.setColor(Color.GREEN);
 			p.setStyle(Paint.Style.STROKE);
@@ -121,19 +115,18 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 		// X/Y Swapped, preview is always portrait, camera is always landscape
 		float px = pos.getFocusRelY();
 		float py = pos.getFocusRelX();
-		int x = (int) (iw * px) + left;
-		int y = (int) (ih * py) + top;
+		int x = (int) (scaledWidth * px) + left;
+		int y = (int) (scaledHeight * py) + top;
 
-		x -= RECT_SIZE / 2;
-		y -= RECT_SIZE / 2;
-		if (x < 0) {
-			x = 0;
-		}
-		if (y < 0) {
-			y = 0;
+		float scaleRect = scaleX;
+		if (scaleY < scaleX) {
+			scaleRect = scaleY;
 		}
 
-		Rect rect = new Rect(x, y, x + RECT_SIZE, y + RECT_SIZE);
+		int scaledRectWidth = (int) (pos.getFocusWidth() * scaleRect);
+		int scaledRectHeight = (int) (pos.getFocusHeight() * scaleRect);
+
+		Rect rect = new Rect(x, y, x + scaledRectWidth, y + scaledRectHeight);
 		Paint paint = new Paint();
 		paint.setColor(Color.WHITE);
 		paint.setStyle(Paint.Style.STROKE);
@@ -149,15 +142,5 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 		}
 		paint.setStrokeWidth(3);
 		canvas.drawRect(rect, paint);
-
-		Paint pt = new Paint();
-		pt.setColor(Color.WHITE);
-		pt.setTextSize(70);
-		if ("field".equals(afMode)) {
-			canvas.drawText("A", x, y, pt);
-		} else if ("manual".equals(afMode)) {
-			String[] text = ShowCameraInfoPreference.formatMfDistance(getContext(), prefs);
-			canvas.drawText("M: " + text[1], x, y, pt);
-		}
 	}
 }

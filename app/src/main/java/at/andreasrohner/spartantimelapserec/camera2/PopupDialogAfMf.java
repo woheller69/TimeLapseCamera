@@ -2,6 +2,7 @@ package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.widget.EditText;
 import android.widget.RadioGroup;
 
 import androidx.preference.PreferenceManager;
@@ -20,6 +21,16 @@ public class PopupDialogAfMf extends PopupDialogBase {
 	private final RadioGroup group;
 
 	/**
+	 * Focus point width
+	 */
+	private final EditText focusPointWidth;
+
+	/**
+	 * Focus point height
+	 */
+	private final EditText focusPointHeight;
+
+	/**
 	 * Constructor
 	 *
 	 * @param context Context
@@ -29,6 +40,13 @@ public class PopupDialogAfMf extends PopupDialogBase {
 		super(context);
 
 		this.group = (RadioGroup) view.findViewById(R.id.bt_afmf_group);
+		this.focusPointWidth = (EditText) view.findViewById(R.id.focus_point_width);
+		this.focusPointHeight = (EditText) view.findViewById(R.id.focus_point_height);
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		this.focusPointWidth.setText(String.valueOf(prefs.getInt("pref_camera_af_field_width", 100)));
+		this.focusPointHeight.setText(String.valueOf(prefs.getInt("pref_camera_af_field_height", 100)));
+
 		updateSelectedCheckbox();
 	}
 
@@ -62,13 +80,35 @@ public class PopupDialogAfMf extends PopupDialogBase {
 
 		// Reset AF Field / Position
 		editor.putString("pref_camera_af_field", "");
-		editor.putFloat("pref_camera_af_manual", 0);
 
 		// Store new mode
 		editor.putString("pref_camera_af_mode", mode);
+
+		// Store field size
+		storeFieldSize(editor, "pref_camera_af_field_width", this.focusPointWidth);
+		storeFieldSize(editor, "pref_camera_af_field_height", this.focusPointHeight);
+
 		editor.apply();
 
 		return 0;
+	}
+
+	/**
+	 * Parse int from input field to settings
+	 *
+	 * @param editor Editor
+	 * @param key    Key
+	 * @param text   Value Field
+	 */
+	private void storeFieldSize(SharedPreferences.Editor editor, String key, EditText text) {
+		int value;
+		try {
+			value = Integer.parseInt(String.valueOf(text.getText()));
+		} catch (NumberFormatException ex) {
+			value = 20;
+		}
+
+		editor.putInt(key, value);
 	}
 
 	@Override

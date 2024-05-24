@@ -31,9 +31,7 @@ public class TakePicture extends BaseTakePicture {
 			@Override
 			public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
 				super.onCaptureCompleted(session, request, result);
-				if (imageTakenListener != null) {
-					imageTakenListener.takeImageFinished();
-				}
+				fireImageTaken();
 			}
 		};
 		cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {

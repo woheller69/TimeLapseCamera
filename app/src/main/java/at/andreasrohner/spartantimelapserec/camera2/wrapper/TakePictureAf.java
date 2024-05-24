@@ -176,9 +176,7 @@ public class TakePictureAf extends BaseTakePicture {
 				@Override
 				public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
 					logger.info("Image taken");
-					if (imageTakenListener != null) {
-						imageTakenListener.takeImageFinished();
-					}
+					fireImageTaken();
 					setCurrentState(CameraAfState.STATE_ENDED);
 					try {
 						session.stopRepeating();
