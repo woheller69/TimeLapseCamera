@@ -119,7 +119,7 @@ public abstract class AbstractPreview2Activity extends AppCompatActivity impleme
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		loadContentView();
-		
+
 		textureView = (TextureView) findViewById(R.id.texture);
 		overlay = (PreviewOverlay) findViewById(R.id.imageOverlay);
 		overlay.setScaling(scaling);
@@ -168,6 +168,11 @@ public abstract class AbstractPreview2Activity extends AppCompatActivity impleme
 	 * Take a picture
 	 */
 	protected void takePicture() {
+		if (camera == null) {
+			logger.error("Camera is null");
+			return;
+		}
+
 		if (!camera.isOpen()) {
 			error("Camera is not open!", null);
 			return;
