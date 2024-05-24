@@ -17,7 +17,7 @@ public class ConfigureCamera2FromPrefs {
 	/**
 	 * Logger
 	 */
-	private Logger logger = new Logger(getClass());
+	protected Logger logger = new Logger(getClass());
 
 	/**
 	 * Preferences

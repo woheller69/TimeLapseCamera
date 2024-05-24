@@ -21,7 +21,7 @@ public class ImageFileDocumentFile implements ImageFile {
 	/**
 	 * Logger
 	 */
-	private Logger logger = new Logger(getClass());
+	protected Logger logger = new Logger(getClass());
 
 	/**
 	 * File

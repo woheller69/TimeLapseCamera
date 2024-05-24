@@ -29,7 +29,7 @@ public class PopupDialogMenu extends PopupDialogBase {
 	/**
 	 * Logger
 	 */
-	private Logger logger = new Logger(getClass());
+	protected Logger logger = new Logger(getClass());
 
 	/**
 	 * White Balance Button

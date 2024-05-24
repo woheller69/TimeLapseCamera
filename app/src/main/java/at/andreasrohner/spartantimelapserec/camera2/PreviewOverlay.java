@@ -20,7 +20,7 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 	/**
 	 * Logger
 	 */
-	private Logger logger = new Logger(getClass());
+	protected Logger logger = new Logger(getClass());
 
 	/**
 	 * Draw debug border

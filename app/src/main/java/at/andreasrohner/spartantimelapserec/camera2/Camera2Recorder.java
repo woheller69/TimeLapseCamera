@@ -22,7 +22,7 @@ public class Camera2Recorder implements Runnable, ImageTakenListener, ProcessErr
 	/**
 	 * Logger
 	 */
-	private Logger logger = new Logger(getClass());
+	protected Logger logger = new Logger(getClass());
 
 	/**
 	 * Context

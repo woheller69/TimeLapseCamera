@@ -18,7 +18,7 @@ public class FileNameControllerExternal extends AbstractFileNameController {
 	/**
 	 * Logger
 	 */
-	private Logger logger = new Logger(getClass());
+	protected Logger logger = new Logger(getClass());
 
 	/**
 	 * Output path

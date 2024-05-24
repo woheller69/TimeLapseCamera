@@ -13,7 +13,7 @@ public class PreviewScaling {
 	/**
 	 * Logger
 	 */
-	private Logger logger = new Logger(getClass());
+	protected Logger logger = new Logger(getClass());
 
 	/**
 	 * Texture width

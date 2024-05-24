@@ -21,7 +21,7 @@ public class FileNameControllerInternal extends AbstractFileNameController {
 	/**
 	 * Logger
 	 */
-	private Logger logger = new Logger(getClass());
+	protected Logger logger = new Logger(getClass());
 
 	/**
 	 * Output path

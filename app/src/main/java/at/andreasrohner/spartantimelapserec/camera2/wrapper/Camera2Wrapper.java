@@ -25,7 +25,7 @@ public class Camera2Wrapper {
 	/**
 	 * Logger
 	 */
-	private Logger logger = new Logger(getClass());
+	protected Logger logger = new Logger(getClass());
 
 	/**
 	 * Context
@@ -179,20 +179,10 @@ public class Camera2Wrapper {
 	public synchronized void close() {
 		try {
 			cameraOpenCloseLock.acquire();
-			/* TODO !!!!!!!!!!!!!!!!!!!!!!!!!
-			if (null != mCaptureSession) {
-				mCaptureSession.close();
-				mCaptureSession = null;
-			}*/
 			if (cameraDevice != null) {
 				cameraDevice.close();
 				cameraDevice = null;
 			}
-			/* TODO !!!!!!!!!!!!!!!!!!!!!!!!!
-			if (null != mImageReader) {
-				mImageReader.close();
-				mImageReader = null;
-			}*/
 		} catch (InterruptedException e) {
 			logger.error("Interrupted while trying to lock camera closing.", e);
 		} finally {
