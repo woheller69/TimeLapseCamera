@@ -118,7 +118,7 @@
     <string name="pref_schedule_recording_enabled_title">Enable scheduled start</string>
     <string name="pref_schedule_recording_date">Date</string>
     <string name="pref_schedule_recording_time">Time</string>
-    <string name="camera2_header">Camera Preview / Configuration</string>
+    <string name="camera2_header">Preview</string>
     <string name="iso">ISO</string>
     <string name="iso_message">Select camera ISO</string>
     <string name="camera_value_auto">Auto</string>

@@ -16,7 +16,6 @@ import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.WindowManager;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.util.Arrays;
@@ -85,16 +84,6 @@ public abstract class AbstractPreview2Activity extends AppCompatActivity impleme
 	protected HandlerThread backgroundThread;
 
 	/**
-	 * Touch / focus handler
-	 */
-	protected CameraFocusOnTouchHandler touchFocusHandler;
-
-	/**
-	 * Handle buttons and button actions of the camera preview
-	 */
-	protected CameraControlButtonHandler cameraControlButtonHandler;
-
-	/**
 	 * Camera configuration
 	 */
 	protected ConfigureCamera2FromPrefs cameraConfig;
@@ -110,8 +99,14 @@ public abstract class AbstractPreview2Activity extends AppCompatActivity impleme
 	protected PreviewScaling scaling = new PreviewScaling();
 
 	/**
+	 * Camera characteristics
+	 */
+	protected CameraCharacteristics characteristics;
+
+	/**
 	 * Constructor
 	 */
+
 	public AbstractPreview2Activity() {
 	}
 
@@ -126,11 +121,6 @@ public abstract class AbstractPreview2Activity extends AppCompatActivity impleme
 
 		assert textureView != null;
 		textureView.setSurfaceTextureListener(new PreviewSurfaceListener(() -> openCamera()));
-
-		cameraControlButtonHandler = new CameraControlButtonHandler(this);
-		cameraControlButtonHandler.setConfigChangeListener(this);
-
-		((ImageButton) findViewById(R.id.btn_takepicture)).setOnClickListener(v -> takePicture());
 	}
 
 	/**
@@ -167,7 +157,7 @@ public abstract class AbstractPreview2Activity extends AppCompatActivity impleme
 	/**
 	 * Take a picture
 	 */
-	protected void takePicture() {
+	public void takePicture() {
 		if (camera == null) {
 			logger.error("Camera is null");
 			return;
@@ -187,8 +177,6 @@ public abstract class AbstractPreview2Activity extends AppCompatActivity impleme
 	 */
 	@Override
 	public void takeImageFinished() {
-		// Attach the Listener again, which was removed until the picture was saved
-		textureView.setOnTouchListener(touchFocusHandler);
 		createCameraPreview();
 
 		ImageFile img = ImageRecorderState.getCurrentRecordedImage();
@@ -206,7 +194,7 @@ public abstract class AbstractPreview2Activity extends AppCompatActivity impleme
 			SurfaceTexture texture = textureView.getSurfaceTexture();
 			assert texture != null;
 
-			CameraCharacteristics characteristics = camera.getCharacteristics();
+			this.characteristics = camera.getCharacteristics();
 			StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 			assert map != null;
 			Size imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
@@ -227,14 +215,12 @@ public abstract class AbstractPreview2Activity extends AppCompatActivity impleme
 					AbstractPreview2Activity.this.cameraCaptureSession = cameraCaptureSession;
 					updatePreview();
 
-					touchFocusHandler = new CameraFocusOnTouchHandler(getApplicationContext(), characteristics, captureRequestBuilder, AbstractPreview2Activity.this.cameraCaptureSession, backgroundHandler, scaling);
-					touchFocusHandler.loadLastFocusConfig();
-					textureView.setOnTouchListener(touchFocusHandler);
-					touchFocusHandler.setFocusChangeListener(state -> updateFocusDisplay(state));
+					onCameraConfigured();
 				}
 
 				@Override
 				public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
+					logger.error("Configuration failed");
 					Toast.makeText(AbstractPreview2Activity.this, "Configuration failed", Toast.LENGTH_SHORT).show();
 				}
 			}, null);
@@ -244,9 +230,16 @@ public abstract class AbstractPreview2Activity extends AppCompatActivity impleme
 	}
 
 	/**
+	 * Camera configured
+	 */
+	protected void onCameraConfigured() {
+		// Can be overwritten by extending classes
+	}
+
+	/**
 	 * Update focus display
 	 */
-	private void updateFocusDisplay(FocusChangeListener.FocusState state) {
+	protected void updateFocusDisplay(FocusChangeListener.FocusState state) {
 		runOnUiThread(new Runnable() {
 			public void run() {
 				overlay.setFocusState(state);
@@ -278,7 +271,7 @@ public abstract class AbstractPreview2Activity extends AppCompatActivity impleme
 	/**
 	 * Open the camera, if the camera is already open, close it first
 	 */
-	private synchronized void openCamera() {
+	protected synchronized void openCamera() {
 		if (camera != null) {
 			camera.close();
 		}
@@ -288,8 +281,6 @@ public abstract class AbstractPreview2Activity extends AppCompatActivity impleme
 		camera = new Camera2Wrapper(this, AbstractFileNameController.createInstance(this), this);
 		camera.setOpenCallback(this);
 		camera.open();
-
-		cameraControlButtonHandler.cameraOpened(camera);
 
 		cameraConfig = new ConfigureCamera2FromPrefs(PreferenceManager.getDefaultSharedPreferences(this));
 	}

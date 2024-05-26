@@ -48,8 +48,8 @@
             android:name=".camera2.Preview2Activity"
             android:exported="false"
             android:label="@string/camera2_header"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.Design.NoActionBar" />
+            android:screenOrientation="portrait" />
+        <!-- android:theme="@style/Theme.Design.NoActionBar" -->
         <activity
             android:name=".preference.activity.RestSettingsActivity"
             android:exported="false"

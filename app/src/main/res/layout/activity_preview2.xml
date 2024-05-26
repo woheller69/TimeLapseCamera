@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/preview2"
     android:background="#000000"
     tools:context=".camera2.Preview2Activity">
 

@@ -1,6 +1,7 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.content.Context;
+import android.content.Intent;
 
 import at.andreasrohner.spartantimelapserec.BaseForegroundService;
 
@@ -10,14 +11,14 @@ import at.andreasrohner.spartantimelapserec.BaseForegroundService;
 public class Camera2ForegroundService extends BaseForegroundService {
 
 	/**
-	 * Log Tag
-	 */
-	private static final String TAG = Camera2ForegroundService.class.getSimpleName();
-
-	/**
 	 * Recorder implementation
 	 */
-	private Camera2Recorder recorder;
+	private BaseRecorder recorder;
+
+	/**
+	 * Recorder class
+	 */
+	private String recorderClass;
 
 	/**
 	 * Constructor
@@ -31,7 +32,13 @@ public class Camera2ForegroundService extends BaseForegroundService {
 		initHandler();
 
 		Context context = getApplicationContext();
-		recorder = new Camera2Recorder(context, handler);
+
+		if (Camera2PreviewRecorder.class.getSimpleName().equals(recorderClass)) {
+			recorder = new Camera2PreviewRecorder(context, handler);
+		} else {
+			recorder = new Camera2Recorder(context, handler);
+		}
+
 		handler.post(new Runnable() {
 			@Override
 			public void run() {
@@ -39,6 +46,12 @@ public class Camera2ForegroundService extends BaseForegroundService {
 			}
 		});
 		updateNotification();
+	}
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		recorderClass = intent.getStringExtra("recorder");
+		return super.onStartCommand(intent, flags, startId);
 	}
 
 	@Override

@@ -27,6 +27,6 @@ public class ScheduleReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		ServiceHelper serviceHelper = new ServiceHelper(context);
-		serviceHelper.start(true);
+		serviceHelper.start(ServiceHelper.ServiceStartType.UI);
 	}
 }
