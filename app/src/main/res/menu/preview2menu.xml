@@ -3,16 +3,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="at.andreasrohner.spartantimelapserec.MainActivity">
 
-    <item
-        android:id="@+id/prv_action_start"
-        android:icon="@drawable/ic_radio_button_checked_24px"
-        android:onClick="actionStart"
-        android:title="@string/action_start"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/prv_action_stop"
-        android:icon="@drawable/ic_stop_circle_24px"
-        android:onClick="actionStop"
-        android:title="@string/action_stop"
-        app:showAsAction="always" />
+    <group>
+        <item
+            android:id="@+id/prv_action_start"
+            android:icon="@drawable/ic_radio_button_checked_24px"
+            android:onClick="actionStart"
+            android:title="@string/action_start"
+            app:showAsAction="always" />
+
+        <item
+            android:id="@+id/prv_action_stop"
+            android:icon="@drawable/ic_stop_circle_24px"
+            android:onClick="actionStop"
+            android:title="@string/action_stop"
+            app:showAsAction="always" />
+    </group>
+
+    <group>
+        <item
+            android:id="@+id/prv_refocus"
+            android:icon="@drawable/ic_focus"
+            android:onClick="actionRefocus"
+            android:title="@string/action_focus"
+            app:showAsAction="always" />
+    </group>
+
 </menu>

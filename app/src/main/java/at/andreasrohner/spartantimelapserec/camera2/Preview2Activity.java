@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.core.view.MenuCompat;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.RecordingMenuHelper;
 import at.andreasrohner.spartantimelapserec.ServiceHelper;
@@ -58,6 +59,7 @@ public class Preview2Activity extends AbstractPreview2Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.preview2menu, menu);
+		MenuCompat.setGroupDividerEnabled(menu, true);
 
 		RecordingMenuHelper menuHelper = new RecordingMenuHelper(menu, getApplicationContext());
 		menuHelper.setIdStart(R.id.prv_action_start);
@@ -98,6 +100,15 @@ public class Preview2Activity extends AbstractPreview2Activity {
 		helper.stop("Stop button pressed", false);
 
 		invalidateOptionsMenu();
+	}
+
+	/**
+	 * Focus again with the same settings
+	 *
+	 * @param item Item
+	 */
+	public void actionRefocus(MenuItem item) {
+		touchFocusHandler.loadLastFocusConfig();
 	}
 
 	@Override

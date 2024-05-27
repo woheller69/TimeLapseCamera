@@ -1,8 +1,10 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RadioGroup;
 
 import androidx.preference.PreferenceManager;
@@ -43,11 +45,29 @@ public class PopupDialogAfMf extends PopupDialogBase {
 		this.focusPointWidth = (EditText) view.findViewById(R.id.focus_point_width);
 		this.focusPointHeight = (EditText) view.findViewById(R.id.focus_point_height);
 
+		((ImageButton) view.findViewById(R.id.focus_help_button)).setOnClickListener(x -> showInformationDialog(R.string.focus_information));
+		((ImageButton) view.findViewById(R.id.refocus_help_button)).setOnClickListener(x -> showInformationDialog(R.string.refocus_info));
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		this.focusPointWidth.setText(String.valueOf(prefs.getInt("pref_camera_af_field_width", 100)));
 		this.focusPointHeight.setText(String.valueOf(prefs.getInt("pref_camera_af_field_height", 100)));
 
 		updateSelectedCheckbox();
+	}
+
+	/**
+	 * Show Information / Help
+	 *
+	 * @param messageId Text ID
+	 */
+	private void showInformationDialog(int messageId) {
+		AlertDialog.Builder helpDlg = new AlertDialog.Builder(context);
+		helpDlg.setTitle(R.string.focus_information_header);
+		helpDlg.setMessage(messageId);
+
+		helpDlg.setPositiveButton(R.string.dialog_OK_button, (dialog, which) -> {
+		});
+		helpDlg.show();
 	}
 
 	/**
