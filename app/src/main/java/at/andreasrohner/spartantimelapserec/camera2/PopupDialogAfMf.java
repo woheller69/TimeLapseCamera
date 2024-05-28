@@ -33,6 +33,11 @@ public class PopupDialogAfMf extends PopupDialogBase {
 	private final EditText focusPointHeight;
 
 	/**
+	 * Input for focus interval / count
+	 */
+	private final EditText refocusCount;
+
+	/**
 	 * Constructor
 	 *
 	 * @param context Context
@@ -44,6 +49,7 @@ public class PopupDialogAfMf extends PopupDialogBase {
 		this.group = (RadioGroup) view.findViewById(R.id.bt_afmf_group);
 		this.focusPointWidth = (EditText) view.findViewById(R.id.focus_point_width);
 		this.focusPointHeight = (EditText) view.findViewById(R.id.focus_point_height);
+		this.refocusCount = (EditText) view.findViewById(R.id.refocus_count);
 
 		((ImageButton) view.findViewById(R.id.focus_help_button)).setOnClickListener(x -> showInformationDialog(R.string.focus_information));
 		((ImageButton) view.findViewById(R.id.refocus_help_button)).setOnClickListener(x -> showInformationDialog(R.string.refocus_info));
@@ -51,6 +57,7 @@ public class PopupDialogAfMf extends PopupDialogBase {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		this.focusPointWidth.setText(String.valueOf(prefs.getInt("pref_camera_af_field_width", 100)));
 		this.focusPointHeight.setText(String.valueOf(prefs.getInt("pref_camera_af_field_height", 100)));
+		this.refocusCount.setText(String.valueOf(prefs.getInt("pref_camera_af_refocus", 1)));
 
 		updateSelectedCheckbox();
 	}
@@ -107,6 +114,7 @@ public class PopupDialogAfMf extends PopupDialogBase {
 		// Store field size
 		storeFieldSize(editor, "pref_camera_af_field_width", this.focusPointWidth);
 		storeFieldSize(editor, "pref_camera_af_field_height", this.focusPointHeight);
+		storeFieldSize(editor, "pref_camera_af_refocus", this.refocusCount);
 
 		editor.apply();
 

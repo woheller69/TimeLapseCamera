@@ -134,7 +134,6 @@ public class CameraFocusOnTouchHandler implements View.OnTouchListener {
 	public void loadLastFocusConfig() {
 		PrefUtil.AfMode afMode = PrefUtil.getAfMode(prefs);
 		if (afMode != PrefUtil.AfMode.FIELD) {
-			// Just load the AF Field in the field mode
 			return;
 		}
 

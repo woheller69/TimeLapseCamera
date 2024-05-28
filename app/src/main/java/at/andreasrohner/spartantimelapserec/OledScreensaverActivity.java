@@ -144,12 +144,7 @@ public class OledScreensaverActivity extends AppCompatActivity {
 		t.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						updateText();
-					}
-				});
+				runOnUiThread(() -> updateText());
 			}
 		}, 10, REFRESH_INTERVAL);
 	}

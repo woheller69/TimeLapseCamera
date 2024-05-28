@@ -174,5 +174,5 @@
     <string name="focus_information_header">Fokus Informationen</string>
     <string name="focus_information">Autofokus lässt die Kamera den Fokuspunkt wählen. Wird die Aufnahme aus dieser Vorschau gestartet, dann wird der Fokus gehalte, oder es kann konfiguriert werden wie of neu fokussiert wird. Wird die Aufnahme ohne Vorschau gestartet, dann funktioniert das fokussieren nicht zuverlässig.</string>
     <string name="cam_afmf_field_refocus">Neu fokussieren</string>
-    <string name="refocus_info">0=Vorschau Fokus beibehalten, 1=Nach jedem Bild neu fokussieren, 2=Nach jedem zweiten Bild fokussieren...</string>
+    <string name="refocus_info">0=Vorschau Fokus beibehalten, 1=Vor jedem Bild neu fokussieren, 2=Vor jedem zweiten Bild fokussieren...</string>
 </resources>

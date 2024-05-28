@@ -4,7 +4,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.core.view.MenuCompat;
@@ -15,7 +17,7 @@ import at.andreasrohner.spartantimelapserec.ServiceHelper;
 /**
  * Preview with Camera 2 Activity
  */
-public class Preview2Activity extends AbstractPreview2Activity {
+public class Preview2Activity extends AbstractPreview2Activity implements FocusChangeListener {
 
 	/**
 	 * Handle buttons and button actions of the camera preview
@@ -26,6 +28,16 @@ public class Preview2Activity extends AbstractPreview2Activity {
 	 * Touch / focus handler
 	 */
 	protected CameraFocusOnTouchHandler touchFocusHandler;
+
+	/**
+	 * Listen for one focus changed, then remove listener
+	 */
+	protected FocusChangeListener onceFocusChangedListener = null;
+
+	/**
+	 * Toolbar
+	 */
+	private LinearLayout cameraToolbar;
 
 	/**
 	 * Constructor
@@ -53,6 +65,8 @@ public class Preview2Activity extends AbstractPreview2Activity {
 		cameraControlButtonHandler.setConfigChangeListener(this);
 
 		((ImageButton) findViewById(R.id.btn_takepicture)).setOnClickListener(v -> takePicture());
+
+		cameraToolbar = (LinearLayout) findViewById(R.id.cameraToolbar);
 	}
 
 	@Override
@@ -108,6 +122,13 @@ public class Preview2Activity extends AbstractPreview2Activity {
 	 * @param item Item
 	 */
 	public void actionRefocus(MenuItem item) {
+		focus();
+	}
+
+	/**
+	 * Focus to the last configured settings
+	 */
+	public void focus() {
 		touchFocusHandler.loadLastFocusConfig();
 	}
 
@@ -129,6 +150,53 @@ public class Preview2Activity extends AbstractPreview2Activity {
 		touchFocusHandler = new CameraFocusOnTouchHandler(getApplicationContext(), characteristics, captureRequestBuilder, this.cameraCaptureSession, backgroundHandler, scaling);
 		touchFocusHandler.loadLastFocusConfig();
 		textureView.setOnTouchListener(touchFocusHandler);
-		touchFocusHandler.setFocusChangeListener(state -> updateFocusDisplay(state));
+		touchFocusHandler.setFocusChangeListener(this);
+	}
+
+	/**
+	 * @param onceFocusChangedListener Listen for one focus changed, then remove listener
+	 */
+	public void setOnceFocusChangedListener(FocusChangeListener onceFocusChangedListener) {
+		this.onceFocusChangedListener = onceFocusChangedListener;
+	}
+
+	@Override
+	public void focusChanged(FocusState state) {
+		updateFocusDisplay(state);
+
+		FocusChangeListener l = onceFocusChangedListener;
+		if (l != null) {
+			l.focusChanged(state);
+		}
+	}
+
+	/**
+	 * Enable recording mode
+	 */
+	public void enableRecordingMode() {
+		runOnUiThread(() -> enableRecordingModeUi());
+	}
+
+	/**
+	 * Disable recording mode
+	 */
+	public void disableRecordingMode() {
+		runOnUiThread(() -> disableRecordingModeUi());
+	}
+
+	/**
+	 * Enable recording mode
+	 */
+	private void enableRecordingModeUi() {
+		cameraToolbar.setVisibility(View.GONE);
+		textureView.setOnTouchListener(null);
+	}
+
+	/**
+	 * Disable recording mode
+	 */
+	private void disableRecordingModeUi() {
+		cameraToolbar.setVisibility(View.VISIBLE);
+		textureView.setOnTouchListener(touchFocusHandler);
 	}
 }
