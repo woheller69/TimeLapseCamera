@@ -1,6 +1,7 @@
 package at.andreasrohner.spartantimelapserec.preference.activity;
 
 import android.content.SharedPreferences;
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -48,6 +49,12 @@ public class Camera2SettingsActivity extends AbstractSettingsActivity {
 		}
 
 		@Override
+		public void onCreate(@Nullable Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			updateIntervalWarning();
+		}
+
+		@Override
 		protected void updateValues() {
 			// Nothing to do
 		}
@@ -55,6 +62,19 @@ public class Camera2SettingsActivity extends AbstractSettingsActivity {
 		@Override
 		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
 			updateValues();
+
+			if ("pref_capture_rate".equals(key)) {
+				updateIntervalWarning();
+			}
+		}
+
+		/**
+		 * Show interval warning, if time is short
+		 */
+		private void updateIntervalWarning() {
+			SharedPreferences prefs = getPreferenceManager().getSharedPreferences();
+			int rateMs = prefs.getInt("pref_capture_rate", 10000);
+			findPreference("pref_capture_rate_warning").setVisible(rateMs < 10000);
 		}
 	}
 }

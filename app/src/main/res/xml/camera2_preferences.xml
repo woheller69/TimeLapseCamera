@@ -8,6 +8,11 @@
             android:title="@string/pref_capture_rate"
             app:icon="@drawable/ic_timespan"
             app:timeSpanType="formatMs" />
+
+        <Preference
+            app:icon="@drawable/ic_warn"
+            android:key="pref_capture_rate_warning"
+            android:summary="@string/warn_interval_short" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_jpeg_settings">
