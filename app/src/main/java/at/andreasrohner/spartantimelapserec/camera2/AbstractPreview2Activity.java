@@ -156,8 +156,10 @@ public abstract class AbstractPreview2Activity extends AppCompatActivity impleme
 
 	/**
 	 * Take a picture
+	 *
+	 * @param listener Listener
 	 */
-	public void takePicture() {
+	public void takePicture(ImageTakenListener listener) {
 		if (camera == null) {
 			logger.error("Camera is null");
 			return;
@@ -169,7 +171,8 @@ public abstract class AbstractPreview2Activity extends AppCompatActivity impleme
 		}
 
 		textureView.setOnTouchListener(null);
-		camera.takePicture(backgroundHandler, this);
+
+		camera.takePicture(backgroundHandler, ImageTakenListener.combine(this, listener));
 	}
 
 	/**

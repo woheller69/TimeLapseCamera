@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 
 import androidx.preference.PreferenceManager;
+import at.andreasrohner.spartantimelapserec.R;
+import at.andreasrohner.spartantimelapserec.camera2.wrapper.ImageTakenListener;
 import at.andreasrohner.spartantimelapserec.preference.PrefUtil;
 
 /**
@@ -26,6 +28,11 @@ public class Camera2PreviewRecorder extends BaseRecorder implements FocusChangeL
 	 * Refocus every X image (0=disabled)
 	 */
 	private int refocusEvery;
+
+	/**
+	 * Wait for focus result
+	 */
+	private int waitForImagesFocused = 0;
 
 	/**
 	 * Constructor
@@ -62,6 +69,7 @@ public class Camera2PreviewRecorder extends BaseRecorder implements FocusChangeL
 		}
 
 		preview2Activity.enableRecordingMode();
+		preview2Activity.setFocusChangedListener(this);
 	}
 
 	@Override
@@ -74,11 +82,16 @@ public class Camera2PreviewRecorder extends BaseRecorder implements FocusChangeL
 		}
 
 		preview2Activity.disableRecordingMode();
+		preview2Activity.setFocusChangedListener(null);
 	}
 
 	@Override
 	public void focusChanged(FocusState state) {
+		if (waitForImagesFocused == 0) {
+			return;
+		}
 		if (state == FocusState.FOCUS_SUCCESS || state == FocusState.FOCUS_FAILED) {
+			waitForImagesFocused = 0;
 			doTakeImage();
 		}
 	}
@@ -91,7 +104,10 @@ public class Camera2PreviewRecorder extends BaseRecorder implements FocusChangeL
 		}
 
 		if (refocusEvery > 0 && imageId % refocusEvery == 0) {
-			preview2Activity.setOnceFocusChangedListener(this);
+			if (waitForImagesFocused > 0) {
+				logger.warn("Missed image, focus not yet ready!");
+			}
+			waitForImagesFocused = 1;
 			preview2Activity.focus();
 		} else {
 			doTakeImage();
@@ -102,7 +118,14 @@ public class Camera2PreviewRecorder extends BaseRecorder implements FocusChangeL
 	 * Call the activity to take an image
 	 */
 	private void doTakeImage() {
-		preview2Activity.takePicture();
-		imageId++;
+		preview2Activity.takePicture(new ImageTakenListener() {
+			@Override
+			public void takeImageFinished() {
+				logger.info("Image taken");
+				imageId++;
+
+				preview2Activity.updateRecordingText(String.format(context.getString(R.string.recording_text_placeholder), imageId));
+			}
+		});
 	}
 }

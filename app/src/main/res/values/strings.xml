@@ -177,4 +177,5 @@
     <string name="focus_information">Autofocus let the camera decide where to focus. If the recording is started, while this preview is running, the focus is kept as in preview, or you can configure the interval to refocus. If the recording is started without preview, focus does not work reliable.</string>
     <string name="cam_afmf_field_refocus">Refocus config</string>
     <string name="refocus_info">0=Keep the initial focus, 1=Focus before each image, 2=Focus every second image...</string>
+    <string name="recording_text_placeholder">Recording... %d images taken.</string>
 </resources>

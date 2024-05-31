@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.core.view.MenuCompat;
@@ -30,14 +31,24 @@ public class Preview2Activity extends AbstractPreview2Activity implements FocusC
 	protected CameraFocusOnTouchHandler touchFocusHandler;
 
 	/**
-	 * Listen for one focus changed, then remove listener
+	 * Listen for focus changed
 	 */
-	protected FocusChangeListener onceFocusChangedListener = null;
+	protected FocusChangeListener focusChangedListener = null;
 
 	/**
 	 * Toolbar
 	 */
-	private LinearLayout cameraToolbar;
+	private LinearLayout buttonLayout;
+
+	/**
+	 * Recording Info
+	 */
+	private LinearLayout recordingInfo;
+
+	/**
+	 * Recoding info Text View
+	 */
+	private TextView recordingInfoText;
 
 	/**
 	 * Constructor
@@ -64,9 +75,12 @@ public class Preview2Activity extends AbstractPreview2Activity implements FocusC
 		cameraControlButtonHandler = new CameraControlButtonHandler(this);
 		cameraControlButtonHandler.setConfigChangeListener(this);
 
-		((ImageButton) findViewById(R.id.btn_takepicture)).setOnClickListener(v -> takePicture());
+		((ImageButton) findViewById(R.id.btn_takepicture)).setOnClickListener(v -> takePicture(null));
 
-		cameraToolbar = (LinearLayout) findViewById(R.id.cameraToolbar);
+		buttonLayout = (LinearLayout) findViewById(R.id.buttonLayout);
+		recordingInfo = (LinearLayout) findViewById(R.id.recordingInfo);
+		recordingInfoText = (TextView) findViewById(R.id.recordingInfoText);
+
 	}
 
 	@Override
@@ -142,7 +156,7 @@ public class Preview2Activity extends AbstractPreview2Activity implements FocusC
 	public void takeImageFinished() {
 		super.takeImageFinished();
 		// Attach the Listener again, which was removed until the picture was saved
-		textureView.setOnTouchListener(touchFocusHandler);
+		runOnUiThread(() -> textureView.setOnTouchListener(touchFocusHandler));
 	}
 
 	@Override
@@ -154,17 +168,17 @@ public class Preview2Activity extends AbstractPreview2Activity implements FocusC
 	}
 
 	/**
-	 * @param onceFocusChangedListener Listen for one focus changed, then remove listener
+	 * @param focusChangedListener Listen for focus changed
 	 */
-	public void setOnceFocusChangedListener(FocusChangeListener onceFocusChangedListener) {
-		this.onceFocusChangedListener = onceFocusChangedListener;
+	public void setFocusChangedListener(FocusChangeListener focusChangedListener) {
+		this.focusChangedListener = focusChangedListener;
 	}
 
 	@Override
 	public void focusChanged(FocusState state) {
 		updateFocusDisplay(state);
 
-		FocusChangeListener l = onceFocusChangedListener;
+		FocusChangeListener l = focusChangedListener;
 		if (l != null) {
 			l.focusChanged(state);
 		}
@@ -185,18 +199,39 @@ public class Preview2Activity extends AbstractPreview2Activity implements FocusC
 	}
 
 	/**
+	 * Update recording info text
+	 *
+	 * @param text Text
+	 */
+	public void updateRecordingText(String text) {
+		runOnUiThread(() -> updateRecordingTextUi(text));
+	}
+
+	/**
 	 * Enable recording mode
 	 */
 	private void enableRecordingModeUi() {
-		cameraToolbar.setVisibility(View.GONE);
+		buttonLayout.setVisibility(View.GONE);
+		recordingInfo.setVisibility(View.VISIBLE);
 		textureView.setOnTouchListener(null);
+		recordingInfoText.setText("");
 	}
 
 	/**
 	 * Disable recording mode
 	 */
 	private void disableRecordingModeUi() {
-		cameraToolbar.setVisibility(View.VISIBLE);
+		buttonLayout.setVisibility(View.VISIBLE);
+		recordingInfo.setVisibility(View.GONE);
 		textureView.setOnTouchListener(touchFocusHandler);
+	}
+
+	/**
+	 * Update recording info text
+	 *
+	 * @param text Text
+	 */
+	private void updateRecordingTextUi(String text) {
+		recordingInfoText.setText(text);
 	}
 }
