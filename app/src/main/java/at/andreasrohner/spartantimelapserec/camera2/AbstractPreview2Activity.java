@@ -205,6 +205,8 @@ public abstract class AbstractPreview2Activity extends AppCompatActivity impleme
 			transformTexture(imageDimension);
 			texture.setDefaultBufferSize(imageDimension.getWidth(), imageDimension.getHeight());
 			Surface surface = new Surface(texture);
+
+			logger.debug("createCaptureRequest for Preview");
 			captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
 			captureRequestBuilder.addTarget(surface);
 			cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {

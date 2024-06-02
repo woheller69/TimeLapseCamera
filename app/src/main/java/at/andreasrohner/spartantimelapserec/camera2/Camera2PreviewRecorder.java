@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.camera2.wrapper.ImageTakenListener;
@@ -92,7 +95,16 @@ public class Camera2PreviewRecorder extends BaseRecorder implements FocusChangeL
 		}
 		if (state == FocusState.FOCUS_SUCCESS || state == FocusState.FOCUS_FAILED) {
 			waitForImagesFocused = 0;
-			doTakeImage();
+
+			// Take the image a little later, else the preview cannot be started again, because
+			// currently the image is taken now
+			Timer t = new Timer();
+			t.schedule(new TimerTask() {
+				@Override
+				public void run() {
+					doTakeImage();
+				}
+			}, 100);
 		}
 	}
 
@@ -123,6 +135,7 @@ public class Camera2PreviewRecorder extends BaseRecorder implements FocusChangeL
 			public void takeImageFinished() {
 				logger.info("Image taken");
 				imageId++;
+				Camera2PreviewRecorder.this.takeImageFinished();
 
 				preview2Activity.updateRecordingText(String.format(context.getString(R.string.recording_text_placeholder), imageId));
 			}

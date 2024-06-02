@@ -56,6 +56,11 @@ public class Logger {
 			}
 		}
 
+		// Probably null Exception
+		if (stack.size() == 1 && stack.getFirst() == null) {
+			stack.removeFirst();
+		}
+
 		if (!stack.isEmpty()) {
 			error("Error Message with wrong parameter count: «{}», {}", message, Arrays.toString(param));
 		}

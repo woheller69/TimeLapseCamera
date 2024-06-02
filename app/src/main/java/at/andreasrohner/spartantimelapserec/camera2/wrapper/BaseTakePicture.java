@@ -32,7 +32,7 @@ public abstract class BaseTakePicture implements ImageReader.OnImageAvailableLis
 	/**
 	 * Global ID, incremented to get unique IDs
 	 */
-	private static AtomicInteger SID = new AtomicInteger(0);
+	private static final AtomicInteger SID = new AtomicInteger(0);
 
 	/**
 	 * Logger
@@ -97,7 +97,7 @@ public abstract class BaseTakePicture implements ImageReader.OnImageAvailableLis
 	}
 
 	/**
-	 * Rremove listener
+	 * Remove listener
 	 *
 	 * @param imageTakenListener Listener to remove
 	 */
@@ -137,7 +137,7 @@ public abstract class BaseTakePicture implements ImageReader.OnImageAvailableLis
 	 * Prepare image reader
 	 *
 	 * @param cameraDevice Camera
-	 * @throws CameraAccessException
+	 * @throws CameraAccessException On camera error
 	 */
 	private void prepareImageReader(CameraDevice cameraDevice) throws CameraAccessException {
 		Size size = cameraConfig.prepareSize();
@@ -145,6 +145,7 @@ public abstract class BaseTakePicture implements ImageReader.OnImageAvailableLis
 		List<Surface> outputSurfaces = new ArrayList<>(1);
 		outputSurfaces.add(reader.getSurface());
 
+		logger.debug("createCaptureRequest #{}", id);
 		captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
 		captureBuilder.addTarget(reader.getSurface());
 		captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
@@ -191,6 +192,7 @@ public abstract class BaseTakePicture implements ImageReader.OnImageAvailableLis
 
 	@Override
 	public void onImageAvailable(ImageReader reader) {
+		logger.debug("Store image #{}", id);
 		try (Image image = reader.acquireLatestImage()) {
 			ByteBuffer buffer = image.getPlanes()[0].getBuffer();
 			byte[] bytes = new byte[buffer.capacity()];
