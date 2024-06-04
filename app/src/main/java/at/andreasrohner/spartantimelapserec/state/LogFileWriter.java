@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 
 import androidx.preference.PreferenceManager;
 
+import static android.os.Environment.DIRECTORY_DOCUMENTS;
 import static android.os.Environment.DIRECTORY_PICTURES;
 
 /**
@@ -48,6 +49,11 @@ public class LogFileWriter {
 	private static SharedPreferences prefs;
 
 	/**
+	 * Main Path
+	 */
+	private static String projectPath;
+
+	/**
 	 * Utility class
 	 */
 	private LogFileWriter() {
@@ -62,6 +68,27 @@ public class LogFileWriter {
 		prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		level = prefs.getInt("log_file_level", LogLevel.INFO.LEVEL);
 		setEnabled(prefs.getBoolean("log_file_enabled", false));
+		Log.e("xxxx", "xxxx start");
+
+		// Try to store the logs in the Picture Directory, if possible. But newer Android Version forbidden this...
+		projectPath = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).getPath();
+
+		File outputFile = new File(projectPath, "test-log-writeable.log");
+		try (FileOutputStream out = new FileOutputStream(outputFile, true)) {
+			out.write(0x30);
+		} catch (Exception ex) {
+			// java.io.FileNotFoundException: /storage/emulated/0/Pictures/test-log-writeable.log: open failed: EPERM (Operation not permitted)
+			if (ex.getMessage().contains("open failed: EPERM")) {
+				Log.e("Info", "Try to write to documents folder, not allowed to write log to Pictures Folder", ex);
+				projectPath = Environment.getExternalStoragePublicDirectory(DIRECTORY_DOCUMENTS).getPath();
+			} else {
+				Log.e("Log", "Logtest error", ex);
+			}
+		}
+
+		if (outputFile.exists()) {
+			outputFile.delete();
+		}
 	}
 
 	/**
@@ -82,7 +109,6 @@ public class LogFileWriter {
 	 * @return The Logfolder path
 	 */
 	public static File getLogFolder() {
-		String projectPath = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).getPath();
 		String projectName = prefs.getString("pref_project_title", "NO_NAME");
 		return new File(projectPath, projectName + "/Logs");
 	}
