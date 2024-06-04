@@ -182,7 +182,14 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 	@Override
 	protected void onDestroy() {
 		broadcastReceiver = null;
+		BaseForegroundService.unregisterStatusListener(this);
 		super.onDestroy();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		BaseForegroundService.unregisterStatusListener(this);
 	}
 
 	public void actionStop(MenuItem item) {
@@ -245,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 
 	@Override
 	public void onServiceStatusChange(ServiceState status) {
-		invalidateOptionsMenu();
+		runOnUiThread(() -> invalidateOptionsMenu());
 
 		if (settingsFragment == null) {
 			return;

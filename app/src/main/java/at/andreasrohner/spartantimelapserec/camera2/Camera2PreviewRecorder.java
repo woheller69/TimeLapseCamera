@@ -71,7 +71,6 @@ public class Camera2PreviewRecorder extends BaseRecorder implements FocusChangeL
 			refocusEvery = 0;
 		}
 
-		preview2Activity.enableRecordingMode();
 		preview2Activity.setFocusChangedListener(this);
 	}
 
@@ -84,7 +83,6 @@ public class Camera2PreviewRecorder extends BaseRecorder implements FocusChangeL
 			return;
 		}
 
-		preview2Activity.disableRecordingMode();
 		preview2Activity.setFocusChangedListener(null);
 	}
 

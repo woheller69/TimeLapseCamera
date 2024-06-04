@@ -124,6 +124,18 @@ public abstract class BaseForegroundService extends Service implements Handler.C
 	}
 
 	/**
+	 * Unregister listener
+	 *
+	 * @param l Listener
+	 */
+	public static void unregisterStatusListener(ServiceStatusListener l) {
+		synchronized (listener) {
+			// make sure the listener is added just once
+			listener.remove(l);
+		}
+	}
+
+	/**
 	 * Inform the listener about the state change
 	 *
 	 * @param status New state

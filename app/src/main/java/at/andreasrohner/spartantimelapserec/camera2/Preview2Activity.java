@@ -11,14 +11,17 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.core.view.MenuCompat;
+import at.andreasrohner.spartantimelapserec.BaseForegroundService;
 import at.andreasrohner.spartantimelapserec.R;
 import at.andreasrohner.spartantimelapserec.RecordingMenuHelper;
 import at.andreasrohner.spartantimelapserec.ServiceHelper;
+import at.andreasrohner.spartantimelapserec.ServiceState;
+import at.andreasrohner.spartantimelapserec.ServiceStatusListener;
 
 /**
  * Preview with Camera 2 Activity
  */
-public class Preview2Activity extends AbstractPreview2Activity implements FocusChangeListener {
+public class Preview2Activity extends AbstractPreview2Activity implements FocusChangeListener, ServiceStatusListener {
 
 	/**
 	 * Handle buttons and button actions of the camera preview
@@ -84,6 +87,24 @@ public class Preview2Activity extends AbstractPreview2Activity implements FocusC
 	}
 
 	@Override
+	protected void onResume() {
+		super.onResume();
+		BaseForegroundService.registerStatusListener(this);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		BaseForegroundService.unregisterStatusListener(this);
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		BaseForegroundService.unregisterStatusListener(this);
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.preview2menu, menu);
@@ -95,6 +116,19 @@ public class Preview2Activity extends AbstractPreview2Activity implements FocusC
 		menuHelper.update();
 
 		return true;
+	}
+
+	@Override
+	public void onServiceStatusChange(ServiceState status) {
+		runOnUiThread(() -> {
+			invalidateOptionsMenu();
+
+			if (status.getState() == ServiceState.State.RUNNING) {
+				enableRecordingModeUi();
+			} else {
+				disableRecordingModeUi();
+			}
+		});
 	}
 
 	@Override
@@ -114,8 +148,6 @@ public class Preview2Activity extends AbstractPreview2Activity implements FocusC
 	public void actionStart(MenuItem item) {
 		ServiceHelper helper = new ServiceHelper(getApplicationContext());
 		helper.start(ServiceHelper.ServiceStartType.PREVIEW);
-
-		invalidateOptionsMenu();
 	}
 
 	/**
@@ -126,8 +158,6 @@ public class Preview2Activity extends AbstractPreview2Activity implements FocusC
 	public void actionStop(MenuItem item) {
 		ServiceHelper helper = new ServiceHelper(getApplicationContext());
 		helper.stop("Stop button pressed", false);
-
-		invalidateOptionsMenu();
 	}
 
 	/**
@@ -182,20 +212,6 @@ public class Preview2Activity extends AbstractPreview2Activity implements FocusC
 		if (l != null) {
 			l.focusChanged(state);
 		}
-	}
-
-	/**
-	 * Enable recording mode
-	 */
-	public void enableRecordingMode() {
-		runOnUiThread(() -> enableRecordingModeUi());
-	}
-
-	/**
-	 * Disable recording mode
-	 */
-	public void disableRecordingMode() {
-		runOnUiThread(() -> disableRecordingModeUi());
 	}
 
 	/**
