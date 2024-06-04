@@ -54,6 +54,11 @@ public class Preview2Activity extends AbstractPreview2Activity implements FocusC
 	private TextView recordingInfoText;
 
 	/**
+	 * Should the focus position should be loaded again
+	 */
+	private boolean loadCamFocusAgain = false;
+
+	/**
 	 * Constructor
 	 */
 	public Preview2Activity() {
@@ -90,6 +95,7 @@ public class Preview2Activity extends AbstractPreview2Activity implements FocusC
 	protected void onResume() {
 		super.onResume();
 		BaseForegroundService.registerStatusListener(this);
+		loadCamFocusAgain = true;
 	}
 
 	@Override
@@ -192,7 +198,11 @@ public class Preview2Activity extends AbstractPreview2Activity implements FocusC
 	@Override
 	protected void onCameraConfigured() {
 		touchFocusHandler = new CameraFocusOnTouchHandler(getApplicationContext(), characteristics, captureRequestBuilder, this.cameraCaptureSession, backgroundHandler, scaling);
-		touchFocusHandler.loadLastFocusConfig();
+
+		if (loadCamFocusAgain) {
+			touchFocusHandler.loadLastFocusConfig();
+			loadCamFocusAgain = false;
+		}
 		textureView.setOnTouchListener(touchFocusHandler);
 		touchFocusHandler.setFocusChangeListener(this);
 	}
