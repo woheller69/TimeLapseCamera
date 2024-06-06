@@ -13,6 +13,7 @@ import at.andreasrohner.spartantimelapserec.camera2.AfPos;
 import at.andreasrohner.spartantimelapserec.camera2.CameraTiming;
 import at.andreasrohner.spartantimelapserec.camera2.pupcfg.CameraModel;
 import at.andreasrohner.spartantimelapserec.preference.CameraSettings;
+import at.andreasrohner.spartantimelapserec.preference.PrefUtil;
 import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
@@ -131,24 +132,15 @@ public class ShowCameraInfoPreference extends DialogPreference {
 				setSummary(R.string.camera_flash_off);
 			}
 		} else if ("pref_camera_af_mode".equals(key)) {
-			String afMode = prefs.getString("pref_camera_af_mode", null);
+			PrefUtil.AfMode afMode = PrefUtil.getAfMode(prefs);
 
-			if ("field".equals(afMode)) {
-				AfPos pos = AfPos.fromString(prefs.getString("pref_camera_af_field", null));
+			if (afMode == PrefUtil.AfMode.FIELD) {
+				AfPos pos = AfPos.fromPref(prefs);
 				if (pos == null) {
 					setSummary("ERROR");
 				} else {
-					setSummary("F: " + String.format("%.02f", pos.getFocusRelX()) + " / " + String.format("%.02f", pos.getFocusRelY()));
+					setSummary(String.format("%.02f", pos.getFocusRelX()) + " / " + String.format("%.02f", pos.getFocusRelY()));
 				}
-			} else if ("manual".equals(afMode)) {
-				float focusDistance = prefs.getFloat("pref_camera_af_manual", 0);
-				String m;
-				if (focusDistance == 0) {
-					m = "∞";
-				} else {
-					m = String.format("%.2f", (1.0f / focusDistance));
-				}
-				setSummary("M: " + String.format("%.4f", focusDistance) + " " + getContext().getText(R.string.dioptre) + " / " + m + "m");
 			} else {
 				setSummary(R.string.camera_value_auto);
 			}

@@ -7,10 +7,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.DialogPreference;
-import at.andreasrohner.spartantimelapserec.camera2.Camera2Wrapper;
 import at.andreasrohner.spartantimelapserec.camera2.PopupDialogIso;
 import at.andreasrohner.spartantimelapserec.camera2.ProcessErrorHandler;
 import at.andreasrohner.spartantimelapserec.camera2.filename.AbstractFileNameController;
+import at.andreasrohner.spartantimelapserec.camera2.wrapper.Camera2Wrapper;
 import at.andreasrohner.spartantimelapserec.preference.update.SummaryPreference;
 
 /**

@@ -7,7 +7,6 @@ import android.text.format.DateFormat;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
 import at.andreasrohner.spartantimelapserec.ImageRecorderState;
 import at.andreasrohner.spartantimelapserec.state.Logger;
@@ -22,7 +21,7 @@ public class FileNameControllerInternal extends AbstractFileNameController {
 	/**
 	 * Logger
 	 */
-	private Logger logger = new Logger(getClass());
+	protected Logger logger = new Logger(getClass());
 
 	/**
 	 * Output path
@@ -44,7 +43,7 @@ public class FileNameControllerInternal extends AbstractFileNameController {
 	}
 
 	@Override
-	public OutputStream getOutputFile(String ext) throws IOException {
+	public ImageOutput getOutputFile(String ext) throws IOException {
 		if (!outputDir.exists()) {
 			if (!outputDir.mkdirs()) {
 				throw new IOException("Could not create folder «" + outputDir + "»");
@@ -52,8 +51,10 @@ public class FileNameControllerInternal extends AbstractFileNameController {
 		}
 
 		File outFile;
+		String fileName;
 		do {
-			outFile = new File(outputDir, projectName + fileIndex + "." + ext);
+			fileName = projectName + fileIndex + "." + ext;
+			outFile = new File(outputDir, fileName);
 			fileIndex++;
 		} while (outFile.isFile());
 
@@ -63,6 +64,6 @@ public class FileNameControllerInternal extends AbstractFileNameController {
 
 		ImageRecorderState.setCurrentImage(new ImageFileFile(outFile));
 
-		return new FileOutputStream(outFile);
+		return new ImageOutput(fileName, new FileOutputStream(outFile));
 	}
 }

@@ -13,7 +13,7 @@ public class PreviewScaling {
 	/**
 	 * Logger
 	 */
-	private Logger logger = new Logger(getClass());
+	protected Logger logger = new Logger(getClass());
 
 	/**
 	 * Texture width
@@ -28,12 +28,12 @@ public class PreviewScaling {
 	/**
 	 * Image width
 	 */
-	private float iw;
+	private float imageWidth;
 
 	/**
 	 * Image height
 	 */
-	private float ih;
+	private float imageHeight;
 
 	/**
 	 * Rotation Enum Value
@@ -89,8 +89,15 @@ public class PreviewScaling {
 	 * @param height Height
 	 */
 	public void setImageSize(int width, int height) {
-		this.iw = width;
-		this.ih = height;
+		this.imageWidth = width;
+		this.imageHeight = height;
+	}
+
+	/**
+	 * @return Image width
+	 */
+	public float getImageWidth() {
+		return imageWidth;
 	}
 
 	/**
@@ -127,13 +134,13 @@ public class PreviewScaling {
 		scaleY = 1;
 		rotate = 0;
 
-		logger.debug("transformTexture: info tw={}, th={}, r={} | iw={}, ih={}, r={}", tw, th, (tw / th), iw, ih, (iw / ih));
+		logger.debug("transformTexture: info tw={}, th={}, r={} | iw={}, ih={}, r={}", tw, th, (tw / th), imageWidth, imageHeight, (imageWidth / imageHeight));
 
 		if (rotationEnum == Surface.ROTATION_0) {
 			// *** Portrait ***
 
-			float factorX = ih / th;
-			float factorY = iw / tw;
+			float factorX = imageHeight / th;
+			float factorY = imageWidth / tw;
 			logger.debug("transformTexture: 0° fx={}, fy={}", factorX, factorY);
 
 			if (factorX < factorY) {

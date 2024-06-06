@@ -408,7 +408,7 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 			result = BaseForegroundService.getStatus().getState() == ServiceState.State.RUNNING ? "running" : "stopped";
 		} else if ("start".equals(command)) {
 			ServiceHelper helper = new ServiceHelper(restService.getApplicationContext());
-			helper.start(false);
+			helper.start(ServiceHelper.ServiceStartType.REST);
 			result = "ok";
 		} else if ("stop".equals(command)) {
 			ServiceHelper helper = new ServiceHelper(restService.getApplicationContext());

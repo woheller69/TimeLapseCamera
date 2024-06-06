@@ -1,103 +1,62 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
-import android.content.Context;
-import android.graphics.SurfaceTexture;
-import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.params.StreamConfigurationMap;
-import android.media.ImageReader;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.util.Log;
-import android.util.Size;
-import android.view.Surface;
-import android.view.TextureView;
-import android.view.WindowManager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageButton;
-import android.widget.Toast;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-import java.util.Arrays;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceManager;
-import at.andreasrohner.spartantimelapserec.ImageRecorderState;
+import androidx.appcompat.app.ActionBar;
+import androidx.core.view.MenuCompat;
+import at.andreasrohner.spartantimelapserec.BaseForegroundService;
 import at.andreasrohner.spartantimelapserec.R;
-import at.andreasrohner.spartantimelapserec.camera2.filename.AbstractFileNameController;
-import at.andreasrohner.spartantimelapserec.camera2.filename.ImageFile;
+import at.andreasrohner.spartantimelapserec.RecordingMenuHelper;
+import at.andreasrohner.spartantimelapserec.ServiceHelper;
+import at.andreasrohner.spartantimelapserec.ServiceState;
+import at.andreasrohner.spartantimelapserec.ServiceStatusListener;
 
 /**
  * Preview with Camera 2 Activity
  */
-public class Preview2Activity extends AppCompatActivity implements Camera2Wrapper.CameraOpenCallback, TakePicture.ImageTakenListener, ProcessErrorHandler, CameraControlButtonHandler.ConfigChangeListener {
-
-	/**
-	 * Log Tag
-	 */
-	private static final String TAG = Preview2Activity.class.getSimpleName();
-
-	/**
-	 * Texture view
-	 */
-	private TextureView textureView;
-
-	/**
-	 * Camera implementation
-	 */
-	private Camera2Wrapper camera;
-
-	/**
-	 * Capture session
-	 */
-	protected CameraCaptureSession cameraCaptureSession;
-
-	/**
-	 * Capture Request Builder
-	 */
-	protected CaptureRequest.Builder captureRequestBuilder;
-
-	/**
-	 * Image Reader
-	 */
-	private ImageReader imageReader;
-
-	/**
-	 * Handler to store image
-	 */
-	private Handler backgroundHandler;
-
-	/**
-	 * Thread to store image
-	 */
-	private HandlerThread backgroundThread;
-
-	/**
-	 * Touch / focus handler
-	 */
-	private CameraFocusOnTouchHandler touchFocusHandler;
+public class Preview2Activity extends AbstractPreview2Activity implements FocusChangeListener, ServiceStatusListener {
 
 	/**
 	 * Handle buttons and button actions of the camera preview
 	 */
-	private CameraControlButtonHandler cameraControlButtonHandler;
+	protected CameraControlButtonHandler cameraControlButtonHandler;
 
 	/**
-	 * Camera configuration
+	 * Touch / focus handler
 	 */
-	private ConfigureCamera2FromPrefs cameraConfig;
+	protected CameraFocusOnTouchHandler touchFocusHandler;
 
 	/**
-	 * Overlay
+	 * Listen for focus changed
 	 */
-	private PreviewOverlay overlay;
+	protected FocusChangeListener focusChangedListener = null;
 
 	/**
-	 * Calculate the scaling for the preview
+	 * Toolbar
 	 */
-	private PreviewScaling scaling = new PreviewScaling();
+	private LinearLayout buttonLayout;
+
+	/**
+	 * Recording Info
+	 */
+	private LinearLayout recordingInfo;
+
+	/**
+	 * Recoding info Text View
+	 */
+	private TextView recordingInfoText;
+
+	/**
+	 * Should the focus position should be loaded again
+	 */
+	private boolean loadCamFocusAgain = false;
 
 	/**
 	 * Constructor
@@ -106,239 +65,199 @@ public class Preview2Activity extends AppCompatActivity implements Camera2Wrappe
 	}
 
 	@Override
+	protected void loadContentView() {
+		setContentView(R.layout.activity_preview2);
+	}
+
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_preview2);
-		textureView = (TextureView) findViewById(R.id.texture);
-		overlay = (PreviewOverlay) findViewById(R.id.imageOverlay);
-		overlay.setScaling(scaling);
 
-		assert textureView != null;
-		textureView.setSurfaceTextureListener(new PreviewSurfaceListener(() -> openCamera()));
+		Camera2PreviewRecorder.setPreview2Activity(this);
+
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setDisplayHomeAsUpEnabled(true);
+		}
 
 		cameraControlButtonHandler = new CameraControlButtonHandler(this);
 		cameraControlButtonHandler.setConfigChangeListener(this);
 
-		((ImageButton) findViewById(R.id.btn_takepicture)).setOnClickListener(v -> takePicture());
-	}
+		((ImageButton) findViewById(R.id.btn_takepicture)).setOnClickListener(v -> takePicture(null));
 
-	/**
-	 * Start the background thread
-	 */
-	protected void startBackgroundThread() {
-		backgroundThread = new HandlerThread("Camera Background");
-		backgroundThread.start();
-		backgroundHandler = new Handler(backgroundThread.getLooper());
-	}
+		buttonLayout = (LinearLayout) findViewById(R.id.buttonLayout);
+		recordingInfo = (LinearLayout) findViewById(R.id.recordingInfo);
+		recordingInfoText = (TextView) findViewById(R.id.recordingInfoText);
 
-	/**
-	 * Stop the background Thread
-	 */
-	protected synchronized void stopBackgroundThread() {
-		if (backgroundThread == null) {
-			return;
-		}
-		backgroundThread.quitSafely();
-		try {
-			backgroundThread.join();
-		} catch (Exception e) {
-			Log.w(TAG, "Error stopping background Thread");
-		}
-		backgroundThread = null;
-		backgroundHandler = null;
-	}
-
-	/**
-	 * Take a picture
-	 */
-	protected void takePicture() {
-		if (!camera.isOpen()) {
-			error("Camera is not open!", null);
-			return;
-		}
-
-		textureView.setOnTouchListener(null);
-		camera.takePicture(backgroundHandler, this);
-	}
-
-	/**
-	 * Image taken, start the preview again
-	 */
-	@Override
-	public void takeImageFinished() {
-		// Attach the Listener again, which was removed until the picture was saved
-		textureView.setOnTouchListener(touchFocusHandler);
-		createCameraPreview();
-
-		ImageFile img = ImageRecorderState.getCurrentRecordedImage();
-		if (img != null) {
-			Toast.makeText(getApplicationContext(), img.getName(), Toast.LENGTH_SHORT).show();
-		}
-	}
-
-	/**
-	 * Create the preview
-	 */
-	public void createCameraPreview() {
-		try {
-			CameraDevice cameraDevice = camera.getCameraDevice();
-			SurfaceTexture texture = textureView.getSurfaceTexture();
-			assert texture != null;
-
-			CameraCharacteristics characteristics = camera.getCharacteristics();
-			StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-			assert map != null;
-			Size imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
-			transformTexture(imageDimension);
-			texture.setDefaultBufferSize(imageDimension.getWidth(), imageDimension.getHeight());
-			Surface surface = new Surface(texture);
-			captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-			captureRequestBuilder.addTarget(surface);
-			cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
-				@Override
-				public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
-					//The camera is already closed
-					if (null == cameraDevice) {
-						return;
-					}
-					// When the session is ready, we start displaying the preview.
-					Preview2Activity.this.cameraCaptureSession = cameraCaptureSession;
-					updatePreview();
-
-					touchFocusHandler = new CameraFocusOnTouchHandler(getApplicationContext(), characteristics, captureRequestBuilder, Preview2Activity.this.cameraCaptureSession, backgroundHandler, scaling);
-					textureView.setOnTouchListener(touchFocusHandler);
-					touchFocusHandler.setFocusChangeListener(() -> updateFocusDisplay());
-				}
-
-				@Override
-				public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-					Toast.makeText(Preview2Activity.this, "Configuration failed", Toast.LENGTH_SHORT).show();
-				}
-			}, null);
-		} catch (Exception e) {
-			error("Create Preview failed", e);
-		}
-	}
-
-	/**
-	 * Update focus display
-	 */
-	private void updateFocusDisplay() {
-		runOnUiThread(new Runnable() {
-			public void run() {
-				overlay.invalidate();
-			}
-		});
-	}
-
-	/**
-	 * Set the correct transformation matrix
-	 *
-	 * @param imageDimension Image size
-	 */
-	private void transformTexture(Size imageDimension) {
-		scaling.setTextureSize(textureView.getWidth(), textureView.getHeight());
-
-		// Image is rotated by default, therefore here width/height is swapped!
-		scaling.setImageSize(imageDimension.getHeight(), imageDimension.getWidth());
-
-		Context context = getApplicationContext();
-		scaling.setRotationEnum(((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation());
-
-		scaling.calculate();
-
-		textureView.setTransform(scaling.createMatrix());
-		updateFocusDisplay();
-	}
-
-	/**
-	 * Open the camera, if the camera is already open, close it first
-	 */
-	private synchronized void openCamera() {
-		if (camera != null) {
-			camera.close();
-		}
-
-		closeCamera();
-
-		camera = new Camera2Wrapper(this, AbstractFileNameController.createInstance(this), this);
-		camera.setOpenCallback(this);
-		camera.open();
-
-		cameraControlButtonHandler.cameraOpened(camera);
-
-		cameraConfig = new ConfigureCamera2FromPrefs(PreferenceManager.getDefaultSharedPreferences(this));
-	}
-
-	@Override
-	public void cameraOpened(boolean success) {
-		if (success) {
-			createCameraPreview();
-		}
-	}
-
-	@Override
-	public void cameraConfigChanged(int flags) {
-		updatePreview();
-		if (flags == 1) {
-
-			// Re-open Camera
-			openCamera();
-		}
-	}
-
-	/**
-	 * Update the preview
-	 */
-	protected void updatePreview() {
-		if (!camera.isOpen()) {
-			error("Update preview failed!", null);
-			return;
-		}
-
-		cameraConfig.config(captureRequestBuilder);
-
-		try {
-			cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(), null, backgroundHandler);
-		} catch (Exception e) {
-			error("Error configure camera", e);
-		}
-	}
-
-	/**
-	 * Close the camera
-	 */
-	private void closeCamera() {
-		if (camera != null) {
-			camera.close();
-		}
-		if (null != imageReader) {
-			imageReader.close();
-			imageReader = null;
-		}
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		startBackgroundThread();
-		if (textureView.isAvailable()) {
-			openCamera();
-		} else {
-			textureView.setSurfaceTextureListener(new PreviewSurfaceListener(() -> openCamera()));
-		}
+		BaseForegroundService.registerStatusListener(this);
+		loadCamFocusAgain = true;
 	}
 
 	@Override
 	protected void onPause() {
-		//closeCamera();
-		stopBackgroundThread();
 		super.onPause();
+		BaseForegroundService.unregisterStatusListener(this);
 	}
 
 	@Override
-	public void error(String msg, Exception e) {
-		Log.e(TAG, msg, e);
-		Toast.makeText(getApplicationContext(), "Error: " + msg, Toast.LENGTH_SHORT).show();
+	protected void onDestroy() {
+		super.onDestroy();
+		BaseForegroundService.unregisterStatusListener(this);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.preview2menu, menu);
+		MenuCompat.setGroupDividerEnabled(menu, true);
+
+		RecordingMenuHelper menuHelper = new RecordingMenuHelper(menu, getApplicationContext());
+		menuHelper.setIdStart(R.id.prv_action_start);
+		menuHelper.setIdStop(R.id.prv_action_stop);
+		menuHelper.update();
+
+		return true;
+	}
+
+	@Override
+	public void onServiceStatusChange(ServiceState status) {
+		runOnUiThread(() -> {
+			invalidateOptionsMenu();
+
+			if (status.getState() == ServiceState.State.RUNNING) {
+				enableRecordingModeUi();
+			} else {
+				disableRecordingModeUi();
+			}
+		});
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		if (id == android.R.id.home) {
+			finish();
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	/**
+	 * Start Recording
+	 *
+	 * @param item Item
+	 */
+	public void actionStart(MenuItem item) {
+		ServiceHelper helper = new ServiceHelper(getApplicationContext());
+		helper.start(ServiceHelper.ServiceStartType.PREVIEW);
+	}
+
+	/**
+	 * Stop Recording
+	 *
+	 * @param item Item
+	 */
+	public void actionStop(MenuItem item) {
+		ServiceHelper helper = new ServiceHelper(getApplicationContext());
+		helper.stop("Stop button pressed", false);
+	}
+
+	/**
+	 * Focus again with the same settings
+	 *
+	 * @param item Item
+	 */
+	public void actionRefocus(MenuItem item) {
+		focus();
+	}
+
+	/**
+	 * Focus to the last configured settings
+	 */
+	public void focus() {
+		touchFocusHandler.loadLastFocusConfig();
+	}
+
+	@Override
+	protected synchronized void openCamera() {
+		super.openCamera();
+		cameraControlButtonHandler.cameraOpened(camera);
+	}
+
+	@Override
+	public void takeImageFinished() {
+		super.takeImageFinished();
+		// Attach the Listener again, which was removed until the picture was saved
+		runOnUiThread(() -> textureView.setOnTouchListener(touchFocusHandler));
+	}
+
+	@Override
+	protected void onCameraConfigured() {
+		touchFocusHandler = new CameraFocusOnTouchHandler(getApplicationContext(), characteristics, captureRequestBuilder, this.cameraCaptureSession, backgroundHandler, scaling);
+
+		if (loadCamFocusAgain) {
+			touchFocusHandler.loadLastFocusConfig();
+			loadCamFocusAgain = false;
+		}
+		textureView.setOnTouchListener(touchFocusHandler);
+		touchFocusHandler.setFocusChangeListener(this);
+	}
+
+	/**
+	 * @param focusChangedListener Listen for focus changed
+	 */
+	public void setFocusChangedListener(FocusChangeListener focusChangedListener) {
+		this.focusChangedListener = focusChangedListener;
+	}
+
+	@Override
+	public void focusChanged(FocusState state) {
+		updateFocusDisplay(state);
+
+		FocusChangeListener l = focusChangedListener;
+		if (l != null) {
+			l.focusChanged(state);
+		}
+	}
+
+	/**
+	 * Update recording info text
+	 *
+	 * @param text Text
+	 */
+	public void updateRecordingText(String text) {
+		runOnUiThread(() -> updateRecordingTextUi(text));
+	}
+
+	/**
+	 * Enable recording mode
+	 */
+	private void enableRecordingModeUi() {
+		buttonLayout.setVisibility(View.GONE);
+		recordingInfo.setVisibility(View.VISIBLE);
+		textureView.setOnTouchListener(null);
+		recordingInfoText.setText("");
+	}
+
+	/**
+	 * Disable recording mode
+	 */
+	private void disableRecordingModeUi() {
+		buttonLayout.setVisibility(View.VISIBLE);
+		recordingInfo.setVisibility(View.GONE);
+		textureView.setOnTouchListener(touchFocusHandler);
+	}
+
+	/**
+	 * Update recording info text
+	 *
+	 * @param text Text
+	 */
+	private void updateRecordingTextUi(String text) {
+		recordingInfoText.setText(text);
 	}
 }

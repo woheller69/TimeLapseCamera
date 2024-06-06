@@ -41,7 +41,7 @@ import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.camera2.Preview2Activity;
 import at.andreasrohner.spartantimelapserec.data.RecMode;
 import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
-import at.andreasrohner.spartantimelapserec.data.SchedulingSettings;
+import at.andreasrohner.spartantimelapserec.preference.PreferencesDefaultValues;
 import at.andreasrohner.spartantimelapserec.rest.RestControlUtil;
 import at.andreasrohner.spartantimelapserec.sensor.MuteShutter;
 import at.andreasrohner.spartantimelapserec.state.LogFileWriter;
@@ -96,6 +96,8 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 				logger.error("Uncaught Exception in «{}»", paramThread.getName(), paramThrowable);
 			}
 		});
+
+		new PreferencesDefaultValues(getApplicationContext()).setDefaultValues();
 
 		if (broadcastReceiver == null) {
 			broadcastReceiver = new DeviceStatusReceiver();
@@ -172,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 
 	public void actionStart(MenuItem item) {
 		ServiceHelper helper = new ServiceHelper(getApplicationContext());
-		helper.start(true);
+		helper.start(ServiceHelper.ServiceStartType.UI);
 
 		invalidateOptionsMenu();
 	}
@@ -180,7 +182,14 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 	@Override
 	protected void onDestroy() {
 		broadcastReceiver = null;
+		BaseForegroundService.unregisterStatusListener(this);
 		super.onDestroy();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		BaseForegroundService.unregisterStatusListener(this);
 	}
 
 	public void actionStop(MenuItem item) {
@@ -231,29 +240,19 @@ public class MainActivity extends AppCompatActivity implements ServiceStatusList
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
-		if (BaseForegroundService.getStatus().getState() == ServiceState.State.RUNNING) {
-			menu.findItem(R.id.action_start).setEnabled(false);
-			menu.findItem(R.id.action_start).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_radio_button_checked_disabled_24px));
-			menu.findItem(R.id.action_preview).setEnabled(false);
-			menu.findItem(R.id.action_preview).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_visibility_disabled_24px));
 
-			SchedulingSettings settings = new SchedulingSettings();
-			settings.load(getApplicationContext());
-			if (settings.isSchedRecEnabled() && settings.getSchedRecTime() > System.currentTimeMillis()) {
-				menu.findItem(R.id.action_stop).setEnabled(false);
-				menu.findItem(R.id.action_stop).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_stop_circle_disabled_24px));
-			}
+		RecordingMenuHelper menuHelper = new RecordingMenuHelper(menu, getApplicationContext());
+		menuHelper.setIdStart(R.id.action_start);
+		menuHelper.setIdPreview(R.id.action_preview);
+		menuHelper.setIdStop(R.id.action_stop);
+		menuHelper.update();
 
-		} else {
-			menu.findItem(R.id.action_stop).setEnabled(false);
-			menu.findItem(R.id.action_stop).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_stop_circle_disabled_24px));
-		}
 		return true;
 	}
 
 	@Override
 	public void onServiceStatusChange(ServiceState status) {
-		invalidateOptionsMenu();
+		runOnUiThread(() -> invalidateOptionsMenu());
 
 		if (settingsFragment == null) {
 			return;

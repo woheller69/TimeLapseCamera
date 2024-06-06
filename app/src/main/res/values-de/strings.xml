@@ -117,7 +117,7 @@
     <string name="pref_schedule_recording_enabled_title">Enable scheduled start</string>
     <string name="pref_schedule_recording_date">Datum</string>
     <string name="pref_schedule_recording_time">Zeit</string>
-    <string name="camera2_header">Kamera Vorschau / Konfiguration</string>
+    <string name="camera2_header">Vorschau</string>
     <string name="iso">ISO</string>
     <string name="iso_message">Kamera ISO wählen</string>
     <string name="camera_value_auto">Auto</string>
@@ -137,7 +137,6 @@
     <string name="autofocus_message">Fokus Modus konfigurieren</string>
     <string name="cam_afmf_autofocus">Autofokus</string>
     <string name="cam_afmf_field">Autofokus auf gewählte Stelle</string>
-    <string name="cam_afmf_manual">Manuell gewählte Fokusdistanz wählen (funktioniert nicht mit den meisten Telefonen)</string>
     <string name="cam_header_flash">Blitz</string>
     <string name="cam_header_flash_info">Die Blitzeinstellungen funktionieren nur im Vollautomatik Modus</string>
     <string name="camera_flash_on">Ein</string>
@@ -165,4 +164,17 @@
     <string name="log_dialog_info">Log Level Filter für Zukünftige Meldungen setzten</string>
     <string name="log_file_dialog_enabled_info">Logdatei im internen Speicher im Ordner «{}» erstellen</string>
     <string name="write_log_file">Logdatei erstellen</string>
+    <string name="no_af_title">Keine Fokussierung</string>
+    <string name="no_af_description">Diese Kamera hat kein Autofokus / der Fokus kann nicht konfiguriert werden.</string>
+    <string name="cam_afmf_field_size_header">AF Feld Grösse</string>
+    <string name="width">Breite</string>
+    <string name="height">Höhe</string>
+    <string name="px">px</string>
+    <string name="action_focus">Fokussieren</string>
+    <string name="focus_information_header">Fokus Informationen</string>
+    <string name="focus_information">Autofokus lässt die Kamera den Fokuspunkt wählen. Wird die Aufnahme aus dieser Vorschau gestartet, dann wird der Fokus gehalte, oder es kann konfiguriert werden wie of neu fokussiert wird. Wird die Aufnahme ohne Vorschau gestartet, dann funktioniert das fokussieren nicht zuverlässig.</string>
+    <string name="cam_afmf_field_refocus">Neu fokussieren</string>
+    <string name="refocus_info">0=Vorschau Fokus beibehalten, 1=Vor jedem Bild neu fokussieren, 2=Vor jedem zweiten Bild fokussieren...</string>
+    <string name="recording_text_placeholder">Aufnahme läuft... %d Bilder aufgenommen.</string>
+    <string name="warn_interval_short">Je nach Hardware und Fokus Config (AF aktiviert) funktionieren möglicherweise weniger 10s nicht zuverlässig</string>
 </resources>

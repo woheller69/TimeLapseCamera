@@ -16,7 +16,7 @@ public class CameraTiming {
 	/**
 	 * Logger
 	 */
-	private Logger logger = new Logger(getClass());
+	protected Logger logger = new Logger(getClass());
 
 	/**
 	 * Predefined time values, copied from a Canon EOS Camera (a little extended)

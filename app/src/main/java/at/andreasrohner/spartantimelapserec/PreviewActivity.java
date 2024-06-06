@@ -41,7 +41,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.data.RecSettingsLegacy;
 
 public class PreviewActivity extends Activity implements ErrorCallback, AutoFocusCallback {
@@ -73,8 +72,9 @@ public class PreviewActivity extends Activity implements ErrorCallback, AutoFocu
 	}
 
 	private void releaseCamera() {
-		if (mCamera == null)
+		if (mCamera == null) {
 			return;
+		}
 
 		try {
 			mCamera.reconnect();
@@ -170,13 +170,15 @@ public class PreviewActivity extends Activity implements ErrorCallback, AutoFocu
 
 	private void startPreview() {
 		try {
-			if (mCamera == null)
+			if (mCamera == null) {
 				preparePreview();
+			}
 
 			mCamera.startPreview();
 
-			if (mUseAutoFocus)
+			if (mUseAutoFocus) {
 				mCamera.autoFocus(this);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -185,6 +187,7 @@ public class PreviewActivity extends Activity implements ErrorCallback, AutoFocu
 	@Override
 	public void onResume() {
 		super.onResume();
+		ServiceHelper.setCurrentPreviewActivity(this);
 
 		startPreview();
 	}
@@ -192,6 +195,7 @@ public class PreviewActivity extends Activity implements ErrorCallback, AutoFocu
 	@Override
 	public void onPause() {
 		super.onPause();
+		ServiceHelper.resetCurrentPreviewActivity(this);
 
 		// Because the Camera object is a shared resource, it's very
 		// important to release it when the activity is paused.
@@ -336,8 +340,9 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
 	private Size getOptimalPreviewSize(List<Size> sizes, int w, int h) {
 		final double ASPECT_TOLERANCE = 0.1;
 		double targetRatio = (double) w / h;
-		if (sizes == null)
+		if (sizes == null) {
 			return null;
+		}
 
 		Size optimalSize = null;
 		double minDiff = Double.MAX_VALUE;
@@ -347,8 +352,9 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
 		// Try to find an size match aspect ratio and size
 		for (Size size : sizes) {
 			double ratio = (double) size.width / size.height;
-			if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
+			if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) {
 				continue;
+			}
 			if (Math.abs(size.height - targetHeight) < minDiff) {
 				optimalSize = size;
 				minDiff = Math.abs(size.height - targetHeight);

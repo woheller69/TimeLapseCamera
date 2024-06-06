@@ -14,6 +14,7 @@ import com.google.android.material.tabs.TabLayout;
 
 import androidx.preference.PreferenceManager;
 import at.andreasrohner.spartantimelapserec.R;
+import at.andreasrohner.spartantimelapserec.camera2.wrapper.Camera2Wrapper;
 
 /**
  * Exposure Time Popup Dialog

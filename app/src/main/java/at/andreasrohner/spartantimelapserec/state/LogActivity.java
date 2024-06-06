@@ -90,14 +90,14 @@ public class LogActivity extends AppCompatActivity {
 		boolean enabled = prefs.getBoolean("log_file_enabled", false);
 		checkbox.setChecked(enabled);
 
-		builder.setPositiveButton(this.getString(R.string.dialog_OK_button), (dialog, which) -> {
+		builder.setPositiveButton(R.string.dialog_OK_button, (dialog, which) -> {
 			boolean newEnabled = checkbox.isChecked();
 			SharedPreferences.Editor editor = prefs.edit();
 			editor.putBoolean("log_file_enabled", newEnabled);
 			editor.apply();
 			LogFileWriter.setEnabled(newEnabled);
 		});
-		builder.setNegativeButton(this.getString(R.string.dialog_CANCEL_button), (dialog, which) -> {
+		builder.setNegativeButton(R.string.dialog_CANCEL_button, (dialog, which) -> {
 			dialog.cancel();
 		});
 		builder.show();
@@ -140,14 +140,14 @@ public class LogActivity extends AppCompatActivity {
 		int level = prefs.getInt(configKey, LogLevel.INFO.LEVEL);
 		selection.selectById(String.valueOf(level));
 
-		builder.setPositiveButton(this.getString(R.string.dialog_OK_button), (dialog, which) -> {
+		builder.setPositiveButton(R.string.dialog_OK_button, (dialog, which) -> {
 			int newLevel = selection.getSelectedItem().LEVEL;
 			SharedPreferences.Editor editor = prefs.edit();
 			editor.putInt(configKey, newLevel);
 			editor.apply();
 			callback.logLevelChanged(newLevel);
 		});
-		builder.setNegativeButton(this.getString(R.string.dialog_CANCEL_button), (dialog, which) -> {
+		builder.setNegativeButton(R.string.dialog_CANCEL_button, (dialog, which) -> {
 			dialog.cancel();
 		});
 		builder.show();

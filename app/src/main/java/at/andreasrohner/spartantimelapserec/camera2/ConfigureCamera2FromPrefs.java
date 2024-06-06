@@ -1,10 +1,12 @@
 package at.andreasrohner.spartantimelapserec.camera2;
 
 import android.content.SharedPreferences;
+import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.util.Size;
 
+import at.andreasrohner.spartantimelapserec.preference.PrefUtil;
 import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
@@ -15,7 +17,7 @@ public class ConfigureCamera2FromPrefs {
 	/**
 	 * Logger
 	 */
-	private Logger logger = new Logger(getClass());
+	protected Logger logger = new Logger(getClass());
 
 	/**
 	 * Preferences
@@ -31,6 +33,11 @@ public class ConfigureCamera2FromPrefs {
 	 * Image Size
 	 */
 	private int sizeH;
+
+	/**
+	 * Current focus area
+	 */
+	private MeteringRectangle focusArea;
 
 	/**
 	 * Constructor
@@ -67,19 +74,22 @@ public class ConfigureCamera2FromPrefs {
 	}
 
 	/**
+	 * @return Current focus area
+	 */
+	public MeteringRectangle getFocusArea() {
+		return focusArea;
+	}
+
+	/**
 	 * Configure Focus
 	 *
 	 * @param captureBuilder Camera Configuration
 	 */
 	private void configureFocus(CaptureRequest.Builder captureBuilder) {
-		String afMode = prefs.getString("pref_camera_af_mode", "auto");
+		PrefUtil.AfMode afMode = PrefUtil.getAfMode(prefs);
 
-		if ("field".equals(afMode)) {
+		if (afMode == PrefUtil.AfMode.FIELD) {
 			applyAfField(captureBuilder);
-		} else if ("manual".equals(afMode)) {
-			captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
-			float focusDistance = prefs.getFloat("pref_camera_af_manual", 0);
-			captureBuilder.set(CaptureRequest.LENS_FOCUS_DISTANCE, focusDistance);
 		} else {
 			captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO);
 		}
@@ -91,20 +101,23 @@ public class ConfigureCamera2FromPrefs {
 	 * @param captureBuilder Camera Configuration
 	 */
 	private void applyAfField(CaptureRequest.Builder captureBuilder) {
-		AfPos pos = AfPos.fromString(prefs.getString("pref_camera_af_field", null));
+		AfPos pos = AfPos.fromPref(prefs);
 		if (pos == null) {
 			// Error already logged
 			return;
 		}
 
 		prepareSize();
-		if (pos.getWidth() != sizeW || pos.getHeigth() != sizeH) {
+
+		if (!pos.equalsSize(sizeW, sizeH)) {
 			logger.warn("Focus set at another resolution, currently not implemented, re-focus manually: {}!={} || {}!={}", pos.getWidth(), sizeW, pos.getHeigth(), sizeH);
 			return;
 		}
 
-		MeteringRectangle focusArea = new MeteringRectangle(pos.getFocusX(), pos.getFocusY(), pos.getFocusWidth(), pos.getFocusHeight(), MeteringRectangle.METERING_WEIGHT_MAX - 1);
+		this.focusArea = pos.createMeteringRectangle();
 		logger.debug("Picture focus at {}", focusArea);
+		captureBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START);
+		captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO);
 		captureBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, new MeteringRectangle[] {focusArea});
 		// captureBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, new MeteringRectangle[] {focusArea});
 	}

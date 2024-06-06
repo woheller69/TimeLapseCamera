@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 
 import androidx.preference.PreferenceManager;
+import at.andreasrohner.spartantimelapserec.preference.PrefUtil;
 import at.andreasrohner.spartantimelapserec.state.Logger;
 
 /**
@@ -19,7 +20,7 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 	/**
 	 * Logger
 	 */
-	private Logger logger = new Logger(getClass());
+	protected Logger logger = new Logger(getClass());
 
 	/**
 	 * Draw debug border
@@ -30,6 +31,11 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 	 * Calculate the scaling for the preview
 	 */
 	private PreviewScaling scaling;
+
+	/**
+	 * Focus state
+	 */
+	private FocusChangeListener.FocusState focusState;
 
 	/**
 	 * Constructor
@@ -68,19 +74,26 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 		this.scaling = scaling;
 	}
 
+	/**
+	 * @param focusState Focus state
+	 */
+	public void setFocusState(FocusChangeListener.FocusState focusState) {
+		this.focusState = focusState;
+	}
+
 	@Override
 	public void onDraw(Canvas canvas) {
-		float sx = scaling.getScaleX();
-		float sy = scaling.getScaleY();
-		int vw = getWidth();
-		int vh = getHeight();
-		int iw = (int) (vw * sx);
-		int ih = (int) (vh * sy);
-		int left = (vw - iw) / 2;
-		int top = (vh - ih) / 2;
+		float scaleX = scaling.getScaleX();
+		float scaleY = scaling.getScaleY();
+		int displayWidth = getWidth();
+		int displayHeight = getHeight();
+		int scaledWidth = (int) (displayWidth * scaleX);
+		int scaledHeight = (int) (displayHeight * scaleY);
+		int left = (displayWidth - scaledWidth) / 2;
+		int top = (displayHeight - scaledHeight) / 2;
 
 		if (DRAW_DEBUG_BORDER) {
-			Rect boundingBox = new Rect(left, top, iw + left, ih + top);
+			Rect boundingBox = new Rect(left, top, scaledWidth + left, scaledHeight + top);
 			Paint p = new Paint();
 			p.setColor(Color.GREEN);
 			p.setStyle(Paint.Style.STROKE);
@@ -89,39 +102,41 @@ public class PreviewOverlay extends androidx.appcompat.widget.AppCompatImageView
 		}
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-		AfPos pos = AfPos.fromString(prefs.getString("pref_camera_af_field", null));
-		if (pos == null) {
+		PrefUtil.AfMode afMode = PrefUtil.getAfMode(prefs);
+		if (afMode == PrefUtil.AfMode.AUTO) {
 			return;
 		}
-		String afMode = prefs.getString("pref_camera_af_mode", "auto");
-		if ("auto".equals(afMode)) {
+
+		AfPos pos = AfPos.fromPref(prefs);
+		if (pos == null) {
 			return;
 		}
 
 		// X/Y Swapped, preview is always portrait, camera is always landscape
 		float px = pos.getFocusRelY();
 		float py = pos.getFocusRelX();
-		int x = (int) (iw * px) + left;
-		int y = (int) (ih * py) + top;
+		int x = (int) (scaledWidth * px) + left;
+		int y = (int) (scaledHeight * py) + top;
 
-		Rect rect = new Rect(x, y, x + 100, y + 100);
+		float scaleRect = displayWidth / scaling.getImageWidth();
+		int scaledRectWidth = (int) (pos.getFocusWidth() * scaleRect);
+		int scaledRectHeight = (int) (pos.getFocusHeight() * scaleRect);
+
+		Rect rect = new Rect(x, y, x + scaledRectWidth, y + scaledRectHeight);
 		Paint paint = new Paint();
 		paint.setColor(Color.WHITE);
 		paint.setStyle(Paint.Style.STROKE);
 		paint.setStrokeWidth(7);
 		canvas.drawRect(rect, paint);
 
-		paint.setColor(Color.RED);
+		if (focusState == FocusChangeListener.FocusState.FOCUS_SUCCESS) {
+			paint.setColor(Color.GREEN);
+		} else if (focusState == FocusChangeListener.FocusState.FOCUS_SUCCESS) {
+			paint.setColor(Color.RED);
+		} else {
+			paint.setColor(Color.GRAY);
+		}
 		paint.setStrokeWidth(3);
 		canvas.drawRect(rect, paint);
-
-		Paint pt = new Paint();
-		pt.setColor(Color.WHITE);
-		pt.setTextSize(70);
-		if ("field".equals(afMode)) {
-			canvas.drawText("A", x, y, pt);
-		} else if ("manual".equals(afMode)) {
-			canvas.drawText("M", x, y, pt);
-		}
 	}
 }
