@@ -104,36 +104,39 @@ public class HttpThread extends Thread implements HttpOutput, Closeable {
 		BufferedReader reader = new BufferedReader(isr);
 
 		String request = reader.readLine();
-		int pos = request.indexOf(' ');
-		if (pos == -1) {
-			Log.e(TAG, "Invalid Request: «" + request + "»");
-		}
-		String method = request.substring(0, pos);
-		int pos2 = request.indexOf(' ', pos + 1);
-		if (pos2 == -1) {
-			Log.e(TAG, "Invalid Request: «" + request + "»");
-		}
-		String url = request.substring(pos + 1, pos2);
-		String protocol = request.substring(pos2);
-
-		Log.d(TAG, "Request: «" + method + "» «" + url + "» «" + protocol + "»");
-
-		String line = reader.readLine();
-		Map<String, String> header = new HashMap<>();
-		while (!line.isEmpty()) {
-			pos = line.indexOf(':');
+		if (request != null) {
+			int pos = request.indexOf(' ');
 			if (pos == -1) {
-				continue;
+				Log.e(TAG, "Invalid Request: «" + request + "»");
+			}
+			String method = request.substring(0, pos);
+			int pos2 = request.indexOf(' ', pos + 1);
+			if (pos2 == -1) {
+				Log.e(TAG, "Invalid Request: «" + request + "»");
+			}
+			String url = request.substring(pos + 1, pos2);
+			String protocol = request.substring(pos2);
+
+			Log.d(TAG, "Request: «" + method + "» «" + url + "» «" + protocol + "»");
+
+			String line = reader.readLine();
+			Map<String, String> header = new HashMap<>();
+			while (line != null && !line.isEmpty()) {
+				pos = line.indexOf(':');
+				if (pos == -1) {
+					continue;
+				}
+
+				String key = line.substring(0, pos);
+				String value = line.substring(pos + 1);
+				header.put(key, value);
+
+				line = reader.readLine();
 			}
 
-			String key = line.substring(0, pos);
-			String value = line.substring(pos + 1);
-			header.put(key, value);
-
-			line = reader.readLine();
+			processRequest(method, url, protocol, header);
 		}
 
-		processRequest(method, url, protocol, header);
 	}
 
 	/**
