@@ -1,0 +1,14 @@
+Ekran kapalıyken arka planda zaman aralıklı videolar kaydeden sade bir uygulama.
+Zaman aralıklı videolar çeşitli çözünürlüklerde MP4 video dosyası olarak veya ayrı JPEG dosyaları olarak kaydedilebilir.
+Kayıt sırasında ön izleme görünmez ve ekran kapatılabilir.
+Kayıt sınırı yoktur, ancak pil seviyesi veya disk alanı düşükse uygulama kaydı durduracaktır.
+
+Özellikler:
+
+* Normal video kaydedin (MP4)
+* Zaman aralıklı video kaydedin (MP4/JPEG)
+* Çeşitli çözünürlükleri seçin
+* Kullanılacak kamerayı seçin
+* Belirli bir tarihte kayıt planlayın
+* Seçilen çözünürlükle ön izleme yapın
+* Deklanşör sesini devre dışı bırakın
