@@ -1,0 +1,2 @@
+Ignore battery optimizations
+Turkish translation
